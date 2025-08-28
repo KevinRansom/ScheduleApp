@@ -19,10 +19,10 @@ namespace ScheduleApp.Converters
             switch (kind)
             {
                 case CoverageTaskKind.Coverage: return CoverageBrush;
-                case CoverageTaskKind.Break: return BreakBrush;
-                case CoverageTaskKind.Lunch: return LunchBrush;
-                case CoverageTaskKind.Idle: return IdleBrush;
-                default: return Brushes.Transparent;
+                case CoverageTaskKind.Break:    return BreakBrush;
+                case CoverageTaskKind.Lunch:    return LunchBrush;
+                case CoverageTaskKind.Idle:     return IdleBrush;
+                default:                        return Brushes.Transparent;
             }
         }
 

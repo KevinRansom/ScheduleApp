@@ -109,13 +109,21 @@ namespace ScheduleApp.Services
             // Track last room per support to encourage consistency
             var lastRoomBySupport = day.Supports.ToDictionary(s => s.Name, s => (string)null);
 
-            // Build preference map: room -> support name
-            var prefMap = day.Preferences.Where(p => !string.IsNullOrWhiteSpace(p.RoomNumber) && !string.IsNullOrWhiteSpace(p.PreferredSupportName))
-                                         .ToDictionary(p => p.RoomNumber, p => p.PreferredSupportName);
+            // Build preference map: room -> list of preferred support names (case-insensitive)
+            var prefMap = day.Preferences
+                .Where(p => !string.IsNullOrWhiteSpace(p.RoomNumber) &&
+                            !string.IsNullOrWhiteSpace(p.PreferredSupportName))
+                .GroupBy(p => p.RoomNumber, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(x => x.PreferredSupportName)
+                          .Where(n => !string.IsNullOrWhiteSpace(n))
+                          .Distinct(StringComparer.OrdinalIgnoreCase)
+                          .ToList(),
+                    StringComparer.OrdinalIgnoreCase);
 
             foreach (var task in teacherTasks.OrderBy(t => t.Start))
             {
-                // Find candidates available for the entire block (including buffer)
                 var candidates = new List<Tuple<Support, int>>(); // support, score
 
                 foreach (var s in day.Supports)
@@ -128,14 +136,19 @@ namespace ScheduleApp.Services
                     {
                         int score = 0;
 
-                        // Prefer preferred support per room
-                        if (prefMap.ContainsKey(task.RoomNumber) && string.Equals(prefMap[task.RoomNumber], s.Name, StringComparison.OrdinalIgnoreCase))
+                        // Prefer any listed preferred support for the room
+                        if (prefMap.TryGetValue(task.RoomNumber, out var preferredList) &&
+                            preferredList.Any(n => string.Equals(n, s.Name, StringComparison.OrdinalIgnoreCase)))
+                        {
                             score -= 3;
+                        }
 
                         // Prefer support who last covered this room
                         if (!string.IsNullOrEmpty(lastRoomBySupport[s.Name]) &&
                             string.Equals(lastRoomBySupport[s.Name], task.RoomNumber, StringComparison.OrdinalIgnoreCase))
+                        {
                             score -= 2;
+                        }
 
                         // Prefer the one that stays most utilized (minimize idle fragmentation)
                         var lastEnd = GetLastEffectiveEnd(supportWindows[s.Name]);
@@ -199,14 +212,14 @@ namespace ScheduleApp.Services
                 if (needsLunch)
                 {
                     var midpoint = sShiftStart + TimeSpan.FromTicks((sShiftEnd - sShiftStart).Ticks / 2);
-                    TryPlaceSelfCare(list, ref freeWindows, CoverageTaskKind.Lunch, "Self", "---", midpoint, 30, 0);
+                    TryPlaceSelfCare(list, ref freeWindows, name, CoverageTaskKind.Lunch, "Self", "---", midpoint, 30, 0);
                 }
 
                 // Place breaks across the shift
                 for (int i = 0; i < breaksNeeded; i++)
                 {
                     var target = sShiftStart.AddHours((i + 1) * 3.0); // after each 3h block
-                    TryPlaceSelfCare(list, ref freeWindows, CoverageTaskKind.Break, "Self", "---", target, 10, 5);
+                    TryPlaceSelfCare(list, ref freeWindows, name, CoverageTaskKind.Break, "Self", "---", target, 10, 5);
                 }
 
                 // Fill idle segments as working time
@@ -227,7 +240,15 @@ namespace ScheduleApp.Services
                     });
                 }
 
-                bySupport[name] = list.OrderBy(t => t.Start).ToList();
+                // Ensure SupportName is populated for all tasks
+                list = list.OrderBy(t => t.Start).ToList();
+                foreach (var t in list)
+                {
+                    if (string.IsNullOrWhiteSpace(t.SupportName))
+                        t.SupportName = name;
+                }
+
+                bySupport[name] = list;
             }
         }
 
@@ -307,6 +328,7 @@ namespace ScheduleApp.Services
 
         private static bool TryPlaceSelfCare(List<CoverageTask> list,
             ref List<Tuple<DateTime, DateTime>> freeWindows,
+            string supportName,
             CoverageTaskKind kind, string teacherName, string room,
             DateTime target, int minutes, int bufferAfter)
         {
@@ -334,7 +356,7 @@ namespace ScheduleApp.Services
                 {
                     var task = new CoverageTask
                     {
-                        SupportName = list.Count > 0 ? list[0].SupportName : "", // will be filled by caller per support loop
+                        SupportName = supportName,
                         Kind = kind,
                         TeacherName = teacherName,
                         RoomNumber = room,

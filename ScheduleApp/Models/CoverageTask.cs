@@ -24,28 +24,20 @@ namespace ScheduleApp.Models
 
         public int Minutes => (int)Math.Round((End - Start).TotalMinutes);
 
-        // Display helpers for aligned columns in visual/text views
+        // Label matches the Kind used for coloring
         public string TaskName
         {
             get
             {
-                if (Kind == CoverageTaskKind.Coverage) return Minutes >= 25 ? "Lunch" : "Break";
-                if (Kind == CoverageTaskKind.Lunch) return "Lunch";
-                if (Kind == CoverageTaskKind.Break) return "Break";
+                if (Kind == CoverageTaskKind.Coverage) return "Coverage";
+                if (Kind == CoverageTaskKind.Lunch)    return "Lunch";
+                if (Kind == CoverageTaskKind.Break)    return "Break";
                 return "Free"; // Idle shown as Free
             }
         }
 
-        public string DurationText
-        {
-            get
-            {
-                // Show minutes for Break/Lunch/Free; empty for other kinds
-                if (TaskName == "Break" || TaskName == "Lunch" || TaskName == "Free")
-                    return Minutes + "min";
-                return "";
-            }
-        }
+        // Always show duration (including Coverage)
+        public string DurationText => Minutes + "min";
 
         public string TeacherDisplay
         {
@@ -99,7 +91,7 @@ namespace ScheduleApp.Models
 
                 string kindPart;
                 if (Kind == CoverageTaskKind.Coverage)
-                    kindPart = Minutes >= 25 ? "Lunch: 30min" : "Break: 10min";
+                    kindPart = Minutes >= 25 ? "Coverage: Lunch 30min" : "Coverage: Break 10min";
                 else if (Kind == CoverageTaskKind.Lunch) kindPart = "Lunch: 30min";
                 else if (Kind == CoverageTaskKind.Break) kindPart = "Break: 10min";
                 else kindPart = string.Format("Free: {0}min", Minutes);

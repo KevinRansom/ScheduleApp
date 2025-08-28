@@ -17,14 +17,12 @@ namespace ScheduleApp.ViewModels
                 var ordered = Tasks.OrderBy(t => t.Start).ToArray();
                 if (ordered.Length == 0) return string.Empty;
 
-                // Headers
                 var headers = new[] { "Support", "Task", "Duration", "Teacher", "Room", "Start" };
 
-                // Rows
                 var rows = ordered.Select(t =>
                 {
                     var task = GetTaskName(t);
-                    var duration = (task == "Break" || task == "Lunch" || task == "Free") ? (t.Minutes.ToString() + "min") : "";
+                    var duration = t.DurationText; // always show duration
                     var teacher = string.IsNullOrWhiteSpace(t.TeacherName) ? "Self" : t.TeacherName;
                     var room = string.IsNullOrWhiteSpace(t.RoomNumber) ? "---" : t.RoomNumber;
 
@@ -39,7 +37,6 @@ namespace ScheduleApp.ViewModels
                     };
                 }).ToArray();
 
-                // Column widths include headers
                 var colWidths = new int[headers.Length];
                 for (int c = 0; c < colWidths.Length; c++)
                 {
@@ -59,11 +56,10 @@ namespace ScheduleApp.ViewModels
 
         private static string GetTaskName(CoverageTask t)
         {
-            if (t.Kind == CoverageTaskKind.Coverage)
-                return t.Minutes >= 25 ? "Lunch" : "Break";
-            if (t.Kind == CoverageTaskKind.Lunch) return "Lunch";
-            if (t.Kind == CoverageTaskKind.Break) return "Break";
-            return "Free"; // previously Idle
+            if (t.Kind == CoverageTaskKind.Coverage) return "Coverage";
+            if (t.Kind == CoverageTaskKind.Lunch)    return "Lunch";
+            if (t.Kind == CoverageTaskKind.Break)    return "Break";
+            return "Free";
         }
     }
 }
