@@ -1,0 +1,152 @@
+<SetupData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Teachers>
+    <!-- Room 101 (2 teachers) -->
+    <Teacher>
+      <RoomNumber>101</RoomNumber>
+      <Name>Ms. Adams</Name>
+      <Start>PT8H</Start>
+      <End>PT12H</End>
+    </Teacher>
+    <Teacher>
+      <RoomNumber>101</RoomNumber>
+      <Name>Mr. Baker</Name>
+      <Start>PT12H</Start>
+      <End>PT15H30M</End>
+    </Teacher>
+
+    <!-- Room 102 (2 teachers) -->
+    <Teacher>
+      <RoomNumber>102</RoomNumber>
+      <Name>Ms. Clark</Name>
+      <Start>PT8H30M</Start>
+      <End>PT12H30M</End>
+    </Teacher>
+    <Teacher>
+      <RoomNumber>102</RoomNumber>
+      <Name>Mr. Diaz</Name>
+      <Start>PT12H30M</Start>
+      <End>PT16H</End>
+    </Teacher>
+
+    <!-- Room 103 (2 teachers) -->
+    <Teacher>
+      <RoomNumber>103</RoomNumber>
+      <Name>Ms. Evans</Name>
+      <Start>PT8H</Start>
+      <End>PT11H30M</End>
+    </Teacher>
+    <Teacher>
+      <RoomNumber>103</RoomNumber>
+      <Name>Mr. Ford</Name>
+      <Start>PT11H45M</Start>
+      <End>PT15H45M</End>
+    </Teacher>
+
+    <!-- Room 104 (2 teachers) -->
+    <Teacher>
+      <RoomNumber>104</RoomNumber>
+      <Name>Ms. Garcia</Name>
+      <Start>PT8H15M</Start>
+      <End>PT12H15M</End>
+    </Teacher>
+    <Teacher>
+      <RoomNumber>104</RoomNumber>
+      <Name>Mr. Harris</Name>
+      <Start>PT12H15M</Start>
+      <End>PT15H45M</End>
+    </Teacher>
+
+    <!-- Room 105 (2 teachers) -->
+    <Teacher>
+      <RoomNumber>105</RoomNumber>
+      <Name>Ms. Irving</Name>
+      <Start>PT8H</Start>
+      <End>PT12H</End>
+    </Teacher>
+    <Teacher>
+      <RoomNumber>105</RoomNumber>
+      <Name>Mr. Jenkins</Name>
+      <Start>PT12H</Start>
+      <End>PT16H</End>
+    </Teacher>
+
+    <!-- Room 106 (2 teachers) -->
+    <Teacher>
+      <RoomNumber>106</RoomNumber>
+      <Name>Ms. Kim</Name>
+      <Start>PT8H30M</Start>
+      <End>PT12H30M</End>
+    </Teacher>
+    <Teacher>
+      <RoomNumber>106</RoomNumber>
+      <Name>Mr. Lee</Name>
+      <Start>PT12H30M</Start>
+      <End>PT16H</End>
+    </Teacher>
+
+    <!-- Room 107 (2 teachers) -->
+    <Teacher>
+      <RoomNumber>107</RoomNumber>
+      <Name>Ms. Miller</Name>
+      <Start>PT8H</Start>
+      <End>PT12H30M</End>
+    </Teacher>
+    <Teacher>
+      <RoomNumber>107</RoomNumber>
+      <Name>Mr. Nelson</Name>
+      <Start>PT12H30M</Start>
+      <End>PT16H</End>
+    </Teacher>
+
+    <!-- Rooms 108–111 (single teacher each) -->
+    <Teacher>
+      <RoomNumber>108</RoomNumber>
+      <Name>Ms. Owens</Name>
+      <Start>PT8H</Start>
+      <End>PT15H</End>
+    </Teacher>
+    <Teacher>
+      <RoomNumber>109</RoomNumber>
+      <Name>Mr. Patel</Name>
+      <Start>PT8H30M</Start>
+      <End>PT15H30M</End>
+    </Teacher>
+    <Teacher>
+      <RoomNumber>110</RoomNumber>
+      <Name>Ms. Quinn</Name>
+      <Start>PT9H</Start>
+      <End>PT16H</End>
+    </Teacher>
+    <Teacher>
+      <RoomNumber>111</RoomNumber>
+      <Name>Mr. Rivera</Name>
+      <Start>PT8H</Start>
+      <End>PT14H30M</End>
+    </Teacher>
+  </Teachers>
+
+  <Supports>
+    <Support>
+      <Name>ALEX</Name>
+      <Start>PT8H</Start>
+      <End>PT16H</End>
+    </Support>
+    <Support>
+      <Name>BRI</Name>
+      <Start>PT8H30M</Start>
+      <End>PT16H30M</End>
+    </Support>
+    <Support>
+      <Name>CASEY</Name>
+      <Start>PT9H</Start>
+      <End>PT17H</End>
+    </Support>
+    <Support>
+      <Name>DREW</Name>
+      <Start>PT8H</Start>
+      <End>PT15H</End>
+    </Support>
+  </Supports>
+
+  <Preferences />
+</SetupData>
