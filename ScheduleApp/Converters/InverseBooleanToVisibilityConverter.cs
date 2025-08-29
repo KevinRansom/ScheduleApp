@@ -9,7 +9,7 @@ namespace ScheduleApp.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            bool b = value is bool bo && bo;
+            var b = value is bool bo && bo;
             return b ? Visibility.Collapsed : Visibility.Visible;
         }
 

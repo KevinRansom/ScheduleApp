@@ -28,17 +28,17 @@ namespace ScheduleApp.ViewModels
         public int SelectedTabIndex { get { return _selectedTabIndex; } set { _selectedTabIndex = value; Raise(); } }
 
         private readonly SchedulerService _scheduler = new SchedulerService();
+        private readonly PrintService _printService = new PrintService();
 
         public RelayCommand GenerateScheduleCommand { get; }
         public RelayCommand SaveScheduleCommand { get; }
-        public RelayCommand SaveSetupCommand { get; }   // NEW
-        public RelayCommand LoadSetupCommand { get; }   // NEW
+        public RelayCommand SaveSetupCommand { get; }
+        public RelayCommand LoadSetupCommand { get; }
 
-        private readonly string _defaultSetupPath;       // NEW
+        private readonly string _defaultSetupPath;
 
         public MainViewModel()
         {
-            // Populate 24-hour quarter increments
             for (int h = 0; h < 24; h++)
             {
                 QuarterHours.Add(new TimeSpan(h, 0, 0));
@@ -47,7 +47,6 @@ namespace ScheduleApp.ViewModels
                 QuarterHours.Add(new TimeSpan(h, 45, 0));
             }
 
-            // Compute default setup path and ensure directory
             var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             var dir = Path.Combine(appData, "ScheduleApp");
             Directory.CreateDirectory(dir);
@@ -56,10 +55,9 @@ namespace ScheduleApp.ViewModels
             GenerateScheduleCommand = new RelayCommand(GenerateSchedule);
             SaveScheduleCommand = new RelayCommand(SaveSchedule, ScheduleHasData);
 
-            SaveSetupCommand = new RelayCommand(SaveSetupDefault); // NEW
-            LoadSetupCommand = new RelayCommand(LoadSetupDefault); // NEW
+            SaveSetupCommand = new RelayCommand(SaveSetupDefault);
+            LoadSetupCommand = new RelayCommand(LoadSetupDefault);
 
-            // Auto-load default file on startup (if present)
             LoadSetupDefault();
         }
 
@@ -76,7 +74,6 @@ namespace ScheduleApp.ViewModels
             var teacherTasks = _scheduler.GenerateTeacherCoverageTasks(day);
             var assigned = _scheduler.AssignSupportToTeacherTasks(day, teacherTasks);
 
-            // Inject support names for self-care and idle insertion
             foreach (var kvp in assigned.ToList())
             {
                 foreach (var t in kvp.Value)
@@ -87,7 +84,6 @@ namespace ScheduleApp.ViewModels
 
             _scheduler.ScheduleSupportSelfCare(day, assigned);
 
-            // Build tabs
             var tabs = assigned.Keys.OrderBy(k => k).Select(name =>
             {
                 var vm = new SupportTabViewModel { SupportName = name, Tasks = assigned[name].OrderBy(t => t.Start).ToList() };
@@ -97,9 +93,8 @@ namespace ScheduleApp.ViewModels
             Schedule.LoadTabs(tabs);
             PrintPreview.RefreshDocument(tabs);
 
-            SelectedTabIndex = 1; // switch to Schedule View
+            SelectedTabIndex = 1;
 
-            // Enable Save when data exists
             SaveScheduleCommand.RaiseCanExecuteChanged();
         }
 
@@ -110,60 +105,48 @@ namespace ScheduleApp.ViewModels
                 var tabsProp = Schedule?.GetType().GetProperty("SupportTabs");
                 var tabs = tabsProp?.GetValue(Schedule) as IEnumerable;
                 if (tabs == null) return false;
-                foreach (var _ in tabs) return true; // has at least one
+                foreach (var _ in tabs) return true;
                 return false;
             }
             catch { return false; }
         }
 
+        // Save as PDF (PDFsharp): choose folder via SaveFileDialog, then generate file with timestamped name.
         private void SaveSchedule()
         {
-            var dlg = new SaveFileDialog
+            try
             {
-                Title = "Save Schedule",
-                FileName = $"Schedule_{DateTime.Today:yyyyMMdd}.csv",
-                Filter = "CSV files (*.csv)|*.csv|Text files (*.txt)|*.txt",
-                AddExtension = true,
-                OverwritePrompt = true
-            };
-
-            if (dlg.ShowDialog() != true) return;
-
-            var sb = new StringBuilder();
-            sb.AppendLine("Support,Task,Duration,Teacher,Room,Start,Kind");
-
-            var tabsProp = Schedule.GetType().GetProperty("SupportTabs");
-            var tabs = (IEnumerable)tabsProp.GetValue(Schedule);
-
-            foreach (var tab in tabs)
-            {
-                var supportName = ToStringSafe(GetProp(tab, "SupportName"));
-
-                var tasksEnum = (IEnumerable)GetProp(tab, "Tasks");
-                if (tasksEnum == null) continue;
-
-                foreach (var task in tasksEnum)
+                var tabsList = Schedule.SupportTabs?.ToArray();
+                if (tabsList == null || tabsList.Length == 0)
                 {
-                    var taskName   = ToStringSafe(GetProp(task, "TaskName"));
-                    var duration   = ToStringSafe(GetProp(task, "DurationText"));
-                    var teacher    = ToStringSafe(GetProp(task, "TeacherDisplay"));
-                    var room       = ToStringSafe(GetProp(task, "RoomDisplay"));
-                    var start      = ToStringSafe(GetProp(task, "StartText"));
-                    var kind       = ToStringSafe(GetProp(task, "Kind"));
-
-                    sb.AppendLine(string.Join(",",
-                        Csv(supportName),
-                        Csv(taskName),
-                        Csv(duration),
-                        Csv(teacher),
-                        Csv(room),
-                        Csv(start),
-                        Csv(kind)));
+                    MessageBox.Show("No schedules to print.", "Save", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
                 }
-            }
 
-            File.WriteAllText(dlg.FileName, sb.ToString(), Encoding.UTF8);
-            MessageBox.Show("Schedule saved successfully.", "Save Schedule", MessageBoxButton.OK, MessageBoxImage.Information);
+                var defaultName = $"BreakSchedule_{DateTime.Today:yyyy-MM-dd}.pdf";
+                var dlg = new SaveFileDialog
+                {
+                    Title = "Save Schedule as PDF",
+                    FileName = defaultName,
+                    Filter = "PDF Document (*.pdf)|*.pdf",
+                    AddExtension = true,
+                    OverwritePrompt = true
+                };
+                if (dlg.ShowDialog() != true) return;
+
+                var outputDir = Path.GetDirectoryName(dlg.FileName)
+                                 ?? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+                // Optional: pass staff names if available
+                var staffNames = string.Join(", ", Setup.Teachers.Select(t => t.Name));
+                var savedPath = _printService.SaveScheduleAsPdf(tabsList, outputDir, staffNames, appVersion: "1.0");
+
+                MessageBox.Show($"Saved to:\n{savedPath}", "Save PDF", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to save to PDF:\n" + ex.Message, "Save", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         // NEW: Save entire Setup (Teachers, Supports, Preferences) to default file

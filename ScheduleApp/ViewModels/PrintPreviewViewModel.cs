@@ -1,5 +1,7 @@
 using System.Linq;
+using System.Windows;
 using System.Windows.Documents;
+using Microsoft.Win32;
 using ScheduleApp.Infrastructure;
 using ScheduleApp.Services;
 
@@ -46,8 +48,24 @@ namespace ScheduleApp.ViewModels
         private void ExportPdf()
         {
             if (SelectedTab == null) return;
-            var doc = _printService.BuildFlowDocument(new[] { SelectedTab });
-            _printService.PrintToPdf(doc, SelectedTab.SupportName + ".pdf");
+
+            var defaultName = $"BreakSchedule_{System.DateTime.Today:yyyy-MM-dd}.pdf";
+            var dlg = new SaveFileDialog
+            {
+                Title = "Save Schedule as PDF",
+                FileName = defaultName,
+                Filter = "PDF Document (*.pdf)|*.pdf",
+                AddExtension = true,
+                OverwritePrompt = true
+            };
+            if (dlg.ShowDialog() != true) return;
+
+            var outputDir = System.IO.Path.GetDirectoryName(dlg.FileName)
+                             ?? System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
+
+            _printService.SaveScheduleAsPdf(new[] { SelectedTab }, outputDir, staffNames: "", appVersion: "1.0");
+
+            MessageBox.Show("PDF saved.", "Export", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }
