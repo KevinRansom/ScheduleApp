@@ -43,22 +43,16 @@
           <RowDefinition Height="1"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-          <ColumnDefinition/>             <!-- content (no left 1px column) -->
-          <ColumnDefinition Width="1"/>   <!-- right line -->
+          <ColumnDefinition/>
+          <ColumnDefinition Width="1"/>
         </Grid.ColumnDefinitions>
-
-        <!-- content starts at the same x as DataGridCell text (Padding = 8,0,8,0) -->
         <ContentPresenter Grid.Column="0"
                           Margin="{TemplateBinding Padding}"
                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
-
-        <!-- right vertical line (matches data gridline) -->
         <Border Grid.RowSpan="2" Grid.Column="1"
                 Background="{StaticResource SchedGridLineBrush}"
                 IsHitTestVisible="False"/>
-
-        <!-- bottom horizontal line -->
         <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                 Background="{StaticResource SchedGridLineBrush}"
                 IsHitTestVisible="False"/>
@@ -262,20 +256,7 @@
               </DockPanel>
             </GroupBox>
 
-            <StackPanel Grid.Row="2" Grid.ColumnSpan="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,8,0,0">
-              <Border Background="{StaticResource BrushCoverage}" Style="{StaticResource PillStyle}">
-                <TextBlock Text="Coverage" />
-              </Border>
-              <Border Background="{StaticResource BrushBreak}" Style="{StaticResource PillStyle}">
-                <TextBlock Text="Break (10m + 5m buffer)" />
-              </Border>
-              <Border Background="{StaticResource BrushLunch}" Style="{StaticResource PillStyle}">
-                <TextBlock Text="Lunch (30m)" />
-              </Border>
-              <Border Background="{StaticResource BrushIdle}" Style="{StaticResource PillStyle}">
-                <TextBlock Text="Idle" />
-              </Border>
-            </StackPanel>
+            <!-- Removed legend from Setup tab -->
           </Grid>
         </ScrollViewer>
       </TabItem>
@@ -286,24 +267,38 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
           </Grid.RowDefinitions>
-          <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,6">
-            <TextBlock Text="View:" VerticalAlignment="Center" Margin="0,0,8,0"/>
-            <ComboBox Width="140"
-                      SelectedValue="{Binding Schedule.ViewMode}"
-                      SelectedValuePath="Content"
-                      ToolTip="Choose how to display schedules">
-              <ComboBoxItem Content="Text"/>
-              <ComboBoxItem Content="Visual"/>
-            </ComboBox>
 
-            <!-- New: Save button -->
-            <Button Content="Save…" Style="{StaticResource IconButton}"
-                    Command="{Binding SaveScheduleCommand}"
-                    Margin="8,0,0,0"/>
+          <!-- Header: left = actions/text, right = legend -->
+          <Grid Grid.Row="0" Margin="0,0,0,6">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
-            <TextBlock Text="Each tab shows a support's day. Waiting time counts as working time."
-                       VerticalAlignment="Center" Margin="12,0,0,0"/>
-          </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center">
+              <Button Content="Save…" Style="{StaticResource IconButton}"
+                      Command="{Binding SaveScheduleCommand}"
+                      Margin="0,0,0,0"/>
+              <TextBlock Text="Each tab shows a support's day. Waiting time counts as working time."
+                         VerticalAlignment="Center" Margin="12,0,0,0"/>
+            </StackPanel>
+
+            <!-- Legend moved here -->
+            <StackPanel Orientation="Horizontal" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right">
+              <Border Background="{StaticResource BrushCoverage}" Style="{StaticResource PillStyle}">
+                <TextBlock Text="Coverage" />
+              </Border>
+              <Border Background="{StaticResource BrushBreak}" Style="{StaticResource PillStyle}">
+                <TextBlock Text="Break (10m + 5m buffer)" />
+              </Border>
+              <Border Background="{StaticResource BrushLunch}" Style="{StaticResource PillStyle}">
+                <TextBlock Text="Lunch (30m)" />
+              </Border>
+              <Border Background="{StaticResource BrushIdle}" Style="{StaticResource PillStyle}">
+                <TextBlock Text="Free" />
+              </Border>
+            </StackPanel>
+          </Grid>
 
           <TabControl Grid.Row="1" ItemsSource="{Binding Schedule.SupportTabs}">
             <TabControl.ItemTemplate>
@@ -315,15 +310,7 @@
             <TabControl.ContentTemplate>
               <DataTemplate>
                 <Grid>
-                  <!-- Text view -->
-                  <Grid x:Name="TextView"
-                        Visibility="{Binding DataContext.Schedule.ShowText, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                      <TextBlock Style="{StaticResource MonospaceText}" Text="{Binding ScheduleText}"/>
-                    </ScrollViewer>
-                  </Grid>
-
-                  <!-- Visual view (unchanged layout you already have) -->
+                  <!-- Visual view -->
                   <Grid x:Name="VisualView"
                         Visibility="{Binding DataContext.Schedule.ShowVisual, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -386,7 +373,6 @@
                                     <ColumnDefinition SharedSizeGroup="cStart"/>
                                   </Grid.ColumnDefinitions>
 
-                                  <!-- Monospace text for perfect spacing with extra-spaced separators -->
                                   <TextBlock Grid.Column="0" Style="{StaticResource MonospaceText}" Text="{Binding SupportName}"/>
                                   <TextBlock Grid.Column="1" Style="{StaticResource MonospaceText}" Text="  |  " />
                                   <TextBlock Grid.Column="2" Style="{StaticResource MonospaceText}" Text="{Binding TaskName}"/>
@@ -407,7 +393,7 @@
                     </ScrollViewer>
                   </Grid>
 
-                  <!-- New Grid view -->
+                  <!-- Grid view remains (not selectable currently) -->
                   <Grid x:Name="GridView"
                         Visibility="{Binding DataContext.Schedule.ShowGrid, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}">
                     <DataGrid ItemsSource="{Binding Tasks}"
