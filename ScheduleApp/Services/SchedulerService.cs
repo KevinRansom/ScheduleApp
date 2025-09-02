@@ -8,6 +8,9 @@ namespace ScheduleApp.Services
 {
     public class SchedulerService
     {
+        private const int FlexMinutes = 30;   // allow ±30m flex for teacher coverage when needed
+        private static readonly TimeSpan FlexStep = TimeSpan.FromMinutes(15);
+
         public List<CoverageTask> GenerateTeacherCoverageTasks(DayContext day)
         {
             var tasks = new List<CoverageTask>();
@@ -102,6 +105,9 @@ namespace ScheduleApp.Services
         {
             var bySupport = day.Supports.ToDictionary(s => s.Name, s => new List<CoverageTask>());
 
+            // Bucket for unassigned coverage tasks
+            bySupport["Unscheduled"] = new List<CoverageTask>();
+
             // Track reservations per support
             var supportWindows = day.Supports.ToDictionary(s => s.Name, s =>
                 new List<Tuple<DateTime, DateTime>>());
@@ -164,31 +170,155 @@ namespace ScheduleApp.Services
                 if (candidates.Count > 0)
                 {
                     var chosen = candidates[0].Item1;
-                    var assigned = new CoverageTask
-                    {
-                        RoomNumber = task.RoomNumber,
-                        TeacherName = task.TeacherName,
-                        SupportName = chosen.Name,
-                        Kind = CoverageTaskKind.Coverage,
-                        Start = task.Start,
-                        End = task.End,
-                        BufferAfterMinutes = task.BufferAfterMinutes
-                    };
-                    bySupport[chosen.Name].Add(assigned);
-                    supportWindows[chosen.Name].Add(Tuple.Create(assigned.Start, assigned.EffectiveEnd));
-                    supportWindows[chosen.Name] = supportWindows[chosen.Name].OrderBy(w => w.Item1).ToList();
-                    lastRoomBySupport[chosen.Name] = task.RoomNumber;
+                    AddAssigned(bySupport, supportWindows, lastRoomBySupport, chosen, task, task.Start, task.End);
                 }
-                // If no candidate, task remains unassigned (could be reported/colored differently if desired)
+                else
+                {
+                    // Try to flex the task within ±30 minutes to find the nearest available slot
+                    var flex = TryAssignWithFlex(day, task, bySupport, supportWindows, prefMap, lastRoomBySupport);
+                    if (!flex)
+                    {
+                        // Track unassigned coverage
+                        bySupport["Unscheduled"].Add(new CoverageTask
+                        {
+                            RoomNumber = task.RoomNumber,
+                            TeacherName = task.TeacherName,
+                            SupportName = "Unscheduled",
+                            Kind = CoverageTaskKind.Coverage,
+                            Start = task.Start,
+                            End = task.End,
+                            BufferAfterMinutes = task.BufferAfterMinutes
+                        });
+                    }
+                }
             }
 
-            // Sort tasks per support
+            // Sort tasks per support (including Unscheduled)
             foreach (var key in bySupport.Keys.ToList())
             {
                 bySupport[key] = bySupport[key].OrderBy(t => t.Start).ToList();
             }
 
             return bySupport;
+        }
+
+        private bool TryAssignWithFlex(
+            DayContext day,
+            CoverageTask task,
+            Dictionary<string, List<CoverageTask>> bySupport,
+            Dictionary<string, List<Tuple<DateTime, DateTime>>> supportWindows,
+            Dictionary<string, List<string>> prefMap,
+            Dictionary<string, string> lastRoomBySupport)
+        {
+            var duration = task.End - task.Start;
+            var isLunch = duration.TotalMinutes >= 25; // lunch is 30m, breaks are 10m
+            var lunchEarliest = day.Date.Date.AddHours(11); // 11:00 AM lower bound for lunch
+
+            var bestSupport = (Support)null;
+            DateTime bestStart = DateTime.MinValue;
+            int bestScore = int.MaxValue;
+            long bestDelta = long.MaxValue;
+
+            foreach (var s in day.Supports)
+            {
+                var sStart = day.Date.Date.Add(s.Start);
+                var sEnd = day.Date.Date.Add(s.End);
+
+                // Search offsets: 0, +15, -15, +30, -30
+                for (int minutes = 0; minutes <= FlexMinutes; minutes += (int)FlexStep.TotalMinutes)
+                {
+                    foreach (var sign in minutes == 0 ? new[] { 1 } : new[] { +1, -1 })
+                    {
+                        var offset = TimeSpan.FromMinutes(minutes * sign);
+                        var tryStart = task.Start + offset;
+
+                        // Do not move lunch earlier than 11:00
+                        if (isLunch && tryStart < lunchEarliest) continue;
+
+                        var tryEnd = tryStart + duration;
+                        var effEnd = tryEnd.AddMinutes(task.BufferAfterMinutes);
+
+                        if (tryStart < sStart || effEnd > sEnd) continue;
+
+                        if (IsFree(supportWindows[s.Name], tryStart, effEnd))
+                        {
+                            int score = 0;
+
+                            if (prefMap.TryGetValue(task.RoomNumber, out var preferredList) &&
+                                preferredList.Any(n => string.Equals(n, s.Name, StringComparison.OrdinalIgnoreCase)))
+                            {
+                                score -= 3;
+                            }
+
+                            if (!string.IsNullOrEmpty(lastRoomBySupport[s.Name]) &&
+                                string.Equals(lastRoomBySupport[s.Name], task.RoomNumber, StringComparison.OrdinalIgnoreCase))
+                            {
+                                score -= 2;
+                            }
+
+                            // Closer to original time is better
+                            var delta = Math.Abs((tryStart - task.Start).Ticks);
+
+                            var isBetter = score < bestScore ||
+                                           (score == bestScore && delta < bestDelta) ||
+                                           (score == bestScore && delta == bestDelta && string.CompareOrdinal(s.Name, bestSupport?.Name) < 0);
+
+                            if (isBetter)
+                            {
+                                bestSupport = s;
+                                bestStart = tryStart;
+                                bestScore = score;
+                                bestDelta = delta;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (bestSupport != null)
+            {
+                var newEnd = bestStart + (task.End - task.Start);
+                AddAssigned(bySupport, supportWindows, lastRoomBySupport, bestSupport, task, bestStart, newEnd);
+                return true;
+            }
+
+            return false;
+        }
+
+        private void AddAssigned(
+            Dictionary<string, List<CoverageTask>> bySupport,
+            Dictionary<string, List<Tuple<DateTime, DateTime>>> supportWindows,
+            Dictionary<string, string> lastRoomBySupport,
+            Support chosen,
+            CoverageTask task,
+            DateTime start,
+            DateTime end)
+        {
+            var assigned = new CoverageTask
+            {
+                RoomNumber = task.RoomNumber,
+                TeacherName = task.TeacherName,
+                SupportName = chosen.Name,
+                Kind = CoverageTaskKind.Coverage,
+                Start = start,
+                End = end,
+                BufferAfterMinutes = task.BufferAfterMinutes
+            };
+
+            if (!bySupport.TryGetValue(chosen.Name, out var list))
+            {
+                list = new List<CoverageTask>();
+                bySupport[chosen.Name] = list;
+            }
+            list.Add(assigned);
+            bySupport[chosen.Name] = bySupport[chosen.Name].OrderBy(t => t.Start).ToList();
+
+            // Reserve the time including buffer
+            var effWindow = Tuple.Create(assigned.Start, assigned.EffectiveEnd);
+            supportWindows[chosen.Name].Add(effWindow);
+            supportWindows[chosen.Name] = supportWindows[chosen.Name].OrderBy(w => w.Item1).ToList();
+
+            lastRoomBySupport[chosen.Name] = task.RoomNumber;
         }
 
         public void ScheduleSupportSelfCare(DayContext day, Dictionary<string, List<CoverageTask>> bySupport)
@@ -254,40 +384,6 @@ namespace ScheduleApp.Services
 
         // Helpers
 
-        private static List<CoverageTask> ResolveOverlapsPerTeacher(List<CoverageTask> tasks)
-        {
-            var result = new List<CoverageTask>();
-            string currentTeacher = null;
-            DateTime lastEnd = DateTime.MinValue;
-
-            foreach (var t in tasks)
-            {
-                if (currentTeacher != t.TeacherName)
-                {
-                    currentTeacher = t.TeacherName;
-                    lastEnd = DateTime.MinValue;
-                }
-
-                if (t.Start < lastEnd)
-                {
-                    // Shift current task to start at lastEnd if possible, still aligned
-                    var duration = t.End - t.Start;
-                    var newStart = TimeHelpers.RoundUpToQuarter(lastEnd);
-                    var newEnd = newStart + duration;
-                    if (newEnd <= t.End.Date.AddDays(1)) // basic guard
-                    {
-                        t.Start = newStart;
-                        t.End = newEnd;
-                    }
-                }
-
-                result.Add(t);
-                lastEnd = t.End;
-            }
-
-            return result;
-        }
-
         private static bool IsFree(List<Tuple<DateTime, DateTime>> windows, DateTime start, DateTime end)
         {
             for (int i = 0; i < windows.Count; i++)
@@ -332,6 +428,8 @@ namespace ScheduleApp.Services
             CoverageTaskKind kind, string teacherName, string room,
             DateTime target, int minutes, int bufferAfter)
         {
+            var isLunch = kind == CoverageTaskKind.Lunch;
+
             // choose window closest to target that fits aligned start
             var sorted = freeWindows.ToList();
             sorted.Sort((a, b) =>
@@ -343,12 +441,21 @@ namespace ScheduleApp.Services
 
             foreach (var w in sorted)
             {
-                // Align within window
-                var start = TimeHelpers.ClampToQuarterWithin(target, w.Item1, w.Item2);
+                // For lunches, do not start before 11:00
+                var windowStart = w.Item1;
+                if (isLunch)
+                {
+                    var earliestLunch = w.Item1.Date.AddHours(11);
+                    if (windowStart < earliestLunch) windowStart = earliestLunch;
+                    if (windowStart >= w.Item2) continue; // nothing usable in this window
+                }
+
+                // Align within (possibly adjusted) window
+                var start = TimeHelpers.ClampToQuarterWithin(target, windowStart, w.Item2);
                 if (start == DateTime.MinValue)
                 {
                     // Try at window start
-                    start = TimeHelpers.RoundUpToQuarter(w.Item1);
+                    start = TimeHelpers.RoundUpToQuarter(windowStart);
                 }
 
                 var end = start.AddMinutes(minutes);
@@ -392,6 +499,40 @@ namespace ScheduleApp.Services
             }
 
             return false;
+        }
+
+        private static List<CoverageTask> ResolveOverlapsPerTeacher(List<CoverageTask> tasks)
+        {
+            var result = new List<CoverageTask>();
+            string currentTeacher = null;
+            DateTime lastEnd = DateTime.MinValue;
+
+            foreach (var t in tasks.OrderBy(x => x.TeacherName).ThenBy(x => x.Start))
+            {
+                if (currentTeacher != t.TeacherName)
+                {
+                    currentTeacher = t.TeacherName;
+                    lastEnd = DateTime.MinValue;
+                }
+
+                if (t.Start < lastEnd)
+                {
+                    // Shift current task to start at lastEnd if possible, still aligned
+                    var duration = t.End - t.Start;
+                    var newStart = TimeHelpers.RoundUpToQuarter(lastEnd);
+                    var newEnd = newStart + duration;
+                    if (newEnd <= t.End.Date.AddDays(1)) // basic guard
+                    {
+                        t.Start = newStart;
+                        t.End = newEnd;
+                    }
+                }
+
+                result.Add(t);
+                lastEnd = t.End;
+            }
+
+            return result;
         }
     }
 }

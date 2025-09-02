@@ -84,11 +84,20 @@ namespace ScheduleApp.ViewModels
 
             _scheduler.ScheduleSupportSelfCare(day, assigned);
 
-            var tabs = assigned.Keys.OrderBy(k => k).Select(name =>
-            {
-                var vm = new SupportTabViewModel { SupportName = name, Tasks = assigned[name].OrderBy(t => t.Start).ToList() };
-                return vm;
-            }).ToArray();
+            var tabs = assigned.Keys
+                .OrderBy(k => k)
+                .Select(name =>
+                {
+                    // Show "Unscheduled Breaks" as the tab title,
+                    // but keep the row Support column as "Unscheduled"
+                    var vm = new SupportTabViewModel
+                    {
+                        SupportName = name == "Unscheduled" ? "Unscheduled Breaks" : name,
+                        Tasks = assigned[name].OrderBy(t => t.Start).ToList()
+                    };
+                    return vm;
+                })
+                .ToArray();
 
             Schedule.LoadTabs(tabs);
             PrintPreview.RefreshDocument(tabs);
