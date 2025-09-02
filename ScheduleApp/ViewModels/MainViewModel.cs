@@ -102,6 +102,11 @@ namespace ScheduleApp.ViewModels
             Schedule.LoadTabs(tabs);
             PrintPreview.RefreshDocument(tabs);
 
+            // NEW: build teacher-centric rows
+            var allAssignedTasks = assigned.Values.SelectMany(x => x).ToList();
+            Schedule.LoadTeacherSchedules(DateTime.Today, Setup.Teachers.ToList(), allAssignedTasks);
+
+            // Prefer to land on the Schedule View tab
             SelectedTabIndex = 1;
 
             SaveScheduleCommand.RaiseCanExecuteChanged();

@@ -63,6 +63,7 @@
     <Compile Include="ScheduleApp\Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="ScheduleApp\Converters\NotNullConverters.cs" />
     <Compile Include="ScheduleApp\Converters\TaskKindToBrushConverter.cs" />
+    <Compile Include="ScheduleApp\Converters\TeacherRowToBrushConverter.cs" />
     <Compile Include="ScheduleApp\Converters\TimeSpanToStringConverter.cs" />
     <Compile Include="ScheduleApp\Infrastructure\RelayCommand.cs" />
     <Compile Include="ScheduleApp\Infrastructure\RelayCommand.Generic.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="ScheduleApp\Models\SetupData.cs" />
     <Compile Include="ScheduleApp\Models\Support.cs" />
     <Compile Include="ScheduleApp\Models\Teacher.cs" />
+    <Compile Include="ScheduleApp\Models\TeacherScheduleRow.cs" />
     <Compile Include="ScheduleApp\Services\PrintService.cs" />
     <Compile Include="ScheduleApp\Services\SchedulerService.cs" />
     <Compile Include="ScheduleApp\ViewModels\BaseViewModel.cs" />

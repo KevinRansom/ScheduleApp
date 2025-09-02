@@ -13,7 +13,7 @@ namespace ScheduleApp.Models
     public class CoverageTask
     {
         public string RoomNumber { get; set; } // --- for self-care/idle
-        public string TeacherName { get; set; } // "Self" for self-care, "" for idle
+        public string TeacherName { get; set; } // For self-care: support name
         public string SupportName { get; set; } // filled for support timelines
         public CoverageTaskKind Kind { get; set; }
         public DateTime Start { get; set; }
@@ -21,10 +21,8 @@ namespace ScheduleApp.Models
         public int BufferAfterMinutes { get; set; } // 5 for 10-min breaks, 0 otherwise
 
         public DateTime EffectiveEnd => End.AddMinutes(BufferAfterMinutes);
-
         public int Minutes => (int)Math.Round((End - Start).TotalMinutes);
 
-        // Label matches the Kind used for coloring
         public string TaskName
         {
             get
@@ -32,20 +30,18 @@ namespace ScheduleApp.Models
                 if (Kind == CoverageTaskKind.Coverage) return "Coverage";
                 if (Kind == CoverageTaskKind.Lunch)    return "Lunch";
                 if (Kind == CoverageTaskKind.Break)    return "Break";
-                return "Free"; // Idle shown as Free
+                return "Free";
             }
         }
 
-        // Always show duration (including Coverage)
         public string DurationText => Minutes + "min";
 
+        // UPDATED: for self-care/idle show the support staff name when provided
         public string TeacherDisplay
         {
             get
             {
-                // For self-care/free rows show Self; otherwise actual teacher
-                if (Kind == CoverageTaskKind.Coverage) return string.IsNullOrWhiteSpace(TeacherName) ? "Self" : TeacherName;
-                return "Self";
+                return string.IsNullOrWhiteSpace(TeacherName) ? "Self" : TeacherName;
             }
         }
 
@@ -53,7 +49,6 @@ namespace ScheduleApp.Models
         {
             get
             {
-                // Coverage shows actual room, others as ---
                 if (Kind == CoverageTaskKind.Coverage)
                     return string.IsNullOrWhiteSpace(RoomNumber) ? "---" : RoomNumber;
                 return "---";
@@ -85,9 +80,7 @@ namespace ScheduleApp.Models
             get
             {
                 var start = Start.ToString("HH:mm");
-                string who = Kind == CoverageTaskKind.Coverage
-                    ? string.Format("Teacher: {0} | Room: {1}", TeacherDisplay, RoomDisplay)
-                    : "Teacher: Self | Room: ---";
+                string who = string.Format("Teacher: {0} | Room: {1}", TeacherDisplay, RoomDisplay);
 
                 string kindPart;
                 if (Kind == CoverageTaskKind.Coverage)
