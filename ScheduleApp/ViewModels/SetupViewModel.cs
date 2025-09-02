@@ -13,6 +13,16 @@ namespace ScheduleApp.ViewModels
         public ObservableCollection<Support> Supports { get; } = new ObservableCollection<Support>();
         public ObservableCollection<RoomPreference> Preferences { get; } = new ObservableCollection<RoomPreference>();
 
+        // Institution details (bindable)
+        private string _schoolName;
+        public string SchoolName { get { return _schoolName; } set { _schoolName = value; Raise(); } }
+
+        private string _schoolAddress;
+        public string SchoolAddress { get { return _schoolAddress; } set { _schoolAddress = value; Raise(); } }
+
+        private string _schoolPhone;
+        public string SchoolPhone { get { return _schoolPhone; } set { _schoolPhone = value; Raise(); } }
+
         private Teacher _selectedTeacher;
         public Teacher SelectedTeacher { get { return _selectedTeacher; } set { _selectedTeacher = value; Raise(); } }
 
@@ -37,8 +47,6 @@ namespace ScheduleApp.ViewModels
             RemoveSupportCommand = new RelayCommand<IList>(RemoveSupports, sel => sel != null && sel.Count > 0);
             AddPreferenceCommand = new RelayCommand(AddPreference);
             RemovePreferenceCommand = new RelayCommand<IList>(RemovePreferences, sel => sel != null && sel.Count > 0);
-
-            // Seed data removed
         }
 
         private void AddTeacher()

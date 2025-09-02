@@ -158,7 +158,10 @@ namespace ScheduleApp.ViewModels
                 {
                     Teachers = Setup.Teachers?.ToList() ?? new List<Teacher>(),
                     Supports = Setup.Supports?.ToList() ?? new List<Support>(),
-                    Preferences = Setup.Preferences?.ToList() ?? new List<RoomPreference>()
+                    Preferences = Setup.Preferences?.ToList() ?? new List<RoomPreference>(),
+                    SchoolName = Setup.SchoolName,
+                    SchoolAddress = Setup.SchoolAddress,
+                    SchoolPhone = Setup.SchoolPhone
                 };
 
                 var serializer = new XmlSerializer(typeof(SetupData));
@@ -194,6 +197,11 @@ namespace ScheduleApp.ViewModels
                     if (data.Teachers != null) foreach (var t in data.Teachers) Setup.Teachers.Add(t);
                     if (data.Supports != null) foreach (var s in data.Supports) Setup.Supports.Add(s);
                     if (data.Preferences != null) foreach (var p in data.Preferences) Setup.Preferences.Add(p);
+
+                    // restore institution details
+                    Setup.SchoolName = data.SchoolName;
+                    Setup.SchoolAddress = data.SchoolAddress;
+                    Setup.SchoolPhone = data.SchoolPhone;
                 }
             }
             catch (Exception ex)

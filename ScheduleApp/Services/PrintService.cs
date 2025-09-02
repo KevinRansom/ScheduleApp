@@ -45,8 +45,8 @@ namespace ScheduleApp.Services
                 page.Size = PdfSharp.PageSize.Letter;
                 var gfx = XGraphics.FromPdfPage(page);
 
-                // Use core font to avoid IFontResolver
-                var fontOpts = new XPdfFontOptions(PdfFontEncoding.WinAnsi, PdfFontEmbedding.None);
+                // Use core font "Courier" with Unicode encoding; fonts are always embedded in v6.1+
+                var fontOpts   = new XPdfFontOptions(PdfFontEncoding.Unicode, PdfFontEmbedding.TryComputeSubset);
                 var headerFont = new XFont("Courier", 16, XFontStyleEx.Bold, fontOpts);
                 var bodyFont   = new XFont("Courier", 12, XFontStyleEx.Regular, fontOpts);
 

@@ -59,6 +59,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\HeaderCornerConverters.cs" />
     <Compile Include="ScheduleApp\Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="ScheduleApp\Converters\NotNullConverters.cs" />
     <Compile Include="ScheduleApp\Converters\TaskKindToBrushConverter.cs" />
@@ -128,5 +129,6 @@
   <ItemGroup>
     <!-- PDFsharp 6.1+ for .NET Framework -->
     <PackageReference Include="PdfSharp" Version="6.1.0" />
-  </ItemGroup>  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
