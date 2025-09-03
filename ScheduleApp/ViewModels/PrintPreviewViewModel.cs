@@ -4,6 +4,7 @@ using System.Windows.Documents;
 using Microsoft.Win32;
 using ScheduleApp.Infrastructure;
 using ScheduleApp.Services;
+using ScheduleApp.Models; // NEW
 
 namespace ScheduleApp.ViewModels
 {
@@ -28,9 +29,16 @@ namespace ScheduleApp.ViewModels
             ExportPdfCommand = new RelayCommand(ExportPdf, () => SelectedTab != null);
         }
 
+        // OLD signature kept for compatibility (supports-only)
         public void RefreshDocument(SupportTabViewModel[] tabs)
         {
             Document = _printService.BuildFlowDocument(tabs);
+        }
+
+        // NEW: supports + teachers
+        public void RefreshDocument(SupportTabViewModel[] tabs, System.Collections.Generic.IList<Teacher> teachers)
+        {
+            Document = _printService.BuildFlowDocument(tabs, teachers);
         }
 
         private void PrintAll()

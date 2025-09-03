@@ -88,8 +88,6 @@ namespace ScheduleApp.ViewModels
                 .OrderBy(k => k)
                 .Select(name =>
                 {
-                    // Show "Unscheduled Breaks" as the tab title,
-                    // but keep the row Support column as "Unscheduled"
                     var vm = new SupportTabViewModel
                     {
                         SupportName = name == "Unscheduled" ? "Unscheduled Breaks" : name,
@@ -100,13 +98,13 @@ namespace ScheduleApp.ViewModels
                 .ToArray();
 
             Schedule.LoadTabs(tabs);
-            PrintPreview.RefreshDocument(tabs);
 
-            // NEW: build teacher-centric rows
+            // NEW: include teacher pages in the preview document
+            PrintPreview.RefreshDocument(tabs, Setup.Teachers.ToList());
+
             var allAssignedTasks = assigned.Values.SelectMany(x => x).ToList();
             Schedule.LoadTeacherSchedules(DateTime.Today, Setup.Teachers.ToList(), allAssignedTasks);
 
-            // Prefer to land on the Schedule View tab
             SelectedTabIndex = 1;
 
             SaveScheduleCommand.RaiseCanExecuteChanged();
@@ -151,9 +149,15 @@ namespace ScheduleApp.ViewModels
                 var outputDir = Path.GetDirectoryName(dlg.FileName)
                                  ?? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
-                // Optional: pass staff names if available
                 var staffNames = string.Join(", ", Setup.Teachers.Select(t => t.Name));
-                var savedPath = _printService.SaveScheduleAsPdf(tabsList, outputDir, staffNames, appVersion: "1.0");
+
+                // NEW: include teacher schedules in the PDF
+                var savedPath = _printService.SaveScheduleAsPdf(
+                    tabsList,
+                    Setup.Teachers.ToList(),
+                    outputDir,
+                    staffNames,
+                    appVersion: "1.0");
 
                 MessageBox.Show($"Saved to:\n{savedPath}", "Save PDF", MessageBoxButton.OK, MessageBoxImage.Information);
             }
