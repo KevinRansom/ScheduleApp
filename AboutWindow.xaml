@@ -1,0 +1,65 @@
+﻿<Window x:Class="ScheduleApp.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ScheduleApp About"
+        Width="900"
+        MinWidth="760"
+        Height="520"
+        ResizeMode="CanResize"
+        SnapsToDevicePixels="True"
+        UseLayoutRounding="True">
+  <Border Padding="12"
+          Background="{DynamicResource MenuBackgroundBrush}"
+          BorderBrush="{DynamicResource MenuBorderBrush}"
+          BorderThickness="1"
+          CornerRadius="8"
+          Margin="8">
+    <FlowDocumentScrollViewer VerticalScrollBarVisibility="Auto">
+      <!-- Increased PageWidth so FlowDocument content does not wrap at default narrow widths -->
+      <FlowDocument FontFamily="Segoe UI" FontSize="13" PageWidth="820">
+        <Paragraph FontSize="16" FontWeight="Bold">🗓️ ScheduleApp</Paragraph>
+
+        <Paragraph>
+          ScheduleApp is a daily scheduling companion for classroom staff.
+          It builds compliant schedules for Teachers and Support roles based on
+          Washington State work time and break regulations.
+        </Paragraph>
+
+        <Paragraph FontWeight="Bold">What It Does</Paragraph>
+        <List>
+          <ListItem><Paragraph>Generates daily classroom schedules</Paragraph></ListItem>
+          <ListItem><Paragraph>Ensures compliance with required breaks and work hour limits</Paragraph></ListItem>
+          <ListItem><Paragraph>Produces daily reports for regulatory review and audit</Paragraph></ListItem>
+        </List>
+
+        <Paragraph FontWeight="Bold">How to Use</Paragraph>
+        <!-- Numbered vertical list (each step on its own line) -->
+        <List MarkerStyle="Decimal" Margin="0,0,0,8">
+          <ListItem><Paragraph>Enter Staff Availability</Paragraph></ListItem>
+          <ListItem><Paragraph>Set Daily Parameters (periods, breaks, coverage)</Paragraph></ListItem>
+          <ListItem><Paragraph>Generate Schedule</Paragraph></ListItem>
+          <ListItem><Paragraph>Review Daily Compliance Report</Paragraph></ListItem>
+        </List>
+
+        <Paragraph FontWeight="Bold">Compliance Coverage</Paragraph>
+        <List>
+          <ListItem><Paragraph>Rest breaks and meal periods</Paragraph></ListItem>
+          <ListItem><Paragraph>Maximum consecutive work hours</Paragraph></ListItem>
+          <ListItem><Paragraph>Role-specific coverage rules</Paragraph></ListItem>
+        </List>
+
+        <Paragraph>
+          Reports are formatted for easy review by administrators and regulators.
+        </Paragraph>
+
+        <!-- Source code and contact: each on its own line, separated from surrounding content -->
+        <Paragraph Margin="0,12,0,6">Source code: https://github.com/KevinRansom/scheduleapp</Paragraph>
+        <Paragraph Margin="0,0,0,12">Contact: codecutter@hotmail.com</Paragraph>
+
+        <!-- Built-in / copyright block: each on its own line, separated from surrounding content -->
+        <Paragraph Margin="0,12,0,6">Built in Washington State.</Paragraph>
+        <Paragraph Margin="0,0,0,12">© 2025 Kevin Ransom. All rights reserved. ScheduleApp is open source under the MIT License.</Paragraph>
+      </FlowDocument>
+    </FlowDocumentScrollViewer>
+  </Border>
+</Window>

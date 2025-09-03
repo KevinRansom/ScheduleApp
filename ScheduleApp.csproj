@@ -61,6 +61,9 @@
     </ApplicationDefinition>
     <Compile Include="Converters\HeaderCornerConverters.cs" />
     <Compile Include="Converters\RoundedClipConverter.cs" />
+    <Compile Include="AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ScheduleApp\Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="ScheduleApp\Converters\NotNullConverters.cs" />
     <Compile Include="ScheduleApp\Converters\TaskKindToBrushConverter.cs" />
@@ -84,6 +87,9 @@
     <Compile Include="ScheduleApp\ViewModels\ScheduleViewModel.cs" />
     <Compile Include="ScheduleApp\ViewModels\SetupViewModel.cs" />
     <Compile Include="ScheduleApp\ViewModels\SupportTabViewModel.cs" />
+    <Page Include="AboutWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
