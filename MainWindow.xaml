@@ -27,11 +27,13 @@
     </LinearGradientBrush>
     <StaticResource x:Key="GridHeaderBackground" ResourceKey="GridHeaderSolid"/>
 
-    <!-- Converters -->
+    <!-- Converters (ensure RoundedClipConverter is declared BEFORE styles that use it) -->
     <conv:HeaderCornerRadiusConverter x:Key="HeaderCornerRadiusConverter"/>
     <conv:HeaderBorderThicknessConverter x:Key="HeaderBorderThicknessConverter"/>
+    <conv:RoundedClipConverter x:Key="RoundedClipConverter"/>
 
     <!-- Column header template with correct MultiBindings -->
+    <!-- Replace existing RoundedDataGridColumnHeader with this version to show sort glyph -->
     <Style x:Key="RoundedDataGridColumnHeader" TargetType="DataGridColumnHeader">
       <Setter Property="Background" Value="{StaticResource GridHeaderBackground}"/>
       <Setter Property="Padding" Value="8,2,8,2"/>
@@ -49,7 +51,7 @@
                                 ConverterParameter="{StaticResource GridCornerRadius}">
                     <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Column.DisplayIndex"/>
                     <Binding RelativeSource="{RelativeSource AncestorType=DataGrid}" Path="Columns.Count"/>
-                    <Binding Source="{StaticResource GridOuterBorderStroke}"/> <!-- CHANGED -->
+                    <Binding Source="{StaticResource GridOuterBorderStroke}"/>
                   </MultiBinding>
                 </Border.CornerRadius>
                 <Border.BorderThickness>
@@ -60,10 +62,51 @@
                 </Border.BorderThickness>
               </Border>
 
-              <ContentPresenter Margin="{TemplateBinding Padding}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+              <!-- Content + sort glyph -->
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition/>
+                  <ColumnDefinition Width="20"/>
+                </Grid.ColumnDefinitions>
+
+                <ContentPresenter Grid.Column="0"
+                                  Margin="{TemplateBinding Padding}"
+                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+
+                <!-- simple triangular glyph (points up). shown when header.SortDirection is set -->
+                <Path x:Name="SortGlyph"
+                      Grid.Column="1"
+                      Width="10"
+                      Height="6"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Fill="#444"
+                      Visibility="Collapsed"
+                      Data="M 0 6 L 5 0 L 10 6 Z" RenderTransformOrigin="0.5,0.5"/>
+
+              </Grid>
             </Grid>
+
+            <ControlTemplate.Triggers>
+              <!-- Show glyph when Sorted ascending or descending -->
+              <Trigger Property="SortDirection" Value="{x:Null}">
+                <Setter TargetName="SortGlyph" Property="Visibility" Value="Collapsed"/>
+              </Trigger>
+              <Trigger Property="SortDirection" Value="Ascending">
+                <Setter TargetName="SortGlyph" Property="Visibility" Value="Visible"/>
+                <Setter TargetName="SortGlyph" Property="RenderTransform" Value="{x:Null}"/>
+              </Trigger>
+              <Trigger Property="SortDirection" Value="Descending">
+                <Setter TargetName="SortGlyph" Property="Visibility" Value="Visible"/>
+                <!-- flip the triangle to point down -->
+                <Setter TargetName="SortGlyph" Property="RenderTransform">
+                  <Setter.Value>
+                    <ScaleTransform ScaleY="-1"/>
+                  </Setter.Value>
+                </Setter>
+              </Trigger>
+            </ControlTemplate.Triggers>
           </ControlTemplate>
         </Setter.Value>
       </Setter>
@@ -78,7 +121,7 @@
                                    IdleBrush="{StaticResource BrushIdle}"/>
     <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     <conv:InverseBooleanToVisibilityConverter x:Key="BoolToVisInverse"/>
-    <conv:NotNullToTrueConverter x:Key="NotNullToTrue"/> <!-- CHANGED -->
+    <conv:NotNullToTrueConverter x:Key="NotNullToTrue"/>
     <conv:NotNullToFalseConverter x:Key="NotNullToFalse"/>
 
     <Style x:Key="PillStyle" TargetType="Border">
@@ -94,18 +137,55 @@
     <!-- Single gridline brush used everywhere -->
     <SolidColorBrush x:Key="SchedGridLineBrush" Color="#FFBFBFBF"/>
 
-    <!-- Rounded container for tables: use shared radius/thickness so curves line up -->
+    <!-- Existing RoundedTableBorder (kept for compatibility) -->
     <Style x:Key="RoundedTableBorder" TargetType="Border">
       <Setter Property="CornerRadius" Value="{StaticResource GridCornerRadius}"/>
       <Setter Property="Background" Value="#FFFFFFFF"/>
       <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
-      <Setter Property="BorderThickness" Value="{StaticResource GridOuterBorderThickness}"/> <!-- CHANGED -->
+      <Setter Property="BorderThickness" Value="{StaticResource GridOuterBorderThickness}"/>
       <Setter Property="SnapsToDevicePixels" Value="True"/>
       <Setter Property="Padding" Value="0"/>
       <Setter Property="ClipToBounds" Value="True"/>
     </Style>
 
-        <!-- NEW: Larger rounded action buttons (based on your IconButton) -->
+    <!-- NEW: ContentControl wrapper that preserves outer border stroke and clips inner content -->
+    <Style x:Key="RoundedTableContainer" TargetType="ContentControl">
+      <Setter Property="Background" Value="#FFFFFFFF"/>
+      <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
+      <Setter Property="BorderThickness" Value="{StaticResource GridOuterBorderThickness}"/>
+      <Setter Property="SnapsToDevicePixels" Value="True"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="ContentControl">
+            <Grid SnapsToDevicePixels="True">
+              <!-- Outer border (drawn full size, visible stroke) -->
+              <Border x:Name="OuterBorder"
+                      Background="{TemplateBinding Background}"
+                      BorderBrush="{TemplateBinding BorderBrush}"
+                      BorderThickness="{TemplateBinding BorderThickness}"
+                      CornerRadius="{StaticResource GridCornerRadius}"
+                      SnapsToDevicePixels="True"/>
+
+              <!-- Inner content host — NO margin here (avoid double inset).
+                   The inner Grid gets the rounded clip so children cannot draw into the stroke area. -->
+              <Grid>
+                <Grid.Clip>
+                  <MultiBinding Converter="{StaticResource RoundedClipConverter}">
+                    <Binding RelativeSource="{RelativeSource Self}" Path="ActualWidth"/>
+                    <Binding RelativeSource="{RelativeSource Self}" Path="ActualHeight"/>
+                    <Binding Source="{StaticResource GridCornerRadius}"/>
+                    <Binding Source="{StaticResource GridOuterBorderStroke}"/>
+                  </MultiBinding>
+                </Grid.Clip>
+                <ContentPresenter />
+              </Grid>
+            </Grid>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <!-- NEW: Larger rounded action buttons (based on your IconButton) -->
     <Style x:Key="RoundedActionButton" TargetType="Button" BasedOn="{StaticResource IconButton}">
       <Setter Property="MinWidth" Value="140"/>
       <Setter Property="Height" Value="40"/>
@@ -225,16 +305,16 @@
                       <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <!-- LEFT: grid wrapped in a rounded Border -->
-                    <Border Grid.Column="0"
-                            Style="{StaticResource RoundedTableBorder}"
-                            ClipToBounds="True"
-                            Margin="0">
+                    <!-- LEFT: grid wrapped in a rounded container that preserves outer stroke -->
+                    <ContentControl Grid.Column="0"
+                                    Style="{StaticResource RoundedTableContainer}"
+                                    Margin="0">
 
                         <DataGrid x:Name="TeachersGrid"
                                   ItemsSource="{Binding Setup.Teachers}"
                                   AutoGenerateColumns="False"
                                   CanUserAddRows="False"
+                                  CanUserSortColumns="True"
                                   HeadersVisibility="Column"
                                   SelectionMode="Extended"
                                   SelectionUnit="FullRow"
@@ -250,11 +330,7 @@
                                 <Style TargetType="{x:Type DataGridColumnHeadersPresenter}">
                                     <Setter Property="Background" Value="Transparent"/>
                                     <Setter Property="SnapsToDevicePixels" Value="True"/>
-                                </Style>
-
-                                <!-- Transparent column headers -->
-                                <Style TargetType="DataGridColumnHeader">
-                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="ClipToBounds" Value="True"/>
                                 </Style>
 
                                 <!-- Default cell style with right border -->
@@ -287,6 +363,7 @@
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Room Number"
                                                     Binding="{Binding RoomNumber}"
+                                                    SortMemberPath="RoomNumber"
                                                     Width="*"
                                                     CellStyle="{StaticResource DefaultCellStyle}"
                                                     ElementStyle="{StaticResource DefaultTextElementStyle}"
@@ -294,12 +371,14 @@
 
                                 <DataGridTextColumn Header="Teacher Name"
                                                     Binding="{Binding Name}"
+                                                    SortMemberPath="Name"
                                                     Width="*"
                                                     CellStyle="{StaticResource DefaultCellStyle}"
                                                     ElementStyle="{StaticResource DefaultTextElementStyle}"
                                                     EditingElementStyle="{StaticResource DefaultEditingElementStyle}"/>
 
                                 <DataGridTemplateColumn Header="Start Time"
+                                                        SortMemberPath="Start"
                                                         Width="*"
                                                         CellStyle="{StaticResource DefaultCellStyle}">
                                     <DataGridTemplateColumn.CellTemplate>
@@ -321,6 +400,7 @@
 
                                 <!-- Last column: no right border -->
                                 <DataGridTemplateColumn Header="End Time"
+                                                        SortMemberPath="End"
                                                         Width="*"
                                                         CellStyle="{StaticResource LastColumnCellStyle}">
                                     <DataGridTemplateColumn.CellTemplate>
@@ -341,7 +421,7 @@
                                 </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>
-                    </Border>
+                    </ContentControl>
 
                     <!-- Right: actions -->
                     <StackPanel Grid.Column="1"
@@ -361,144 +441,241 @@
                 </TabItem>
 
                 <TabItem Header="Support Staff">
-                  <DockPanel Margin="16">
-                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,0,0,12">
-                      <Button Content="Add" Style="{StaticResource IconButton}" Margin="0,0,12,0"
-                              Command="{Binding Setup.AddSupportCommand}"/>
-                      <Button Content="Remove" Style="{StaticResource IconButton}"
-                              Command="{Binding Setup.RemoveSupportCommand}"
-                              CommandParameter="{Binding SelectedItems, ElementName=SupportsGrid}"/>
-                    </StackPanel>
+                  <Grid Margin="16">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                    <Border Style="{StaticResource RoundedTableBorder}" Margin="0">
-                      <DataGrid x:Name="SupportsGrid"
-                                ItemsSource="{Binding Setup.Supports}"
-                                SelectedItem="{Binding Setup.SelectedSupport}"
-                                AutoGenerateColumns="False"
-                                CanUserAddRows="False"
-                                HeadersVisibility="Column"
-                                SelectionMode="Extended"
-                                SelectionUnit="FullRow"
-                                GridLinesVisibility="All"
-                                HorizontalGridLinesBrush="{StaticResource SchedGridLineBrush}"
-                                VerticalGridLinesBrush="{StaticResource SchedGridLineBrush}"
-                                SnapsToDevicePixels="True"
-                                ColumnHeaderStyle="{StaticResource SchedGridHeaderStyleDefault}"
-                                BorderThickness="0"
-                                Background="Transparent">
-                        <DataGrid.Columns>
-                          <DataGridTextColumn Header="Room Number" Binding="{Binding Name}" Width="*">
-                            <DataGridTextColumn.ElementStyle>
-                              <Style TargetType="TextBlock">
-                                <Setter Property="Margin" Value="7,0,0,0"/>
-                              </Style>
-                            </DataGridTextColumn.ElementStyle>
-                            <DataGridTextColumn.EditingElementStyle>
-                              <Style TargetType="TextBox">
-                                <Setter Property="Padding" Value="7,0,0,0"/>
-                              </Style>
-                            </DataGridTextColumn.EditingElementStyle>
-                          </DataGridTextColumn>
-                          <DataGridTemplateColumn Header="Start Time" Width="*">
-                            <DataGridTemplateColumn.CellTemplate>
-                              <DataTemplate>
-                                <TextBlock Text="{Binding Start, Converter={StaticResource TimeSpanToStringConverter}}"
-                                           Margin="7,0,0,0"/>
-                              </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                            <DataGridTemplateColumn.CellEditingTemplate>
-                              <DataTemplate>
-                                <ComboBox ItemsSource="{Binding DataContext.QuarterHours, RelativeSource={RelativeSource AncestorType=Window}}"
-                                          SelectedItem="{Binding Start, Mode=TwoWay}"
-                                          ItemTemplate="{StaticResource TimeItemTemplate}"
-                                          Margin="7,0,0,0"/>
-                              </DataTemplate>
-                            </DataGridTemplateColumn.CellEditingTemplate>
-                          </DataGridTemplateColumn>
+                    <!-- LEFT: grid wrapped in the same rounded container as Teachers -->
+                    <ContentControl Grid.Column="0" Style="{StaticResource RoundedTableContainer}" Margin="0">
+      <DataGrid x:Name="SupportsGrid"
+                ItemsSource="{Binding Setup.Supports}"
+                SelectedItem="{Binding Setup.SelectedSupport}"
+                AutoGenerateColumns="False"
+                CanUserAddRows="False"
+                CanUserSortColumns="True"
+                HeadersVisibility="Column"
+                SelectionMode="Extended"
+                SelectionUnit="FullRow"
+                GridLinesVisibility="Horizontal"
+                HorizontalGridLinesBrush="{StaticResource SchedGridLineBrush}"
+                SnapsToDevicePixels="True"
+                BorderThickness="0"
+                Background="Transparent"
+                ColumnHeaderStyle="{StaticResource RoundedDataGridColumnHeader}">
 
-                          <DataGridTemplateColumn Header="End Time" Width="*">
-                            <DataGridTemplateColumn.CellTemplate>
-                              <DataTemplate>
-                                <TextBlock Text="{Binding End, Converter={StaticResource TimeSpanToStringConverter}}"
-                                           Margin="7,0,0,0"/>
-                              </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                            <DataGridTemplateColumn.CellEditingTemplate>
-                              <DataTemplate>
-                                <ComboBox ItemsSource="{Binding DataContext.QuarterHours, RelativeSource={RelativeSource AncestorType=Window}}"
-                                          SelectedItem="{Binding End, Mode=TwoWay}"
-                                          ItemTemplate="{StaticResource TimeItemTemplate}"
-                                          Margin="7,0,0,0"/>
-                              </DataTemplate>
-                            </DataGridTemplateColumn.CellEditingTemplate>
-                          </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                      </DataGrid>
-                    </Border>
-                  </DockPanel>
-                </TabItem>
+        <DataGrid.Resources>
+          <!-- Match TeachersGrid resources exactly -->
+          <Style TargetType="{x:Type DataGridColumnHeadersPresenter}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="ClipToBounds" Value="True"/>
+          </Style>
+
+          <Style x:Key="DefaultCellStyle" TargetType="DataGridCell">
+            <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
+            <Setter Property="BorderThickness" Value="0,0,1,0"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+          </Style>
+
+          <Style x:Key="LastColumnCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource DefaultCellStyle}">
+            <Setter Property="BorderThickness" Value="0"/>
+          </Style>
+
+          <Style x:Key="DefaultTextElementStyle" TargetType="TextBlock">
+            <Setter Property="Padding" Value="8,0,0,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+          </Style>
+
+          <Style x:Key="DefaultEditingElementStyle" TargetType="TextBox">
+            <Setter Property="Padding" Value="8,0,0,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+          </Style>
+        </DataGrid.Resources>
+
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Room Number"
+                              Binding="{Binding Name}"
+                              SortMemberPath="Name"
+                              Width="*"
+                              CellStyle="{StaticResource DefaultCellStyle}">
+            <DataGridTextColumn.ElementStyle>
+              <Style TargetType="TextBlock">
+                <Setter Property="Margin" Value="7,0,0,0"/>
+              </Style>
+            </DataGridTextColumn.ElementStyle>
+            <DataGridTextColumn.EditingElementStyle>
+              <Style TargetType="TextBox">
+                <Setter Property="Padding" Value="7,0,0,0"/>
+              </Style>
+            </DataGridTextColumn.EditingElementStyle>
+          </DataGridTextColumn>
+
+          <DataGridTemplateColumn Header="Start Time"
+                                  SortMemberPath="Start"
+                                  Width="*"
+                                  CellStyle="{StaticResource DefaultCellStyle}">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding Start, Converter={StaticResource TimeSpanToStringConverter}}"
+                           Style="{StaticResource DefaultTextElementStyle}"/>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+            <DataGridTemplateColumn.CellEditingTemplate>
+              <DataTemplate>
+                <ComboBox ItemsSource="{Binding DataContext.QuarterHours, RelativeSource={RelativeSource AncestorType=Window}}"
+                          SelectedItem="{Binding Start, Mode=TwoWay}"
+                          ItemTemplate="{StaticResource TimeItemTemplate}"
+                          MinWidth="120"
+                          Padding="8,0,0,0"/>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellEditingTemplate>
+          </DataGridTemplateColumn>
+
+          <DataGridTemplateColumn Header="End Time"
+                                  SortMemberPath="End"
+                                  Width="*"
+                                  CellStyle="{StaticResource LastColumnCellStyle}">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding End, Converter={StaticResource TimeSpanToStringConverter}}"
+                           Style="{StaticResource DefaultTextElementStyle}"/>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+            <DataGridTemplateColumn.CellEditingTemplate>
+              <DataTemplate>
+                <ComboBox ItemsSource="{Binding DataContext.QuarterHours, RelativeSource={RelativeSource AncestorType=Window}}"
+                          SelectedItem="{Binding End, Mode=TwoWay}"
+                          ItemTemplate="{StaticResource TimeItemTemplate}"
+                          MinWidth="120"
+                          Padding="8,0,0,0"/>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellEditingTemplate>
+          </DataGridTemplateColumn>
+        </DataGrid.Columns>
+      </DataGrid>
+    </ContentControl>
+
+    <!-- RIGHT: actions (same as Teachers tab) -->
+    <StackPanel Grid.Column="1"
+                Orientation="Vertical"
+                Margin="12,0,0,0"
+                VerticalAlignment="Top">
+      <Button Content="Add"
+              Style="{StaticResource RoundedActionButton}"
+              Margin="0,0,0,12"
+              Command="{Binding Setup.AddSupportCommand}"/>
+      <Button Content="Remove"
+              Style="{StaticResource RoundedActionButton}"
+              Command="{Binding Setup.RemoveSupportCommand}"
+              CommandParameter="{Binding SelectedItems, ElementName=SupportsGrid}"/>
+    </StackPanel>
+  </Grid>
+</TabItem>
 
                 <TabItem Header="Classroom Support Preferences">
-                  <DockPanel Margin="16">
-                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,0,0,12">
-                      <Button Content="Add" Style="{StaticResource IconButton}" Margin="0,0,12,0"
-                              Command="{Binding Setup.AddPreferenceCommand}"/>
-                      <Button Content="Remove" Style="{StaticResource IconButton}"
-                              Command="{Binding Setup.RemovePreferenceCommand}"
-                              CommandParameter="{Binding SelectedItems, ElementName=PrefsGrid}"/>
-                    </StackPanel>
+                  <Grid Margin="16">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                    <Border Style="{StaticResource RoundedTableBorder}" Margin="0">
-                      <DataGrid x:Name="PrefsGrid"
-                                ItemsSource="{Binding Setup.Preferences}"
-                                SelectedItem="{Binding Setup.SelectedPreference}"
-                                AutoGenerateColumns="False"
-                                CanUserAddRows="False"
-                                HeadersVisibility="Column"
-                                SelectionMode="Extended"
-                                SelectionUnit="FullRow"
-                                GridLinesVisibility="All"
-                                HorizontalGridLinesBrush="{StaticResource SchedGridLineBrush}"
-                                VerticalGridLinesBrush="{StaticResource SchedGridLineBrush}"
-                                SnapsToDevicePixels="True"
-                                ColumnHeaderStyle="{StaticResource SchedGridHeaderStyleDefault}"
-                                BorderThickness="0"
-                                Background="Transparent">
-                        <DataGrid.Columns>
-                          <DataGridTextColumn Header="Room Number" Binding="{Binding RoomNumber}" Width="*">
-                            <DataGridTextColumn.ElementStyle>
-                              <Style TargetType="TextBlock">
-                                <Setter Property="Margin" Value="7,0,0,0"/>
-                              </Style>
-                            </DataGridTextColumn.ElementStyle>
-                            <DataGridTextColumn.EditingElementStyle>
-                              <Style TargetType="TextBox">
-                                <Setter Property="Padding" Value="7,0,0,0"/>
-                              </Style>
-                            </DataGridTextColumn.EditingElementStyle>
-                          </DataGridTextColumn>
+                    <!-- LEFT: grid wrapped in the same rounded container as Teachers -->
+                    <ContentControl Grid.Column="0" Style="{StaticResource RoundedTableContainer}" Margin="0">
+      <DataGrid x:Name="PrefsGrid"
+                ItemsSource="{Binding Setup.Preferences}"
+                SelectedItem="{Binding Setup.SelectedPreference}"
+                AutoGenerateColumns="False"
+                CanUserAddRows="False"
+                CanUserSortColumns="True"
+                HeadersVisibility="Column"
+                SelectionMode="Extended"
+                SelectionUnit="FullRow"
+                GridLinesVisibility="Horizontal"
+                HorizontalGridLinesBrush="{StaticResource SchedGridLineBrush}"
+                SnapsToDevicePixels="True"
+                BorderThickness="0"
+                Background="Transparent"
+                ColumnHeaderStyle="{StaticResource RoundedDataGridColumnHeader}">
 
-                          <DataGridTemplateColumn Header="Preferred Support Staff" Width="*">
-                            <DataGridTemplateColumn.CellTemplate>
-                              <DataTemplate>
-                                <TextBlock Text="{Binding PreferredSupportName}" Margin="7,0,0,0"/>
-                              </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                            <DataGridTemplateColumn.CellEditingTemplate>
-                              <DataTemplate>
-                                <ComboBox ItemsSource="{Binding DataContext.Setup.Supports, RelativeSource={RelativeSource AncestorType=Window}}"
-                                          DisplayMemberPath="Name"
-                                          SelectedValuePath="Name"
-                                          SelectedValue="{Binding PreferredSupportName}"
-                                          Margin="7,0,0,0"/>
-                              </DataTemplate>
-                            </DataGridTemplateColumn.CellEditingTemplate>
-                          </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                      </DataGrid>
-                    </Border>
-                  </DockPanel>
-                </TabItem>
+        <DataGrid.Resources>
+          <!-- Match TeachersGrid resources exactly -->
+          <Style TargetType="{x:Type DataGridColumnHeadersPresenter}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="ClipToBounds" Value="True"/>
+          </Style>
+
+          <Style x:Key="DefaultCellStyle" TargetType="DataGridCell">
+            <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
+            <Setter Property="BorderThickness" Value="0,0,1,0"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+          </Style>
+
+          <Style x:Key="LastColumnCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource DefaultCellStyle}">
+            <Setter Property="BorderThickness" Value="0"/>
+          </Style>
+
+          <Style x:Key="DefaultTextElementStyle" TargetType="TextBlock">
+            <Setter Property="Padding" Value="8,0,0,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+          </Style>
+
+          <Style x:Key="DefaultEditingElementStyle" TargetType="TextBox">
+            <Setter Property="Padding" Value="8,0,0,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+          </Style>
+        </DataGrid.Resources>
+
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Room Number"
+                              Binding="{Binding RoomNumber}"
+                              SortMemberPath="RoomNumber"
+                              Width="*"
+                              CellStyle="{StaticResource DefaultCellStyle}"
+                              ElementStyle="{StaticResource DefaultTextElementStyle}"
+                              EditingElementStyle="{StaticResource DefaultEditingElementStyle}"/>
+
+          <DataGridTemplateColumn Header="Preferred Support Staff"
+                                  SortMemberPath="PreferredSupportName"
+                                  Width="*"
+                                  CellStyle="{StaticResource LastColumnCellStyle}">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding PreferredSupportName}" Margin="7,0,0,0"/>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+            <DataGridTemplateColumn.CellEditingTemplate>
+              <DataTemplate>
+                <ComboBox ItemsSource="{Binding DataContext.Setup.Supports, RelativeSource={RelativeSource AncestorType=Window}}"
+                          DisplayMemberPath="Name"
+                          SelectedValuePath="Name"
+                          SelectedValue="{Binding PreferredSupportName}"
+                          Margin="7,0,0,0"/>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellEditingTemplate>
+          </DataGridTemplateColumn>
+        </DataGrid.Columns>
+      </DataGrid>
+    </ContentControl>
+
+    <!-- RIGHT: actions (same as Teachers tab) -->
+    <StackPanel Grid.Column="1"
+                Orientation="Vertical"
+                Margin="12,0,0,0"
+                VerticalAlignment="Top">
+      <Button Content="Add"
+              Style="{StaticResource RoundedActionButton}"
+              Margin="0,0,0,12"
+              Command="{Binding Setup.AddPreferenceCommand}"/>
+      <Button Content="Remove"
+              Style="{StaticResource RoundedActionButton}"
+              Command="{Binding Setup.RemovePreferenceCommand}"
+              CommandParameter="{Binding SelectedItems, ElementName=PrefsGrid}"/>
+    </StackPanel>
+  </Grid>
+</TabItem>
               </TabControl>
 
               <!-- RIGHT: School details + vertical, centered action buttons -->

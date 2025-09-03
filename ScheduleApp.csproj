@@ -60,6 +60,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\HeaderCornerConverters.cs" />
+    <Compile Include="Converters\RoundedClipConverter.cs" />
     <Compile Include="ScheduleApp\Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="ScheduleApp\Converters\NotNullConverters.cs" />
     <Compile Include="ScheduleApp\Converters\TaskKindToBrushConverter.cs" />
