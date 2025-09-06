@@ -99,9 +99,35 @@
         <Setter Property="Padding" Value="4,2"/>
     </Style>
 
+    <!-- Added: shared DataGrid element styles used by MainWindow.xaml -->
+
+    <!-- DefaultCellStyle: reusable DataGridCell style with right border -->
+    <Style x:Key="DefaultCellStyle" TargetType="DataGridCell">
+      <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
+      <Setter Property="BorderThickness" Value="0,0,1,0"/>
+      <Setter Property="SnapsToDevicePixels" Value="True"/>
+    </Style>
+
+    <!-- LastColumnCellStyle: variant for last column with no right border -->
+    <Style x:Key="LastColumnCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource DefaultCellStyle}">
+      <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+
+    <!-- DefaultTextElementStyle: element style for display-mode TextBlock in cells -->
+    <Style x:Key="DefaultTextElementStyle" TargetType="TextBlock">
+      <Setter Property="Padding" Value="8,0,0,0"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <!-- DefaultEditingElementStyle: element style for edit-mode TextBox in cells -->
+    <Style x:Key="DefaultEditingElementStyle" TargetType="TextBox">
+      <Setter Property="Padding" Value="8,0,0,0"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+
     <!-- BEGIN: Added resources copied from MainWindow.xaml (appearance-related) -->
-    <!-- 1) HamburgerToggleButtonStyle (Style)
-         NOTE: MainWindow.xaml used an inline ToggleButton; this style reproduces that inline appearance. -->
+
+    <!-- HamburgerToggleButtonStyle (reproduces inline ToggleButton appearance) -->
     <Style x:Key="HamburgerToggleButtonStyle" TargetType="ToggleButton">
       <Setter Property="Width" Value="36"/>
       <Setter Property="Height" Value="36"/>
@@ -126,7 +152,7 @@
       </Setter>
     </Style>
 
-    <!-- 2) RoundedDataGridColumnHeader (Style) -->
+    <!-- RoundedDataGridColumnHeader (Style) -->
     <Style x:Key="RoundedDataGridColumnHeader" TargetType="DataGridColumnHeader">
       <Setter Property="Background" Value="{StaticResource GridHeaderSolid}"/>
       <Setter Property="Padding" Value="8,2,8,2"/>
@@ -205,14 +231,14 @@
       </Setter>
     </Style>
 
-    <!-- 3) PillStyle (Style for Border used in legends) -->
+    <!-- PillStyle (Style for Border used in legends) -->
     <Style x:Key="PillStyle" TargetType="Border">
       <Setter Property="CornerRadius" Value="4"/>
       <Setter Property="Padding" Value="6,2"/>
       <Setter Property="Margin" Value="2"/>
     </Style>
 
-    <!-- 4) RoundedTableBorder (Style for Border) -->
+    <!-- RoundedTableBorder (Style for Border) -->
     <Style x:Key="RoundedTableBorder" TargetType="Border">
       <Setter Property="CornerRadius" Value="{StaticResource GridCornerRadius}"/>
       <Setter Property="Background" Value="#FFFFFFFF"/>
@@ -223,7 +249,7 @@
       <Setter Property="ClipToBounds" Value="True"/>
     </Style>
 
-    <!-- 5) RoundedTableContainer (Style for ContentControl) -->
+    <!-- RoundedTableContainer (Style for ContentControl) -->
     <Style x:Key="RoundedTableContainer" TargetType="ContentControl">
       <Setter Property="Background" Value="#FFFFFFFF"/>
       <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
@@ -260,7 +286,7 @@
       </Setter>
     </Style>
 
-    <!-- 6) SchedHeaderTemplate (ControlTemplate for DataGridColumnHeader) -->
+    <!-- SchedHeaderTemplate (ControlTemplate for DataGridColumnHeader) -->
     <ControlTemplate x:Key="SchedHeaderTemplate" TargetType="DataGridColumnHeader">
       <Grid SnapsToDevicePixels="True" Background="{TemplateBinding Background}">
         <Grid.RowDefinitions>
@@ -284,7 +310,7 @@
       </Grid>
     </ControlTemplate>
 
-    <!-- 7) SchedGridHeaderStyleDefault (Style for DataGridColumnHeader) -->
+    <!-- SchedGridHeaderStyleDefault (Style for DataGridColumnHeader) -->
     <Style x:Key="SchedGridHeaderStyleDefault" TargetType="DataGridColumnHeader">
       <Setter Property="HorizontalContentAlignment" Value="Left"/>
       <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -295,7 +321,7 @@
       <Setter Property="SeparatorBrush" Value="{StaticResource SchedGridLineBrush}"/>
     </Style>
 
-    <!-- 8) SchedGridCellText (Style for TextBlock in cells) -->
+    <!-- SchedGridCellText (Style for TextBlock in cells) -->
     <Style x:Key="SchedGridCellText" TargetType="TextBlock">
       <Setter Property="TextAlignment" Value="Left"/>
       <Setter Property="Padding" Value="8,0,8,0"/>

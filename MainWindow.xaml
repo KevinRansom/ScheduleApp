@@ -412,32 +412,6 @@
                                         <Setter Property="SnapsToDevicePixels" Value="True"/>
                                         <Setter Property="ClipToBounds" Value="True"/>
                                     </Style>
-
-                                    <!-- Default cell style with right border -->
-                                    <Style x:Key="DefaultCellStyle" TargetType="DataGridCell">
-                                        <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
-                                        <Setter Property="BorderThickness" Value="0,0,1,0"/>
-                                        <Setter Property="SnapsToDevicePixels" Value="True"/>
-                                    </Style>
-
-                                    <!-- Last column cell style with no right border -->
-                                    <Style x:Key="LastColumnCellStyle"
-                                           TargetType="DataGridCell"
-                                           BasedOn="{StaticResource DefaultCellStyle}">
-                                        <Setter Property="BorderThickness" Value="0"/>
-                                    </Style>
-
-                                    <!-- Shared element style for display mode -->
-                                    <Style x:Key="DefaultTextElementStyle" TargetType="TextBlock">
-                                        <Setter Property="Padding" Value="8,0,0,0"/> <!-- match header text indent -->
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                    </Style>
-
-                                    <!-- Shared element style for edit mode -->
-                                    <Style x:Key="DefaultEditingElementStyle" TargetType="TextBox">
-                                        <Setter Property="Padding" Value="8,0,0,0"/>
-                                        <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                    </Style>
                                 </DataGrid.Resources>
 
                                 <DataGrid.Columns>
@@ -546,31 +520,11 @@
                 ColumnHeaderStyle="{StaticResource RoundedDataGridColumnHeader}">
 
         <DataGrid.Resources>
-          <!-- Match TeachersGrid resources exactly -->
+          <!-- Match TeachersGrid header presenter style -->
           <Style TargetType="{x:Type DataGridColumnHeadersPresenter}">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="SnapsToDevicePixels" Value="True"/>
             <Setter Property="ClipToBounds" Value="True"/>
-          </Style>
-
-          <Style x:Key="DefaultCellStyle" TargetType="DataGridCell">
-            <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
-            <Setter Property="BorderThickness" Value="0,0,1,0"/>
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
-          </Style>
-
-          <Style x:Key="LastColumnCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource DefaultCellStyle}">
-            <Setter Property="BorderThickness" Value="0"/>
-          </Style>
-
-          <Style x:Key="DefaultTextElementStyle" TargetType="TextBlock">
-            <Setter Property="Padding" Value="8,0,0,0"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-          </Style>
-
-          <Style x:Key="DefaultEditingElementStyle" TargetType="TextBox">
-            <Setter Property="Padding" Value="8,0,0,0"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
           </Style>
         </DataGrid.Resources>
 
@@ -680,31 +634,11 @@
                 ColumnHeaderStyle="{StaticResource RoundedDataGridColumnHeader}">
 
         <DataGrid.Resources>
-          <!-- Match TeachersGrid resources exactly -->
+          <!-- Match TeachersGrid header presenter style -->
           <Style TargetType="{x:Type DataGridColumnHeadersPresenter}">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="SnapsToDevicePixels" Value="True"/>
             <Setter Property="ClipToBounds" Value="True"/>
-          </Style>
-
-          <Style x:Key="DefaultCellStyle" TargetType="DataGridCell">
-            <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
-            <Setter Property="BorderThickness" Value="0,0,1,0"/>
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
-          </Style>
-
-          <Style x:Key="LastColumnCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource DefaultCellStyle}">
-            <Setter Property="BorderThickness" Value="0"/>
-          </Style>
-
-          <Style x:Key="DefaultTextElementStyle" TargetType="TextBlock">
-            <Setter Property="Padding" Value="8,0,0,0"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-          </Style>
-
-          <Style x:Key="DefaultEditingElementStyle" TargetType="TextBox">
-            <Setter Property="Padding" Value="8,0,0,0"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
           </Style>
         </DataGrid.Resources>
 
