@@ -8,16 +8,15 @@
         ResizeMode="CanResize"
         SnapsToDevicePixels="True"
         UseLayoutRounding="True">
-  <Border Padding="12"
+  <Border Padding="{StaticResource WindowContentPadding}"
           Background="{DynamicResource MenuBackgroundBrush}"
           BorderBrush="{DynamicResource MenuBorderBrush}"
           BorderThickness="{StaticResource GridOuterBorderThickness}"
-          CornerRadius="8"
-          Margin="8">
+          CornerRadius="{StaticResource WindowCornerRadius}"
+          Margin="{StaticResource WindowMargin}">
     <FlowDocumentScrollViewer VerticalScrollBarVisibility="Auto">
-      <!-- Increased PageWidth so FlowDocument content does not wrap at default narrow widths -->
-      <FlowDocument FontFamily="Segoe UI" FontSize="13" PageWidth="820">
-        <Paragraph FontSize="16" FontWeight="Bold">🗓️ ScheduleApp</Paragraph>
+      <FlowDocument FontFamily="{StaticResource BodyFontFamily}" FontSize="{StaticResource BodyFontSize}" PageWidth="{StaticResource PageContentWidth}">
+        <Paragraph FontSize="{StaticResource AboutTitleFontSize}" FontWeight="{StaticResource AboutTitleFontWeight}">🗓️ ScheduleApp</Paragraph>
 
         <Paragraph>
           ScheduleApp is a daily scheduling companion for classroom staff.
@@ -33,7 +32,6 @@
         </List>
 
         <Paragraph FontWeight="Bold">How to Use</Paragraph>
-        <!-- Numbered vertical list (each step on its own line) -->
         <List MarkerStyle="Decimal" Margin="0,0,0,8">
           <ListItem><Paragraph>Enter Staff Availability</Paragraph></ListItem>
           <ListItem><Paragraph>Set Daily Parameters (periods, breaks, coverage)</Paragraph></ListItem>
@@ -52,13 +50,11 @@
           Reports are formatted for easy review by administrators and regulators.
         </Paragraph>
 
-        <!-- Source code and contact: each on its own line, separated from surrounding content -->
-        <Paragraph Margin="0,12,0,6">Source code: https://github.com/KevinRansom/scheduleapp</Paragraph>
-        <Paragraph Margin="0,0,0,12">Contact: codecutter@hotmail.com</Paragraph>
+        <Paragraph Margin="{StaticResource ParagraphMarginSmall}">Source code: https://github.com/KevinRansom/scheduleapp</Paragraph>
+        <Paragraph Margin="{StaticResource ParagraphMarginLarge}">Contact: codecutter@hotmail.com</Paragraph>
 
-        <!-- Built-in / copyright block: each on its own line, separated from surrounding content -->
-        <Paragraph Margin="0,12,0,6">Built in Washington State.</Paragraph>
-        <Paragraph Margin="0,0,0,12">© 2025 Kevin Ransom. All rights reserved. ScheduleApp is open source under the MIT License.</Paragraph>
+        <Paragraph Margin="{StaticResource ParagraphMarginSmall}">Built in Washington State.</Paragraph>
+        <Paragraph Margin="{StaticResource ParagraphMarginLarge}">© 2025 Kevin Ransom. All rights reserved. ScheduleApp is open source under the MIT License.</Paragraph>
       </FlowDocument>
     </FlowDocumentScrollViewer>
   </Border>
