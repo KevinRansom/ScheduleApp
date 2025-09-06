@@ -11,7 +11,7 @@
   <Border Padding="12"
           Background="{DynamicResource MenuBackgroundBrush}"
           BorderBrush="{DynamicResource MenuBorderBrush}"
-          BorderThickness="1"
+          BorderThickness="{StaticResource GridOuterBorderThickness}"
           CornerRadius="8"
           Margin="8">
     <FlowDocumentScrollViewer VerticalScrollBarVisibility="Auto">

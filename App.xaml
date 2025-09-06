@@ -4,47 +4,29 @@
              xmlns:conv="clr-namespace:ScheduleApp.Converters"
              StartupUri="MainWindow.xaml">
   <Application.Resources>
-    <!-- Brushes used by legend/converters -->
-    <SolidColorBrush x:Key="BrushCoverage"    Color="#FFD8F1D8"/>
-    <SolidColorBrush x:Key="BrushBreak"       Color="#FFFFE0B2"/>
-    <SolidColorBrush x:Key="BrushLunch"       Color="#FFFFF59D"/>
-    <SolidColorBrush x:Key="BrushIdle"        Color="#FFECEFF1"/>
-    <SolidColorBrush x:Key="BrushUnscheduled" Color="#FFFFFFFF"/>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <!-- Centralized appearance vocabulary -->
+        <ResourceDictionary Source="Appearance.xaml"/>
+      </ResourceDictionary.MergedDictionaries>
 
-    <!-- Also used in DataGrids -->
-    <SolidColorBrush x:Key="SchedGridLineBrush" Color="#FFBFBFBF"/>
-
-    <!-- Styles referenced by MainWindow.xaml -->
-    <Style x:Key="MonospaceText" TargetType="TextBlock">
-      <Setter Property="FontFamily" Value="Consolas"/>
-      <Setter Property="SnapsToDevicePixels" Value="True"/>
-      <Setter Property="VerticalAlignment" Value="Center"/>
-    </Style>
-
-    <Style x:Key="IconButton" TargetType="Button">
-      <Setter Property="Padding" Value="12,6"/>
-      <Setter Property="MinWidth" Value="80"/>
-      <Setter Property="HorizontalAlignment" Value="Left"/>
-      <Setter Property="VerticalAlignment" Value="Center"/>
-      <Setter Property="Margin" Value="0"/>
-    </Style>
-
-    <!-- Converters used by MainWindow.xaml -->
-    <conv:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter"/>
-    <conv:TaskKindToBrushConverter  x:Key="TaskKindToBrushConverter"
-                                    CoverageBrush="{StaticResource BrushCoverage}"
-                                    BreakBrush="{StaticResource BrushBreak}"
-                                    LunchBrush="{StaticResource BrushLunch}"
-                                    IdleBrush="{StaticResource BrushIdle}"/>
-    <conv:InverseBooleanToVisibilityConverter x:Key="BoolToVisInverse"/>
-    <conv:NotNullToTrueConverter  x:Key="NotNullToTrue"/>
-    <conv:NotNullToFalseConverter x:Key="NotNullToFalse"/>
-
-    <!-- Colors rows in Teachers grid -->
-    <conv:TeacherRowToBrushConverter x:Key="TeacherRowToBrushConverter"
+      <!-- Converters used by MainWindow.xaml -->
+      <conv:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter"/>
+      <conv:TaskKindToBrushConverter x:Key="TaskKindToBrushConverter"
+                                     CoverageBrush="{StaticResource BrushCoverage}"
                                      BreakBrush="{StaticResource BrushBreak}"
                                      LunchBrush="{StaticResource BrushLunch}"
-                                     FreeBrush="{StaticResource BrushIdle}"
-                                     UnscheduledBrush="{StaticResource BrushUnscheduled}"/>
+                                     IdleBrush="{StaticResource BrushIdle}"/>
+      <conv:InverseBooleanToVisibilityConverter x:Key="BoolToVisInverse"/>
+      <conv:NotNullToTrueConverter  x:Key="NotNullToTrue"/>
+      <conv:NotNullToFalseConverter x:Key="NotNullToFalse"/>
+
+      <!-- Colors rows in Teachers grid -->
+      <conv:TeacherRowToBrushConverter x:Key="TeacherRowToBrushConverter"
+                                       BreakBrush="{StaticResource BrushBreak}"
+                                       LunchBrush="{StaticResource BrushLunch}"
+                                       FreeBrush="{StaticResource BrushIdle}"
+                                       UnscheduledBrush="{StaticResource BrushUnscheduled}"/>
+    </ResourceDictionary>
   </Application.Resources>
 </Application>
