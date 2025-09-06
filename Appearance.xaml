@@ -241,7 +241,7 @@
                       CornerRadius="{StaticResource GridCornerRadius}"
                       SnapsToDevicePixels="True"/>
 
-              <!-- Inner content host — NO margin here (avoid double inset).
+              <!-- Inner content host - NO margin here (avoid double inset).
                    The inner Grid gets the rounded clip so children cannot draw into the stroke area. -->
               <Grid>
                 <Grid.Clip>
