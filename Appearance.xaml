@@ -52,10 +52,10 @@
     <Thickness x:Key="HamburgerStripeTopMargin">0,2,0,0</Thickness>
     <Thickness x:Key="HamburgerStripeBottomMargin">0,0,0,2</Thickness>
 
+    <!-- Typography -->
     <sys:Double x:Key="PageTitleFontSize">26</sys:Double>
     <sys:Double x:Key="BodyFontSize">13</sys:Double>
     <sys:String x:Key="BodyFontFamily">Segoe UI</sys:String>
-    <!-- Centralized monospace font family -->
     <sys:String x:Key="MonospaceFontFamily">Consolas</sys:String>
     <sys:Double x:Key="PageContentWidth">820</sys:Double>
 
@@ -81,7 +81,7 @@
     <Thickness x:Key="ToolbarButtonMarginLarge">8,0,0,0</Thickness>
     <Thickness x:Key="ToolbarButtonMarginSmall">4,0,0,0</Thickness>
 
-    <!-- Page and form layout (new centralizations) -->
+    <!-- Page and form layout (centralized spacings) -->
     <Thickness x:Key="PageSectionMarginLarge">16</Thickness>
     <Thickness x:Key="PageSectionMarginSmall">8</Thickness>
     <Thickness x:Key="TitleMarginBottomLarge">0,0,0,12</Thickness>
@@ -111,6 +111,7 @@
     <Thickness x:Key="NoBorderThickness">0</Thickness>
     <Thickness x:Key="NoPaddingThickness">0</Thickness>
     <Thickness x:Key="NoMarginThickness">0</Thickness>
+    <Thickness x:Key="GridBottomBorderThickness">0,0,0,1</Thickness>
 
     <!-- Pill metrics -->
     <CornerRadius x:Key="PillCornerRadius">4</CornerRadius>
@@ -126,7 +127,7 @@
 
     <!-- Text styles -->
     <Style x:Key="MonospaceText" TargetType="TextBlock">
-        <Setter Property="FontFamily" Value="Consolas"/>
+        <Setter Property="FontFamily" Value="{StaticResource MonospaceFontFamily}"/>
         <Setter Property="SnapsToDevicePixels" Value="True"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
@@ -166,7 +167,6 @@
     <!-- RoundedActionButton: based on IconButton, overrides corner radius and colors -->
     <Style x:Key="RoundedActionButton" TargetType="Button" BasedOn="{StaticResource IconButton}">
         <Style.Resources>
-            <!-- override the ButtonCornerRadius for this style via centralized key -->
             <CornerRadius x:Key="ButtonCornerRadius">20</CornerRadius>
         </Style.Resources>
         <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
@@ -209,7 +209,7 @@
       <Setter Property="VerticalContentAlignment" Value="Center"/>
     </Style>
 
-    <!-- HamburgerToggleButtonStyle (reproduces inline ToggleButton appearance) -->
+    <!-- HamburgerToggleButtonStyle -->
     <Style x:Key="HamburgerToggleButtonStyle" TargetType="ToggleButton">
       <Setter Property="Width" Value="36"/>
       <Setter Property="Height" Value="36"/>
@@ -224,33 +224,17 @@
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="ToggleButton">
-            <!-- Full-size hit target -->
-            <Border x:Name="HitTarget" Background="{TemplateBinding Background}">
-              <Grid Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Rectangle Height="2" Fill="{DynamicResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Top" Margin="{StaticResource HamburgerStripeTopMargin}"/>
-                <Rectangle Height="2" Fill="{DynamicResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Center"/>
-                <Rectangle Height="2" Fill="{DynamicResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Bottom" Margin="{StaticResource HamburgerStripeBottomMargin}"/>
-              </Grid>
-            </Border>
-
-            <!-- Optional hover/pressed feedback -->
-            <ControlTemplate.Triggers>
-              <Trigger Property="IsMouseOver" Value="True">
-                <Setter TargetName="HitTarget" Property="Opacity" Value="0.9"/>
-              </Trigger>
-              <Trigger Property="IsPressed" Value="True">
-                <Setter TargetName="HitTarget" Property="Opacity" Value="0.8"/>
-              </Trigger>
-              <Trigger Property="IsChecked" Value="True">
-                <Setter TargetName="HitTarget" Property="Opacity" Value="0.9"/>
-              </Trigger>
-            </ControlTemplate.Triggers>
+            <Grid Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center">
+              <Rectangle Height="2" Fill="{DynamicResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Top" Margin="{StaticResource HamburgerStripeTopMargin}"/>
+              <Rectangle Height="2" Fill="{DynamicResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Center"/>
+              <Rectangle Height="2" Fill="{DynamicResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Bottom" Margin="{StaticResource HamburgerStripeBottomMargin}"/>
+            </Grid>
           </ControlTemplate>
         </Setter.Value>
       </Setter>
     </Style>
 
-    <!-- RoundedDataGridColumnHeader (Style) -->
+    <!-- RoundedDataGridColumnHeader -->
     <Style x:Key="RoundedDataGridColumnHeader" TargetType="DataGridColumnHeader">
       <Setter Property="Background" Value="{StaticResource GridHeaderSolid}"/>
       <Setter Property="Padding" Value="{StaticResource DataGridColumnHeaderPadding}"/>
@@ -279,7 +263,6 @@
                 </Border.BorderThickness>
               </Border>
 
-              <!-- Content + sort glyph -->
               <Grid>
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition/>
@@ -325,14 +308,14 @@
       </Setter>
     </Style>
 
-    <!-- PillStyle (Style for Border used in legends) -->
+    <!-- PillStyle -->
     <Style x:Key="PillStyle" TargetType="Border">
       <Setter Property="CornerRadius" Value="{StaticResource PillCornerRadius}"/>
       <Setter Property="Padding" Value="{StaticResource PillPadding}"/>
       <Setter Property="Margin" Value="{StaticResource PillMargin}"/>
     </Style>
 
-    <!-- RoundedTableBorder (Style for Border) -->
+    <!-- RoundedTableBorder -->
     <Style x:Key="RoundedTableBorder" TargetType="Border">
       <Setter Property="CornerRadius" Value="{StaticResource GridCornerRadius}"/>
       <Setter Property="Background" Value="{StaticResource PrimaryBackgroundBrush}"/>
@@ -343,7 +326,7 @@
       <Setter Property="ClipToBounds" Value="True"/>
     </Style>
 
-    <!-- RoundedTableContainer (Style for ContentControl) -->
+    <!-- RoundedTableContainer -->
     <Style x:Key="RoundedTableContainer" TargetType="ContentControl">
       <Setter Property="Background" Value="{StaticResource PrimaryBackgroundBrush}"/>
       <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
@@ -376,7 +359,7 @@
       </Setter>
     </Style>
 
-    <!-- SchedHeaderTemplate (ControlTemplate for DataGridColumnHeader) -->
+    <!-- SchedHeaderTemplate -->
     <ControlTemplate x:Key="SchedHeaderTemplate" TargetType="DataGridColumnHeader">
       <Grid SnapsToDevicePixels="True" Background="{TemplateBinding Background}">
         <Grid.RowDefinitions>
@@ -400,7 +383,7 @@
       </Grid>
     </ControlTemplate>
 
-    <!-- SchedGridHeaderStyleDefault (Style for DataGridColumnHeader) -->
+    <!-- SchedGridHeaderStyleDefault -->
     <Style x:Key="SchedGridHeaderStyleDefault" TargetType="DataGridColumnHeader">
       <Setter Property="HorizontalContentAlignment" Value="Left"/>
       <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -411,11 +394,11 @@
       <Setter Property="SeparatorBrush" Value="{StaticResource SchedGridLineBrush}"/>
     </Style>
 
-    <!-- SchedGridCellText (Style for TextBlock in cells) -->
+    <!-- SchedGridCellText -->
     <Style x:Key="SchedGridCellText" TargetType="TextBlock">
       <Setter Property="TextAlignment" Value="Left"/>
       <Setter Property="Padding" Value="{StaticResource CellTextPadding}"/>
-      <Setter Property="FontFamily" Value="Consolas"/>
+      <Setter Property="FontFamily" Value="{StaticResource MonospaceFontFamily}"/>
       <Setter Property="SnapsToDevicePixels" Value="True"/>
     </Style>
 </ResourceDictionary>

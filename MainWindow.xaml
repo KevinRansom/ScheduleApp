@@ -12,7 +12,7 @@
         UseLayoutRounding="True"
         SnapsToDevicePixels="True">
   <Window.Resources>
-    <!-- Keep converters and non-appearance resources here -->
+    <!-- Converters and non-appearance resources -->
     <conv:HeaderCornerRadiusConverter x:Key="HeaderCornerRadiusConverter"/>
     <conv:HeaderBorderThicknessConverter x:Key="HeaderBorderThicknessConverter"/>
     <conv:RoundedClipConverter x:Key="RoundedClipConverter"/>
@@ -35,7 +35,7 @@
   </Window.Resources>
 
   <DockPanel LastChildFill="True">
-    <!-- Top-aligned hamburger menu (docked top). Use centralized metrics -->
+    <!-- Top-aligned hamburger menu and main content -->
     <Border DockPanel.Dock="Top"
             CornerRadius="{StaticResource TopBarCornerRadius}"
             Background="{DynamicResource MenuBackgroundBrush}"
@@ -51,7 +51,6 @@
             <ColumnDefinition Width="*"/>
           </Grid.ColumnDefinitions>
 
-          <!-- Use centralized hamburger style -->
           <ToggleButton x:Name="HamburgerToggle"
                         Style="{StaticResource HamburgerToggleButtonStyle}"/>
 
@@ -87,25 +86,25 @@
         <TabControl x:Name="MainTabControl" SelectedIndex="{Binding SelectedTabIndex}">
           <TabItem Header="Setup">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
-              <Grid Margin="16">
+              <Grid Margin="{StaticResource PageSectionMarginLarge}">
                 <Grid.RowDefinitions>
                   <RowDefinition Height="Auto"/>
                   <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- Simple title (centralized font size) -->
-                <TextBlock Text="Setup" FontSize="{StaticResource PageTitleFontSize}" Margin="0,0,0,12"/>
+                <TextBlock Text="Setup"
+                           FontSize="{StaticResource PageTitleFontSize}"
+                           Margin="{StaticResource TitleMarginBottomLarge}"/>
 
-                <!-- Two columns: left = tabbed data grids, right = school + actions -->
                 <Grid Grid.Row="1">
                   <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="420" />
                   </Grid.ColumnDefinitions>
 
-                  <TabControl x:Name="SetupInnerTab" Grid.Column="0" Margin="0,0,20,0">
+                  <TabControl x:Name="SetupInnerTab" Grid.Column="0" Margin="{StaticResource RightColumnGapLarge}">
                     <TabItem Header="Classrooms and Teachers">
-                      <Grid Margin="16">
+                      <Grid Margin="{StaticResource PageSectionMarginLarge}">
                         <Grid.ColumnDefinitions>
                           <ColumnDefinition Width="*" />
                           <ColumnDefinition Width="Auto" />
@@ -113,96 +112,95 @@
 
                         <ContentControl Grid.Column="0"
                                         Style="{StaticResource RoundedTableContainer}"
-                                        Margin="0">
+                                        Margin="{StaticResource NoMarginThickness}">
+                          <DataGrid x:Name="TeachersGrid"
+                                    ItemsSource="{Binding Setup.Teachers}"
+                                    AutoGenerateColumns="False"
+                                    CanUserAddRows="False"
+                                    CanUserSortColumns="True"
+                                    HeadersVisibility="Column"
+                                    SelectionMode="Extended"
+                                    SelectionUnit="FullRow"
+                                    GridLinesVisibility="Horizontal"
+                                    HorizontalGridLinesBrush="{StaticResource SchedGridLineBrush}"
+                                    SnapsToDevicePixels="True"
+                                    BorderThickness="{StaticResource NoBorderThickness}"
+                                    Background="{StaticResource TransparentBrush}"
+                                    ColumnHeaderStyle="{StaticResource RoundedDataGridColumnHeader}">
 
-                            <DataGrid x:Name="TeachersGrid"
-                                      ItemsSource="{Binding Setup.Teachers}"
-                                      AutoGenerateColumns="False"
-                                      CanUserAddRows="False"
-                                      CanUserSortColumns="True"
-                                      HeadersVisibility="Column"
-                                      SelectionMode="Extended"
-                                      SelectionUnit="FullRow"
-                                      GridLinesVisibility="Horizontal"
-                                      HorizontalGridLinesBrush="{StaticResource SchedGridLineBrush}"
-                                      SnapsToDevicePixels="True"
-                                      BorderThickness="0"
-                                      Background="Transparent"
-                                      ColumnHeaderStyle="{StaticResource RoundedDataGridColumnHeader}">
+                            <DataGrid.Resources>
+                              <Style TargetType="{x:Type DataGridColumnHeadersPresenter}">
+                                <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
+                                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                                <Setter Property="ClipToBounds" Value="True"/>
+                              </Style>
+                            </DataGrid.Resources>
 
-                                <DataGrid.Resources>
-                                    <Style TargetType="{x:Type DataGridColumnHeadersPresenter}">
-                                        <Setter Property="Background" Value="Transparent"/>
-                                        <Setter Property="SnapsToDevicePixels" Value="True"/>
-                                        <Setter Property="ClipToBounds" Value="True"/>
-                                    </Style>
-                                </DataGrid.Resources>
+                            <DataGrid.Columns>
+                              <DataGridTextColumn Header="Room Number"
+                                                  Binding="{Binding RoomNumber}"
+                                                  SortMemberPath="RoomNumber"
+                                                  Width="*"
+                                                  CellStyle="{StaticResource DefaultCellStyle}"
+                                                  ElementStyle="{StaticResource DefaultTextElementStyle}"
+                                                  EditingElementStyle="{StaticResource DefaultEditingElementStyle}"/>
 
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Room Number"
-                                                        Binding="{Binding RoomNumber}"
-                                                        SortMemberPath="RoomNumber"
-                                                        Width="*"
-                                                        CellStyle="{StaticResource DefaultCellStyle}"
-                                                        ElementStyle="{StaticResource DefaultTextElementStyle}"
-                                                        EditingElementStyle="{StaticResource DefaultEditingElementStyle}"/>
+                              <DataGridTextColumn Header="Teacher Name"
+                                                  Binding="{Binding Name}"
+                                                  SortMemberPath="Name"
+                                                  Width="*"
+                                                  CellStyle="{StaticResource DefaultCellStyle}"
+                                                  ElementStyle="{StaticResource DefaultTextElementStyle}"
+                                                  EditingElementStyle="{StaticResource DefaultEditingElementStyle}"/>
 
-                                    <DataGridTextColumn Header="Teacher Name"
-                                                        Binding="{Binding Name}"
-                                                        SortMemberPath="Name"
-                                                        Width="*"
-                                                        CellStyle="{StaticResource DefaultCellStyle}"
-                                                        ElementStyle="{StaticResource DefaultTextElementStyle}"
-                                                        EditingElementStyle="{StaticResource DefaultEditingElementStyle}"/>
+                              <DataGridTemplateColumn Header="Start Time"
+                                                      SortMemberPath="Start"
+                                                      Width="*"
+                                                      CellStyle="{StaticResource DefaultCellStyle}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                  <DataTemplate>
+                                    <TextBlock Text="{Binding Start, Converter={StaticResource TimeSpanToStringConverter}}"
+                                               Style="{StaticResource DefaultTextElementStyle}"/>
+                                  </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                                <DataGridTemplateColumn.CellEditingTemplate>
+                                  <DataTemplate>
+                                    <ComboBox ItemsSource="{Binding DataContext.QuarterHours, RelativeSource={RelativeSource AncestorType=Window}}"
+                                              SelectedItem="{Binding Start, Mode=TwoWay}"
+                                              ItemTemplate="{StaticResource TimeItemTemplate}"
+                                              MinWidth="120"
+                                              Padding="{StaticResource CellEditorPadding}"/>
+                                  </DataTemplate>
+                                </DataGridTemplateColumn.CellEditingTemplate>
+                              </DataGridTemplateColumn>
 
-                                    <DataGridTemplateColumn Header="Start Time"
-                                                            SortMemberPath="Start"
-                                                            Width="*"
-                                                            CellStyle="{StaticResource DefaultCellStyle}">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Start, Converter={StaticResource TimeSpanToStringConverter}}"
-                                                           Style="{StaticResource DefaultTextElementStyle}"/>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                        <DataGridTemplateColumn.CellEditingTemplate>
-                                            <DataTemplate>
-                                                <ComboBox ItemsSource="{Binding DataContext.QuarterHours, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                          SelectedItem="{Binding Start, Mode=TwoWay}"
-                                                          ItemTemplate="{StaticResource TimeItemTemplate}"
-                                                          MinWidth="120"
-                                                          Padding="{StaticResource CellEditorPadding}"/>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellEditingTemplate>
-                                    </DataGridTemplateColumn>
-
-                                    <DataGridTemplateColumn Header="End Time"
-                                                            SortMemberPath="End"
-                                                            Width="*"
-                                                            CellStyle="{StaticResource LastColumnCellStyle}">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding End, Converter={StaticResource TimeSpanToStringConverter}}"
-                                                           Style="{StaticResource DefaultTextElementStyle}"/>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                        <DataGridTemplateColumn.CellEditingTemplate>
-                                            <DataTemplate>
-                                                <ComboBox ItemsSource="{Binding DataContext.QuarterHours, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                          SelectedItem="{Binding End, Mode=TwoWay}"
-                                                          ItemTemplate="{StaticResource TimeItemTemplate}"
-                                                          MinWidth="120"
-                                                          Padding="{StaticResource CellEditorPadding}"/>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellEditingTemplate>
-                                    </DataGridTemplateColumn>
-                                </DataGrid.Columns>
-                            </DataGrid>
+                              <DataGridTemplateColumn Header="End Time"
+                                                      SortMemberPath="End"
+                                                      Width="*"
+                                                      CellStyle="{StaticResource LastColumnCellStyle}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                  <DataTemplate>
+                                    <TextBlock Text="{Binding End, Converter={StaticResource TimeSpanToStringConverter}}"
+                                               Style="{StaticResource DefaultTextElementStyle}"/>
+                                  </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                                <DataGridTemplateColumn.CellEditingTemplate>
+                                  <DataTemplate>
+                                    <ComboBox ItemsSource="{Binding DataContext.QuarterHours, RelativeSource={RelativeSource AncestorType=Window}}"
+                                              SelectedItem="{Binding End, Mode=TwoWay}"
+                                              ItemTemplate="{StaticResource TimeItemTemplate}"
+                                              MinWidth="120"
+                                              Padding="{StaticResource CellEditorPadding}"/>
+                                  </DataTemplate>
+                                </DataGridTemplateColumn.CellEditingTemplate>
+                              </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                          </DataGrid>
                         </ContentControl>
 
                         <StackPanel Grid.Column="1"
                                     Orientation="Vertical"
-                                    Margin="12,0,0,0"
+                                    Margin="{StaticResource SidePanelLeftMargin}"
                                     VerticalAlignment="Top">
                           <Button Content="Add"
                                   Style="{StaticResource RoundedActionButton}"
@@ -218,208 +216,212 @@
                     </TabItem>
 
                     <TabItem Header="Support Staff">
-                      <Grid Margin="16">
+                      <Grid Margin="{StaticResource PageSectionMarginLarge}">
                         <Grid.ColumnDefinitions>
                           <ColumnDefinition Width="*" />
                           <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <ContentControl Grid.Column="0" Style="{StaticResource RoundedTableContainer}" Margin="0">
-      <DataGrid x:Name="SupportsGrid"
-                ItemsSource="{Binding Setup.Supports}"
-                SelectedItem="{Binding Setup.SelectedSupport}"
-                AutoGenerateColumns="False"
-                CanUserAddRows="False"
-                CanUserSortColumns="True"
-                HeadersVisibility="Column"
-                SelectionMode="Extended"
-                SelectionUnit="FullRow"
-                GridLinesVisibility="Horizontal"
-                HorizontalGridLinesBrush="{StaticResource SchedGridLineBrush}"
-                SnapsToDevicePixels="True"
-                BorderThickness="0"
-                Background="Transparent"
-                ColumnHeaderStyle="{StaticResource RoundedDataGridColumnHeader}">
+                        <ContentControl Grid.Column="0"
+                                        Style="{StaticResource RoundedTableContainer}"
+                                        Margin="{StaticResource NoMarginThickness}">
+                          <DataGrid x:Name="SupportsGrid"
+                                    ItemsSource="{Binding Setup.Supports}"
+                                    SelectedItem="{Binding Setup.SelectedSupport}"
+                                    AutoGenerateColumns="False"
+                                    CanUserAddRows="False"
+                                    CanUserSortColumns="True"
+                                    HeadersVisibility="Column"
+                                    SelectionMode="Extended"
+                                    SelectionUnit="FullRow"
+                                    GridLinesVisibility="Horizontal"
+                                    HorizontalGridLinesBrush="{StaticResource SchedGridLineBrush}"
+                                    SnapsToDevicePixels="True"
+                                    BorderThickness="{StaticResource NoBorderThickness}"
+                                    Background="{StaticResource TransparentBrush}"
+                                    ColumnHeaderStyle="{StaticResource RoundedDataGridColumnHeader}">
 
-        <DataGrid.Resources>
-          <Style TargetType="{x:Type DataGridColumnHeadersPresenter}">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
-            <Setter Property="ClipToBounds" Value="True"/>
-          </Style>
-        </DataGrid.Resources>
+                            <DataGrid.Resources>
+                              <Style TargetType="{x:Type DataGridColumnHeadersPresenter}">
+                                <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
+                                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                                <Setter Property="ClipToBounds" Value="True"/>
+                              </Style>
+                            </DataGrid.Resources>
 
-        <DataGrid.Columns>
-          <DataGridTextColumn Header="Room Number"
-                              Binding="{Binding Name}"
-                              SortMemberPath="Name"
-                              Width="*"
-                              CellStyle="{StaticResource DefaultCellStyle}">
-            <DataGridTextColumn.ElementStyle>
-              <Style TargetType="TextBlock">
-                <Setter Property="Margin" Value="{StaticResource CellElementMargin}"/>
-              </Style>
-            </DataGridTextColumn.ElementStyle>
-            <DataGridTextColumn.EditingElementStyle>
-              <Style TargetType="TextBox">
-                <Setter Property="Padding" Value="{StaticResource CellEditorPadding}"/>
-              </Style>
-            </DataGridTextColumn.EditingElementStyle>
-          </DataGridTextColumn>
+                            <DataGrid.Columns>
+                              <DataGridTextColumn Header="Room Number"
+                                                  Binding="{Binding Name}"
+                                                  SortMemberPath="Name"
+                                                  Width="*"
+                                                  CellStyle="{StaticResource DefaultCellStyle}">
+                                <DataGridTextColumn.ElementStyle>
+                                  <Style TargetType="TextBlock">
+                                    <Setter Property="Margin" Value="{StaticResource CellElementMargin}"/>
+                                  </Style>
+                                </DataGridTextColumn.ElementStyle>
+                                <DataGridTextColumn.EditingElementStyle>
+                                  <Style TargetType="TextBox">
+                                    <Setter Property="Padding" Value="{StaticResource CellEditorPadding}"/>
+                                  </Style>
+                                </DataGridTextColumn.EditingElementStyle>
+                              </DataGridTextColumn>
 
-          <DataGridTemplateColumn Header="Start Time"
-                                  SortMemberPath="Start"
-                                  Width="*"
-                                  CellStyle="{StaticResource DefaultCellStyle}">
-            <DataGridTemplateColumn.CellTemplate>
-              <DataTemplate>
-                <TextBlock Text="{Binding Start, Converter={StaticResource TimeSpanToStringConverter}}"
-                           Style="{StaticResource DefaultTextElementStyle}"/>
-              </DataTemplate>
-            </DataGridTemplateColumn.CellTemplate>
-            <DataGridTemplateColumn.CellEditingTemplate>
-              <DataTemplate>
-                <ComboBox ItemsSource="{Binding DataContext.QuarterHours, RelativeSource={RelativeSource AncestorType=Window}}"
-                          SelectedItem="{Binding Start, Mode=TwoWay}"
-                          ItemTemplate="{StaticResource TimeItemTemplate}"
-                          MinWidth="120"
-                          Padding="{StaticResource CellEditorPadding}"/>
-              </DataTemplate>
-            </DataGridTemplateColumn.CellEditingTemplate>
-          </DataGridTemplateColumn>
+                              <DataGridTemplateColumn Header="Start Time"
+                                                      SortMemberPath="Start"
+                                                      Width="*"
+                                                      CellStyle="{StaticResource DefaultCellStyle}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                  <DataTemplate>
+                                    <TextBlock Text="{Binding Start, Converter={StaticResource TimeSpanToStringConverter}}"
+                                               Style="{StaticResource DefaultTextElementStyle}"/>
+                                  </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                                <DataGridTemplateColumn.CellEditingTemplate>
+                                  <DataTemplate>
+                                    <ComboBox ItemsSource="{Binding DataContext.QuarterHours, RelativeSource={RelativeSource AncestorType=Window}}"
+                                              SelectedItem="{Binding Start, Mode=TwoWay}"
+                                              ItemTemplate="{StaticResource TimeItemTemplate}"
+                                              MinWidth="120"
+                                              Padding="{StaticResource CellEditorPadding}"/>
+                                  </DataTemplate>
+                                </DataGridTemplateColumn.CellEditingTemplate>
+                              </DataGridTemplateColumn>
 
-          <DataGridTemplateColumn Header="End Time"
-                                  SortMemberPath="End"
-                                  Width="*"
-                                  CellStyle="{StaticResource LastColumnCellStyle}">
-            <DataGridTemplateColumn.CellTemplate>
-              <DataTemplate>
-                <TextBlock Text="{Binding End, Converter={StaticResource TimeSpanToStringConverter}}"
-                           Style="{StaticResource DefaultTextElementStyle}"/>
-              </DataTemplate>
-            </DataGridTemplateColumn.CellTemplate>
-            <DataGridTemplateColumn.CellEditingTemplate>
-              <DataTemplate>
-                <ComboBox ItemsSource="{Binding DataContext.QuarterHours, RelativeSource={RelativeSource AncestorType=Window}}"
-                          SelectedItem="{Binding End, Mode=TwoWay}"
-                          ItemTemplate="{StaticResource TimeItemTemplate}"
-                          MinWidth="120"
-                          Padding="{StaticResource CellEditorPadding}"/>
-              </DataTemplate>
-            </DataGridTemplateColumn.CellEditingTemplate>
-          </DataGridTemplateColumn>
-        </DataGrid.Columns>
-      </DataGrid>
-    </ContentControl>
+                              <DataGridTemplateColumn Header="End Time"
+                                                      SortMemberPath="End"
+                                                      Width="*"
+                                                      CellStyle="{StaticResource LastColumnCellStyle}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                  <DataTemplate>
+                                    <TextBlock Text="{Binding End, Converter={StaticResource TimeSpanToStringConverter}}"
+                                               Style="{StaticResource DefaultTextElementStyle}"/>
+                                  </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                                <DataGridTemplateColumn.CellEditingTemplate>
+                                  <DataTemplate>
+                                    <ComboBox ItemsSource="{Binding DataContext.QuarterHours, RelativeSource={RelativeSource AncestorType=Window}}"
+                                              SelectedItem="{Binding End, Mode=TwoWay}"
+                                              ItemTemplate="{StaticResource TimeItemTemplate}"
+                                              MinWidth="120"
+                                              Padding="{StaticResource CellEditorPadding}"/>
+                                  </DataTemplate>
+                                </DataGridTemplateColumn.CellEditingTemplate>
+                              </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                          </DataGrid>
+                        </ContentControl>
 
-    <StackPanel Grid.Column="1"
-                Orientation="Vertical"
-                Margin="12,0,0,0"
-                VerticalAlignment="Top">
-      <Button Content="Add"
-              Style="{StaticResource RoundedActionButton}"
-              Margin="{StaticResource ActionButtonStackMargin}"
-              Command="{Binding Setup.AddSupportCommand}"/>
-      <Button Content="Remove"
-              Style="{StaticResource RoundedActionButton}"
-              Margin="{StaticResource ActionButtonStackMarginNone}"
-              Command="{Binding Setup.RemoveSupportCommand}"
-              CommandParameter="{Binding SelectedItems, ElementName=SupportsGrid}"/>
-    </StackPanel>
-  </Grid>
-</TabItem>
+                        <StackPanel Grid.Column="1"
+                                    Orientation="Vertical"
+                                    Margin="{StaticResource SidePanelLeftMargin}"
+                                    VerticalAlignment="Top">
+                          <Button Content="Add"
+                                  Style="{StaticResource RoundedActionButton}"
+                                  Margin="{StaticResource ActionButtonStackMargin}"
+                                  Command="{Binding Setup.AddSupportCommand}"/>
+                          <Button Content="Remove"
+                                  Style="{StaticResource RoundedActionButton}"
+                                  Margin="{StaticResource ActionButtonStackMarginNone}"
+                                  Command="{Binding Setup.RemoveSupportCommand}"
+                                  CommandParameter="{Binding SelectedItems, ElementName=SupportsGrid}"/>
+                        </StackPanel>
+                      </Grid>
+                    </TabItem>
 
                     <TabItem Header="Classroom Support Preferences">
-                      <Grid Margin="16">
+                      <Grid Margin="{StaticResource PageSectionMarginLarge}">
                         <Grid.ColumnDefinitions>
                           <ColumnDefinition Width="*" />
                           <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <ContentControl Grid.Column="0" Style="{StaticResource RoundedTableContainer}" Margin="0">
-      <DataGrid x:Name="PrefsGrid"
-                ItemsSource="{Binding Setup.Preferences}"
-                SelectedItem="{Binding Setup.SelectedPreference}"
-                AutoGenerateColumns="False"
-                CanUserAddRows="False"
-                CanUserSortColumns="True"
-                HeadersVisibility="Column"
-                SelectionMode="Extended"
-                SelectionUnit="FullRow"
-                GridLinesVisibility="Horizontal"
-                HorizontalGridLinesBrush="{StaticResource SchedGridLineBrush}"
-                SnapsToDevicePixels="True"
-                BorderThickness="0"
-                Background="Transparent"
-                ColumnHeaderStyle="{StaticResource RoundedDataGridColumnHeader}">
+                        <ContentControl Grid.Column="0"
+                                        Style="{StaticResource RoundedTableContainer}"
+                                        Margin="{StaticResource NoMarginThickness}">
+                          <DataGrid x:Name="PrefsGrid"
+                                    ItemsSource="{Binding Setup.Preferences}"
+                                    SelectedItem="{Binding Setup.SelectedPreference}"
+                                    AutoGenerateColumns="False"
+                                    CanUserAddRows="False"
+                                    CanUserSortColumns="True"
+                                    HeadersVisibility="Column"
+                                    SelectionMode="Extended"
+                                    SelectionUnit="FullRow"
+                                    GridLinesVisibility="Horizontal"
+                                    HorizontalGridLinesBrush="{StaticResource SchedGridLineBrush}"
+                                    SnapsToDevicePixels="True"
+                                    BorderThickness="{StaticResource NoBorderThickness}"
+                                    Background="{StaticResource TransparentBrush}"
+                                    ColumnHeaderStyle="{StaticResource RoundedDataGridColumnHeader}">
 
-        <DataGrid.Resources>
-          <Style TargetType="{x:Type DataGridColumnHeadersPresenter}">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
-            <Setter Property="ClipToBounds" Value="True"/>
-          </Style>
-        </DataGrid.Resources>
+                            <DataGrid.Resources>
+                              <Style TargetType="{x:Type DataGridColumnHeadersPresenter}">
+                                <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
+                                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                                <Setter Property="ClipToBounds" Value="True"/>
+                              </Style>
+                            </DataGrid.Resources>
 
-        <DataGrid.Columns>
-          <DataGridTextColumn Header="Room Number"
-                              Binding="{Binding RoomNumber}"
-                              SortMemberPath="RoomNumber"
-                              Width="*"
-                              CellStyle="{StaticResource DefaultCellStyle}"
-                              ElementStyle="{StaticResource DefaultTextElementStyle}"
-                              EditingElementStyle="{StaticResource DefaultEditingElementStyle}"/>
+                            <DataGrid.Columns>
+                              <DataGridTextColumn Header="Room Number"
+                                                  Binding="{Binding RoomNumber}"
+                                                  SortMemberPath="RoomNumber"
+                                                  Width="*"
+                                                  CellStyle="{StaticResource DefaultCellStyle}"
+                                                  ElementStyle="{StaticResource DefaultTextElementStyle}"
+                                                  EditingElementStyle="{StaticResource DefaultEditingElementStyle}"/>
 
-          <DataGridTemplateColumn Header="Preferred Support Staff"
-                                  SortMemberPath="PreferredSupportName"
-                                  Width="*"
-                                  CellStyle="{StaticResource LastColumnCellStyle}">
-            <DataGridTemplateColumn.CellTemplate>
-              <DataTemplate>
-                <TextBlock Text="{Binding PreferredSupportName}" Margin="{StaticResource CellElementMargin}"/>
-              </DataTemplate>
-            </DataGridTemplateColumn.CellTemplate>
-            <DataGridTemplateColumn.CellEditingTemplate>
-              <DataTemplate>
-                <ComboBox ItemsSource="{Binding DataContext.Setup.Supports, RelativeSource={RelativeSource AncestorType=Window}}"
-                          DisplayMemberPath="Name"
-                          SelectedValuePath="Name"
-                          SelectedValue="{Binding PreferredSupportName}"
-                          Margin="{StaticResource CellElementMargin}"/>
-              </DataTemplate>
-            </DataGridTemplateColumn.CellEditingTemplate>
-          </DataGridTemplateColumn>
-        </DataGrid.Columns>
-      </DataGrid>
-    </ContentControl>
+                              <DataGridTemplateColumn Header="Preferred Support Staff"
+                                                      SortMemberPath="PreferredSupportName"
+                                                      Width="*"
+                                                      CellStyle="{StaticResource LastColumnCellStyle}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                  <DataTemplate>
+                                    <TextBlock Text="{Binding PreferredSupportName}" Margin="{StaticResource CellElementMargin}"/>
+                                  </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                                <DataGridTemplateColumn.CellEditingTemplate>
+                                  <DataTemplate>
+                                    <ComboBox ItemsSource="{Binding DataContext.Setup.Supports, RelativeSource={RelativeSource AncestorType=Window}}"
+                                              DisplayMemberPath="Name"
+                                              SelectedValuePath="Name"
+                                              SelectedValue="{Binding PreferredSupportName}"
+                                              Margin="{StaticResource CellElementMargin}"/>
+                                  </DataTemplate>
+                                </DataGridTemplateColumn.CellEditingTemplate>
+                              </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                          </DataGrid>
+                        </ContentControl>
 
-    <StackPanel Grid.Column="1"
-                Orientation="Vertical"
-                Margin="12,0,0,0"
-                VerticalAlignment="Top">
-      <Button Content="Add"
-              Style="{StaticResource RoundedActionButton}"
-              Margin="{StaticResource ActionButtonStackMargin}"
-              Command="{Binding Setup.AddPreferenceCommand}"/>
-      <Button Content="Remove"
-              Style="{StaticResource RoundedActionButton}"
-              Margin="{StaticResource ActionButtonStackMarginNone}"
-              Command="{Binding Setup.RemovePreferenceCommand}"
-              CommandParameter="{Binding SelectedItems, ElementName=PrefsGrid}"/>
-    </StackPanel>
-  </Grid>
-</TabItem>
+                        <StackPanel Grid.Column="1"
+                                    Orientation="Vertical"
+                                    Margin="{StaticResource SidePanelLeftMargin}"
+                                    VerticalAlignment="Top">
+                          <Button Content="Add"
+                                  Style="{StaticResource RoundedActionButton}"
+                                  Margin="{StaticResource ActionButtonStackMargin}"
+                                  Command="{Binding Setup.AddPreferenceCommand}"/>
+                          <Button Content="Remove"
+                                  Style="{StaticResource RoundedActionButton}"
+                                  Margin="{StaticResource ActionButtonStackMarginNone}"
+                                  Command="{Binding Setup.RemovePreferenceCommand}"
+                                  CommandParameter="{Binding SelectedItems, ElementName=PrefsGrid}"/>
+                        </StackPanel>
+                      </Grid>
+                    </TabItem>
                   </TabControl>
 
-                  <Grid Grid.Column="1" Margin="0,0,0,0">
+                  <Grid Grid.Column="1" Margin="{StaticResource NoMarginThickness}">
                     <Grid.RowDefinitions>
                       <RowDefinition Height="Auto"/>
                       <RowDefinition Height="Auto"/>
                       <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <GroupBox Header="School" Grid.Row="0" Margin="0,0,0,24">
-                      <Grid Margin="12">
+                    <GroupBox Header="School" Grid.Row="0" Margin="{StaticResource GroupBoxBottomMarginLarge}">
+                      <Grid Margin="{StaticResource FormInnerMargin}">
                         <Grid.ColumnDefinitions>
                           <ColumnDefinition Width="Auto"/>
                           <ColumnDefinition Width="*"/>
@@ -430,12 +432,12 @@
                           <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,12,8" VerticalAlignment="Center" Text="School Name"/>
-                        <TextBox   Grid.Row="0" Grid.Column="1" Margin="0,0,0,8"
+                        <TextBlock Grid.Row="0" Grid.Column="0" Margin="{StaticResource FormLabelMargin}" VerticalAlignment="Center" Text="School Name"/>
+                        <TextBox   Grid.Row="0" Grid.Column="1" Margin="{StaticResource FormFieldMarginBottom}"
                                    Text="{Binding Setup.SchoolName, UpdateSourceTrigger=PropertyChanged}"/>
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,0,12,8" VerticalAlignment="Top" Text="Address"/>
-                        <TextBox   Grid.Row="1" Grid.Column="1" Margin="0,0,0,8"
+                        <TextBlock Grid.Row="1" Grid.Column="0" Margin="{StaticResource FormLabelMargin}" VerticalAlignment="Top" Text="Address"/>
+                        <TextBox   Grid.Row="1" Grid.Column="1" Margin="{StaticResource FormFieldMarginBottom}"
                                    Text="{Binding Setup.SchoolAddress, UpdateSourceTrigger=PropertyChanged}"
                                    AcceptsReturn="True"
                                    TextWrapping="Wrap"
@@ -443,7 +445,7 @@
                                    MinLines="4"
                                    MaxLines="4"/>
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,0,12,0" VerticalAlignment="Center" Text="Telephone"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Margin="{StaticResource FormLabelMarginLastRow}" VerticalAlignment="Center" Text="Telephone"/>
                         <TextBox   Grid.Row="2" Grid.Column="1"
                                    Text="{Binding Setup.SchoolPhone, UpdateSourceTrigger=PropertyChanged}"/>
                       </Grid>
@@ -453,17 +455,17 @@
                       <Button Content="Generate Schedule"
                               Style="{StaticResource IconButton}"
                               MinWidth="260" Height="44"
-                              Margin="0,0,0,16"
+                              Margin="{StaticResource PrimaryActionMarginBottomLarge}"
                               Command="{Binding GenerateScheduleCommand}"/>
                       <Button Content="Load Data"
                               Style="{StaticResource IconButton}"
                               MinWidth="260" Height="44"
-                              Margin="0,0,0,16"
+                              Margin="{StaticResource PrimaryActionMarginBottomLarge}"
                               Command="{Binding LoadSetupCommand}"/>
                       <Button Content="Save Data"
                               Style="{StaticResource IconButton}"
                               MinWidth="260" Height="44"
-                              Margin="0,0,0,0"
+                              Margin="{StaticResource NoMarginThickness}"
                               Command="{Binding SaveSetupCommand}"/>
                     </StackPanel>
                   </Grid>
@@ -473,13 +475,13 @@
           </TabItem>
 
           <TabItem Header="Schedule View">
-            <Grid Margin="8">
+            <Grid Margin="{StaticResource PageSectionMarginSmall}">
               <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
               </Grid.RowDefinitions>
 
-              <Grid Grid.Row="0" Margin="0,0,0,6">
+              <Grid Grid.Row="0" Margin="{StaticResource ToolbarRowBottomMarginSmall}">
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="*"/>
                   <ColumnDefinition Width="Auto"/>
@@ -488,9 +490,9 @@
                 <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center">
                   <Button Content="Save…" Style="{StaticResource IconButton}"
                           Command="{Binding SaveScheduleCommand}"
-                          Margin="0,0,0,0"/>
+                          Margin="{StaticResource NoMarginThickness}"/>
                   <TextBlock Text="Each tab shows a support's day. Waiting time counts as working time."
-                             VerticalAlignment="Center" Margin="12,0,0,0"/>
+                             VerticalAlignment="Center" Margin="{StaticResource SidePanelLeftMargin}"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right">
@@ -527,14 +529,14 @@
                           <Grid x:Name="VisualView"
                                 Visibility="{Binding DataContext.Schedule.ShowVisual, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}">
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
-                              <Grid Margin="0" Grid.IsSharedSizeScope="True">
+                              <Grid Margin="{StaticResource NoMarginThickness}" Grid.IsSharedSizeScope="True">
                                 <Grid.RowDefinitions>
                                   <RowDefinition Height="Auto"/>
                                   <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <Border Grid.Row="0" Padding="6" Margin="2,0,2,6"
-                                        BorderBrush="{StaticResource SchedGridLineBrush}" BorderThickness="0,0,0,1" Background="{StaticResource PrimaryBackgroundBrush}">
+                                <Border Grid.Row="0" Padding="{StaticResource HeaderBarPadding}" Margin="{StaticResource HeaderBarMargin}"
+                                        BorderBrush="{StaticResource SchedGridLineBrush}" BorderThickness="{StaticResource GridBottomBorderThickness}" Background="{StaticResource PrimaryBackgroundBrush}">
                                   <Grid>
                                     <Grid.ColumnDefinitions>
                                       <ColumnDefinition SharedSizeGroup="cSupport"/>
@@ -550,24 +552,24 @@
                                       <ColumnDefinition SharedSizeGroup="cStart"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <TextBlock Grid.Column="0" Style="{StaticResource MonospaceText}" FontWeight="Bold" Text="Support"/>
-                                    <TextBlock Grid.Column="1" Style="{StaticResource MonospaceText}" FontWeight="Bold" Text="  |  "/>
-                                    <TextBlock Grid.Column="2" Style="{StaticResource MonospaceText}" FontWeight="Bold" Text="Task"/>
-                                    <TextBlock Grid.Column="3" Style="{StaticResource MonospaceText}" FontWeight="Bold" Text="  |  "/>
-                                    <TextBlock Grid.Column="4" Style="{StaticResource MonospaceText}" FontWeight="Bold" Text="Duration"/>
-                                    <TextBlock Grid.Column="5" Style="{StaticResource MonospaceText}" FontWeight="Bold" Text="  |  "/>
-                                    <TextBlock Grid.Column="6" Style="{StaticResource MonospaceText}" FontWeight="Bold" Text="Teacher"/>
-                                    <TextBlock Grid.Column="7" Style="{StaticResource MonospaceText}" FontWeight="Bold" Text="  |  "/>
-                                    <TextBlock Grid.Column="8" Style="{StaticResource MonospaceText}" FontWeight="Bold" Text="Room"/>
-                                    <TextBlock Grid.Column="9" Style="{StaticResource MonospaceText}" FontWeight="Bold" Text="  |  "/>
-                                    <TextBlock Grid.Column="10" Style="{StaticResource MonospaceText}" FontWeight="Bold" Text="Start"/>
+                                    <TextBlock Grid.Column="0" Style="{StaticResource MonospaceText}" FontWeight="{StaticResource AboutTitleFontWeight}" Text="Support"/>
+                                    <TextBlock Grid.Column="1" Style="{StaticResource MonospaceText}" FontWeight="{StaticResource AboutTitleFontWeight}" Text="  |  "/>
+                                    <TextBlock Grid.Column="2" Style="{StaticResource MonospaceText}" FontWeight="{StaticResource AboutTitleFontWeight}" Text="Task"/>
+                                    <TextBlock Grid.Column="3" Style="{StaticResource MonospaceText}" FontWeight="{StaticResource AboutTitleFontWeight}" Text="  |  "/>
+                                    <TextBlock Grid.Column="4" Style="{StaticResource MonospaceText}" FontWeight="{StaticResource AboutTitleFontWeight}" Text="Duration"/>
+                                    <TextBlock Grid.Column="5" Style="{StaticResource MonospaceText}" FontWeight="{StaticResource AboutTitleFontWeight}" Text="  |  "/>
+                                    <TextBlock Grid.Column="6" Style="{StaticResource MonospaceText}" FontWeight="{StaticResource AboutTitleFontWeight}" Text="Teacher"/>
+                                    <TextBlock Grid.Column="7" Style="{StaticResource MonospaceText}" FontWeight="{StaticResource AboutTitleFontWeight}" Text="  |  "/>
+                                    <TextBlock Grid.Column="8" Style="{StaticResource MonospaceText}" FontWeight="{StaticResource AboutTitleFontWeight}" Text="Room"/>
+                                    <TextBlock Grid.Column="9" Style="{StaticResource MonospaceText}" FontWeight="{StaticResource AboutTitleFontWeight}" Text="  |  "/>
+                                    <TextBlock Grid.Column="10" Style="{StaticResource MonospaceText}" FontWeight="{StaticResource AboutTitleFontWeight}" Text="Start"/>
                                   </Grid>
                                 </Border>
 
                                 <ItemsControl Grid.Row="1" ItemsSource="{Binding Tasks}">
                                   <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                      <Border Margin="2" Padding="6"
+                                      <Border Margin="{StaticResource TaskItemMargin}" Padding="{StaticResource TaskItemPadding}"
                                               Background="{Binding Kind, Converter={StaticResource TaskKindToBrushConverter}}">
                                         <Grid>
                                           <Grid.ColumnDefinitions>
@@ -600,35 +602,35 @@
                                     </DataTemplate>
                                   </ItemsControl.ItemTemplate>
                                 </ItemsControl>
-                            </Grid>
-                          </ScrollViewer>
-                        </Grid>
+                              </Grid>
+                            </ScrollViewer>
+                          </Grid>
 
-                        <Grid x:Name="GridView"
-                              Visibility="{Binding DataContext.Schedule.ShowGrid, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}">
-                          <Border Style="{StaticResource RoundedTableBorder}" Margin="0">
-                            <DataGrid ItemsSource="{Binding Tasks}"
-                                      AutoGenerateColumns="False"
-                                      CanUserAddRows="False"
-                                      CanUserDeleteRows="False"
-                                      IsReadOnly="True"
-                                      HeadersVisibility="Column"
-                                      FontFamily="Consolas"
-                                      GridLinesVisibility="All"
-                                      HorizontalGridLinesBrush="{StaticResource SchedGridLineBrush}"
-                                      VerticalGridLinesBrush="{StaticResource SchedGridLineBrush}"
-                                      ColumnHeaderStyle="{StaticResource SchedGridHeaderStyleDefault}"
-                                      CellStyle="{StaticResource SchedGridCellStyle}"
-                                      BorderThickness="0"
-                                      Background="Transparent"
-                                      SnapsToDevicePixels="True"
-                                      Margin="0">
+                          <Grid x:Name="GridView"
+                                Visibility="{Binding DataContext.Schedule.ShowGrid, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}">
+                            <Border Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginThickness}">
+                              <DataGrid ItemsSource="{Binding Tasks}"
+                                        AutoGenerateColumns="False"
+                                        CanUserAddRows="False"
+                                        CanUserDeleteRows="False"
+                                        IsReadOnly="True"
+                                        HeadersVisibility="Column"
+                                        FontFamily="{StaticResource MonospaceFontFamily}"
+                                        GridLinesVisibility="All"
+                                        HorizontalGridLinesBrush="{StaticResource SchedGridLineBrush}"
+                                        VerticalGridLinesBrush="{StaticResource SchedGridLineBrush}"
+                                        ColumnHeaderStyle="{StaticResource SchedGridHeaderStyleDefault}"
+                                        CellStyle="{StaticResource SchedGridCellStyle}"
+                                        BorderThickness="{StaticResource NoBorderThickness}"
+                                        Background="{StaticResource TransparentBrush}"
+                                        SnapsToDevicePixels="True"
+                                        Margin="{StaticResource NoMarginThickness}">
 
                                 <DataGrid.RowStyle>
                                   <Style TargetType="DataGridRow">
                                     <Setter Property="Background" Value="{Binding Kind, Converter={StaticResource TaskKindToBrushConverter}}"/>
                                     <Setter Property="SnapsToDevicePixels" Value="True"/>
-                                  </Style>
+                                   </Style>
                                 </DataGrid.RowStyle>
 
                                 <DataGrid.Columns>
@@ -678,21 +680,21 @@
                 </TabItem>
 
                 <TabItem Header="By Teacher">
-                  <Grid Margin="0">
+                  <Grid Margin="{StaticResource NoMarginThickness}">
                     <Grid.RowDefinitions>
                       <RowDefinition Height="Auto"/>
                       <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,6">
-                      <TextBlock Text="Teacher:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="{StaticResource ToolbarRowBottomMarginSmall}">
+                      <TextBlock Text="Teacher:" VerticalAlignment="Center" Margin="{StaticResource InlineRightMarginSmall}"/>
                       <ComboBox Width="240"
                                 ItemsSource="{Binding Setup.Teachers}"
                                 DisplayMemberPath="Name"
                                 SelectedItem="{Binding Schedule.SelectedTeacher}"/>
                     </StackPanel>
 
-                    <Border Grid.Row="1" Style="{StaticResource RoundedTableBorder}" Margin="0">
+                    <Border Grid.Row="1" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginThickness}">
                       <DataGrid ItemsSource="{Binding Schedule.SelectedTeacherRows}"
                                 AutoGenerateColumns="False"
                                 CanUserAddRows="False"
@@ -704,77 +706,75 @@
                                 VerticalGridLinesBrush="{StaticResource SchedGridLineBrush}"
                                 ColumnHeaderStyle="{StaticResource SchedGridHeaderStyleDefault}"
                                 CellStyle="{StaticResource SchedGridCellStyle}"
-                                BorderThickness="0"
-                                Background="Transparent"
+                                BorderThickness="{StaticResource NoBorderThickness}"
+                                Background="{StaticResource TransparentBrush}"
                                 SnapsToDevicePixels="True"
-                                Margin="0">
-                    <DataGrid.RowStyle>
-                      <Style TargetType="DataGridRow">
-                        <Setter Property="Background" Value="{Binding Converter={StaticResource TeacherRowToBrushConverter}}"/>
-                        <Setter Property="SnapsToDevicePixels" Value="True"/>
-                      </Style>
-                    </DataGrid.RowStyle>
-                    <DataGrid.Columns>
-                      <DataGridTextColumn Header="Name"         Binding="{Binding TeacherName}" Width="2*">
-                        <DataGridTextColumn.ElementStyle>
-                          <StaticResource ResourceKey="SchedGridCellText"/>
-                        </DataGridTextColumn.ElementStyle>
-                      </DataGridTextColumn>
-                      <DataGridTextColumn Header="Support Staff" Binding="{Binding SupportStaff}" Width="2*">
-                        <DataGridTextColumn.ElementStyle>
-                          <StaticResource ResourceKey="SchedGridCellText"/>
-                        </DataGridTextColumn.ElementStyle>
-                      </DataGridTextColumn>
-                      <DataGridTextColumn Header="Activity"     Binding="{Binding Activity}" Width="*">
-                        <DataGridTextColumn.ElementStyle>
-                          <StaticResource ResourceKey="SchedGridCellText"/>
-                        </DataGridTextColumn.ElementStyle>
-                      </DataGridTextColumn>
-                      <DataGridTextColumn Header="Duration"     Binding="{Binding Duration}" Width="*">
-                        <DataGridTextColumn.ElementStyle>
-                          <StaticResource ResourceKey="SchedGridCellText"/>
-                        </DataGridTextColumn.ElementStyle>
-                      </DataGridTextColumn>
-                      <DataGridTextColumn Header="Start"        Binding="{Binding Start}" Width="*">
-                        <DataGridTextColumn.ElementStyle>
-                          <StaticResource ResourceKey="SchedGridCellText"/>
-                        </DataGridTextColumn.ElementStyle>
-                      </DataGridTextColumn>
-                    </DataGrid.Columns>
-                  </DataGrid>
-                </Border>
-              </Grid>
-            </TabItem>
-          </TabControl>
-        </Grid>
-      </TabItem>
+                                Margin="{StaticResource NoMarginThickness}">
+                        <DataGrid.RowStyle>
+                          <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="{Binding Converter={StaticResource TeacherRowToBrushConverter}}"/>
+                            <Setter Property="SnapsToDevicePixels" Value="True"/>
+                          </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.Columns>
+                          <DataGridTextColumn Header="Name"         Binding="{Binding TeacherName}" Width="2*">
+                            <DataGridTextColumn.ElementStyle>
+                              <StaticResource ResourceKey="SchedGridCellText"/>
+                            </DataGridTextColumn.ElementStyle>
+                          </DataGridTextColumn>
+                          <DataGridTextColumn Header="Support Staff" Binding="{Binding SupportStaff}" Width="2*">
+                            <DataGridTextColumn.ElementStyle>
+                              <StaticResource ResourceKey="SchedGridCellText"/>
+                            </DataGridTextColumn.ElementStyle>
+                          </DataGridTextColumn>
+                          <DataGridTextColumn Header="Activity"     Binding="{Binding Activity}" Width="*">
+                            <DataGridTextColumn.ElementStyle>
+                              <StaticResource ResourceKey="SchedGridCellText"/>
+                            </DataGridTextColumn.ElementStyle>
+                          </DataGridTextColumn>
+                          <DataGridTextColumn Header="Duration"     Binding="{Binding Duration}" Width="*">
+                            <DataGridTextColumn.ElementStyle>
+                              <StaticResource ResourceKey="SchedGridCellText"/>
+                            </DataGridTextColumn.ElementStyle>
+                          </DataGridTextColumn>
+                          <DataGridTextColumn Header="Start"        Binding="{Binding Start}" Width="*">
+                            <DataGridTextColumn.ElementStyle>
+                              <StaticResource ResourceKey="SchedGridCellText"/>
+                            </DataGridTextColumn.ElementStyle>
+                          </DataGridTextColumn>
+                        </DataGrid.Columns>
+                      </DataGrid>
+                    </Border>
+                  </Grid>
+                </TabItem>
+              </TabControl>
+            </Grid>
+          </TabItem>
 
-      <TabItem Header="Print Preview">
-        <Grid Margin="8">
-          <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-          </Grid.RowDefinitions>
+          <TabItem Header="Print Preview">
+            <Grid Margin="{StaticResource PageSectionMarginSmall}">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+              </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,6">
-            <ComboBox Width="200"
-                      ItemsSource="{Binding Schedule.SupportTabs}"
-                      DisplayMemberPath="SupportName"
-                      SelectedItem="{Binding PrintPreview.SelectedTab}" />
-            <Button Content="Print All" Style="{StaticResource IconButton}" Command="{Binding PrintPreview.PrintAllCommand}" Margin="{StaticResource ToolbarButtonMarginLarge}"/>
-            <Button Content="Print Selected" Style="{StaticResource IconButton}" Command="{Binding PrintPreview.PrintSelectedCommand}" Margin="{StaticResource ToolbarButtonMarginSmall}"
-                    IsEnabled="{Binding PrintPreview.SelectedTab, Converter={StaticResource NotNullToTrue}}"/>
-            <Button Content="Export PDF" Style="{StaticResource IconButton}" Command="{Binding PrintPreview.ExportPdfCommand}" Margin="{StaticResource ToolbarButtonMarginSmall}"
-                    IsEnabled="{Binding PrintPreview.SelectedTab, Converter={StaticResource NotNullToTrue}}"/>
-          </StackPanel>
+              <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="{StaticResource ToolbarRowBottomMarginSmall}">
+                <ComboBox Width="200"
+                          ItemsSource="{Binding Schedule.SupportTabs}"
+                          DisplayMemberPath="SupportName"
+                          SelectedItem="{Binding PrintPreview.SelectedTab}" />
+                <Button Content="Print All" Style="{StaticResource IconButton}" Command="{Binding PrintPreview.PrintAllCommand}" Margin="{StaticResource ToolbarButtonMarginLarge}"/>
+                <Button Content="Print Selected" Style="{StaticResource IconButton}" Command="{Binding PrintPreview.PrintSelectedCommand}" Margin="{StaticResource ToolbarButtonMarginSmall}"
+                        IsEnabled="{Binding PrintPreview.SelectedTab, Converter={StaticResource NotNullToTrue}}"/>
+                <Button Content="Export PDF" Style="{StaticResource IconButton}" Command="{Binding PrintPreview.ExportPdfCommand}" Margin="{StaticResource ToolbarButtonMarginSmall}"
+                        IsEnabled="{Binding PrintPreview.SelectedTab, Converter={StaticResource NotNullToTrue}}"/>
+              </StackPanel>
 
-          <FlowDocumentScrollViewer Grid.Row="1" Document="{Binding PrintPreview.Document}" />
-        </Grid>
-      </TabItem>
-    </TabControl>
+              <FlowDocumentScrollViewer Grid.Row="1" Document="{Binding PrintPreview.Document}" />
+            </Grid>
+          </TabItem>
+        </TabControl>
       </DockPanel>
     </Border>
-
-    <!-- No other content below; main TabControl has been moved into the top Border per Option A -->
   </DockPanel>
 </Window>
