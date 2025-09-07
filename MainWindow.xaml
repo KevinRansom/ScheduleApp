@@ -32,9 +32,6 @@
     <DataTemplate x:Key="TimeItemTemplate">
       <TextBlock Text="{Binding Converter={StaticResource TimeSpanToStringConverter}}" />
     </DataTemplate>
-
-    <!-- Use centralized DataGrid element styles from Appearance.xaml -->
-    <Style x:Key="PillStyle" TargetType="Border" BasedOn="{StaticResource PillStyle}"/>
   </Window.Resources>
 
   <DockPanel LastChildFill="True">
@@ -74,13 +71,13 @@
                     Margin="{StaticResource PopupMargin}"
                     Effect="{StaticResource PopupShadowEffect}">
               <StackPanel Orientation="Vertical" MinWidth="200">
-                <Button Content="Schedule" Style="{StaticResource IconButton}" Margin="0,0,0,6" Click="MenuSchedule_Click"/>
-                <Button Content="Preview" Style="{StaticResource IconButton}" Margin="0,0,0,6" Click="MenuPreview_Click"/>
-                <Button Content="Teachers" Style="{StaticResource IconButton}" Margin="0,0,0,6" Click="MenuTeachers_Click"/>
-                <Button Content="School" Style="{StaticResource IconButton}" Margin="0,0,0,6" Click="MenuSchool_Click"/>
-                <Button Content="Preferences" Style="{StaticResource IconButton}" Margin="0,0,0,6" Click="MenuPreferences_Click"/>
-                <Button Content="Algorithm" Style="{StaticResource IconButton}" Margin="0,0,0,6" Click="MenuAlgorithm_Click"/>
-                <Separator Margin="0,6,0,6"/>
+                <Button Content="Schedule" Style="{StaticResource IconButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuSchedule_Click"/>
+                <Button Content="Preview" Style="{StaticResource IconButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuPreview_Click"/>
+                <Button Content="Teachers" Style="{StaticResource IconButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuTeachers_Click"/>
+                <Button Content="School" Style="{StaticResource IconButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuSchool_Click"/>
+                <Button Content="Preferences" Style="{StaticResource IconButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuPreferences_Click"/>
+                <Button Content="Algorithm" Style="{StaticResource IconButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuAlgorithm_Click"/>
+                <Separator Margin="{StaticResource PopupSeparatorMargin}"/>
                 <Button Content="About" Style="{StaticResource IconButton}" Click="AboutMenu_Click"/>
               </StackPanel>
             </Border>
@@ -209,10 +206,11 @@
                                     VerticalAlignment="Top">
                           <Button Content="Add"
                                   Style="{StaticResource RoundedActionButton}"
-                                  Margin="0,0,0,12"
+                                  Margin="{StaticResource ActionButtonStackMargin}"
                                   Command="{Binding Setup.AddTeacherCommand}"/>
                           <Button Content="Remove"
                                   Style="{StaticResource RoundedActionButton}"
+                                  Margin="{StaticResource ActionButtonStackMarginNone}"
                                   Command="{Binding Setup.RemoveTeacherCommand}"
                                   CommandParameter="{Binding SelectedItems, ElementName=TeachersGrid}"/>
                         </StackPanel>
@@ -320,10 +318,11 @@
                 VerticalAlignment="Top">
       <Button Content="Add"
               Style="{StaticResource RoundedActionButton}"
-              Margin="0,0,0,12"
+              Margin="{StaticResource ActionButtonStackMargin}"
               Command="{Binding Setup.AddSupportCommand}"/>
       <Button Content="Remove"
               Style="{StaticResource RoundedActionButton}"
+              Margin="{StaticResource ActionButtonStackMarginNone}"
               Command="{Binding Setup.RemoveSupportCommand}"
               CommandParameter="{Binding SelectedItems, ElementName=SupportsGrid}"/>
     </StackPanel>
@@ -400,10 +399,11 @@
                 VerticalAlignment="Top">
       <Button Content="Add"
               Style="{StaticResource RoundedActionButton}"
-              Margin="0,0,0,12"
+              Margin="{StaticResource ActionButtonStackMargin}"
               Command="{Binding Setup.AddPreferenceCommand}"/>
       <Button Content="Remove"
               Style="{StaticResource RoundedActionButton}"
+              Margin="{StaticResource ActionButtonStackMarginNone}"
               Command="{Binding Setup.RemovePreferenceCommand}"
               CommandParameter="{Binding SelectedItems, ElementName=PrefsGrid}"/>
     </StackPanel>
@@ -761,10 +761,10 @@
                       ItemsSource="{Binding Schedule.SupportTabs}"
                       DisplayMemberPath="SupportName"
                       SelectedItem="{Binding PrintPreview.SelectedTab}" />
-            <Button Content="Print All" Style="{StaticResource IconButton}" Command="{Binding PrintPreview.PrintAllCommand}" Margin="8,0,0,0"/>
-            <Button Content="Print Selected" Style="{StaticResource IconButton}" Command="{Binding PrintPreview.PrintSelectedCommand}" Margin="4,0,0,0"
+            <Button Content="Print All" Style="{StaticResource IconButton}" Command="{Binding PrintPreview.PrintAllCommand}" Margin="{StaticResource ToolbarButtonMarginLarge}"/>
+            <Button Content="Print Selected" Style="{StaticResource IconButton}" Command="{Binding PrintPreview.PrintSelectedCommand}" Margin="{StaticResource ToolbarButtonMarginSmall}"
                     IsEnabled="{Binding PrintPreview.SelectedTab, Converter={StaticResource NotNullToTrue}}"/>
-            <Button Content="Export PDF" Style="{StaticResource IconButton}" Command="{Binding PrintPreview.ExportPdfCommand}" Margin="4,0,0,0"
+            <Button Content="Export PDF" Style="{StaticResource IconButton}" Command="{Binding PrintPreview.ExportPdfCommand}" Margin="{StaticResource ToolbarButtonMarginSmall}"
                     IsEnabled="{Binding PrintPreview.SelectedTab, Converter={StaticResource NotNullToTrue}}"/>
           </StackPanel>
 

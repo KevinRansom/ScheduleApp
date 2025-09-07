@@ -32,7 +32,7 @@
         </List>
 
         <Paragraph FontWeight="Bold">How to Use</Paragraph>
-        <List MarkerStyle="Decimal" Margin="0,0,0,8">
+        <List MarkerStyle="Decimal" Margin="{StaticResource OrderedListMarginSmall}">
           <ListItem><Paragraph>Enter Staff Availability</Paragraph></ListItem>
           <ListItem><Paragraph>Set Daily Parameters (periods, breaks, coverage)</Paragraph></ListItem>
           <ListItem><Paragraph>Generate Schedule</Paragraph></ListItem>

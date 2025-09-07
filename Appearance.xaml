@@ -26,6 +26,7 @@
     <SolidColorBrush x:Key="PrimaryBorderBrush" Color="#FFDDDDDD"/>
     <SolidColorBrush x:Key="AccentBrush" Color="#FF007ACC"/>
     <SolidColorBrush x:Key="SortGlyphBrush" Color="#FF444444"/>
+    <SolidColorBrush x:Key="TransparentBrush" Color="Transparent"/>
 
     <!-- Layout metrics -->
     <CornerRadius x:Key="GridCornerRadius">4</CornerRadius>
@@ -34,8 +35,9 @@
     <CornerRadius x:Key="ButtonCornerRadius">4</CornerRadius>
     <Thickness x:Key="ButtonPadding">12,6</Thickness>
     <Thickness x:Key="ButtonMargin">0</Thickness>
+    <Thickness x:Key="ButtonBorderThickness">1</Thickness>
 
-    <!-- New keys from audit -->
+    <!-- New keys from audit / centralization -->
     <CornerRadius x:Key="TopBarCornerRadius">12</CornerRadius>
     <Thickness x:Key="TopBarPadding">6</Thickness>
     <Thickness x:Key="TopBarMargin">8</Thickness>
@@ -43,12 +45,18 @@
     <CornerRadius x:Key="PopupCornerRadius">8</CornerRadius>
     <Thickness x:Key="PopupPadding">8</Thickness>
     <Thickness x:Key="PopupMargin">0,6,0,0</Thickness>
+    <Thickness x:Key="PopupMenuItemMargin">0,0,0,6</Thickness>
+    <Thickness x:Key="PopupSeparatorMargin">0,6,0,6</Thickness>
 
     <Thickness x:Key="HamburgerMargin">2,0,8,0</Thickness>
+    <Thickness x:Key="HamburgerStripeTopMargin">0,2,0,0</Thickness>
+    <Thickness x:Key="HamburgerStripeBottomMargin">0,0,0,2</Thickness>
 
     <sys:Double x:Key="PageTitleFontSize">26</sys:Double>
     <sys:Double x:Key="BodyFontSize">13</sys:Double>
     <sys:String x:Key="BodyFontFamily">Segoe UI</sys:String>
+    <!-- Centralized monospace font family -->
+    <sys:String x:Key="MonospaceFontFamily">Consolas</sys:String>
     <sys:Double x:Key="PageContentWidth">820</sys:Double>
 
     <CornerRadius x:Key="WindowCornerRadius">8</CornerRadius>
@@ -60,11 +68,54 @@
 
     <Thickness x:Key="ParagraphMarginSmall">0,12,0,6</Thickness>
     <Thickness x:Key="ParagraphMarginLarge">0,0,0,12</Thickness>
+    <Thickness x:Key="OrderedListMarginSmall">0,0,0,8</Thickness>
 
     <Thickness x:Key="CellEditorPadding">8,0,0,0</Thickness>
     <Thickness x:Key="CellElementMargin">7,0,0,0</Thickness>
 
-    <CornerRadius x:Key="ActionButtonCornerRadius">8</CornerRadius>
+    <!-- Button stack spacing (right-pane action buttons) -->
+    <Thickness x:Key="ActionButtonStackMargin">0,0,0,12</Thickness>
+    <Thickness x:Key="ActionButtonStackMarginNone">0</Thickness>
+
+    <!-- Toolbar button spacing (print preview) -->
+    <Thickness x:Key="ToolbarButtonMarginLarge">8,0,0,0</Thickness>
+    <Thickness x:Key="ToolbarButtonMarginSmall">4,0,0,0</Thickness>
+
+    <!-- Page and form layout (new centralizations) -->
+    <Thickness x:Key="PageSectionMarginLarge">16</Thickness>
+    <Thickness x:Key="PageSectionMarginSmall">8</Thickness>
+    <Thickness x:Key="TitleMarginBottomLarge">0,0,0,12</Thickness>
+    <Thickness x:Key="RightColumnGapLarge">0,0,20,0</Thickness>
+    <Thickness x:Key="SidePanelLeftMargin">12,0,0,0</Thickness>
+    <Thickness x:Key="GroupBoxBottomMarginLarge">0,0,0,24</Thickness>
+    <Thickness x:Key="FormInnerMargin">12</Thickness>
+    <Thickness x:Key="FormLabelMargin">0,0,12,8</Thickness>
+    <Thickness x:Key="FormLabelMarginLastRow">0,0,12,0</Thickness>
+    <Thickness x:Key="FormFieldMarginBottom">0,0,0,8</Thickness>
+    <Thickness x:Key="PrimaryActionMarginBottomLarge">0,0,0,16</Thickness>
+    <Thickness x:Key="ToolbarRowBottomMarginSmall">0,0,0,6</Thickness>
+    <Thickness x:Key="InlineRightMarginSmall">0,0,8,0</Thickness>
+    <Thickness x:Key="HeaderBarPadding">6</Thickness>
+    <Thickness x:Key="HeaderBarMargin">2,0,2,6</Thickness>
+    <Thickness x:Key="TaskItemMargin">2</Thickness>
+    <Thickness x:Key="TaskItemPadding">6</Thickness>
+
+    <!-- DataGrid header/cell shared metrics -->
+    <Thickness x:Key="DataGridColumnHeaderPadding">8,2,8,2</Thickness>
+    <Thickness x:Key="GridHeaderPadding">4,2</Thickness>
+    <Thickness x:Key="GridCellPadding">4,2</Thickness>
+    <Thickness x:Key="CellTextPadding">8,0,8,0</Thickness>
+    <Thickness x:Key="HeaderBorderThicknessDefault">0,0,1,1</Thickness>
+    <Thickness x:Key="CellBorderThicknessDefault">0,0,1,1</Thickness>
+    <Thickness x:Key="GridCellRightBorderThickness">0,0,1,0</Thickness>
+    <Thickness x:Key="NoBorderThickness">0</Thickness>
+    <Thickness x:Key="NoPaddingThickness">0</Thickness>
+    <Thickness x:Key="NoMarginThickness">0</Thickness>
+
+    <!-- Pill metrics -->
+    <CornerRadius x:Key="PillCornerRadius">4</CornerRadius>
+    <Thickness x:Key="PillPadding">6,2</Thickness>
+    <Thickness x:Key="PillMargin">2</Thickness>
 
     <!-- Effects -->
     <DropShadowEffect x:Key="PopupShadowEffect"
@@ -91,7 +142,7 @@
         <Setter Property="Margin" Value="{StaticResource ButtonMargin}"/>
         <Setter Property="Background" Value="{StaticResource PrimaryBackgroundBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
-        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderThickness" Value="{StaticResource ButtonBorderThickness}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -115,7 +166,7 @@
     <!-- RoundedActionButton: based on IconButton, overrides corner radius and colors -->
     <Style x:Key="RoundedActionButton" TargetType="Button" BasedOn="{StaticResource IconButton}">
         <Style.Resources>
-            <!-- override the ButtonCornerRadius for this style -->
+            <!-- override the ButtonCornerRadius for this style via centralized key -->
             <CornerRadius x:Key="ButtonCornerRadius">20</CornerRadius>
         </Style.Resources>
         <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
@@ -126,26 +177,26 @@
     <Style x:Key="SchedGridHeaderStyle" TargetType="DataGridColumnHeader">
         <Setter Property="Background" Value="{StaticResource GridHeaderGradient}"/>
         <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
-        <Setter Property="BorderThickness" Value="0,0,1,1"/>
-        <Setter Property="Padding" Value="4,2"/>
+        <Setter Property="BorderThickness" Value="{StaticResource HeaderBorderThicknessDefault}"/>
+        <Setter Property="Padding" Value="{StaticResource GridHeaderPadding}"/>
     </Style>
 
     <!-- SchedGridCellStyle for DataGridCell -->
     <Style x:Key="SchedGridCellStyle" TargetType="DataGridCell">
         <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
-        <Setter Property="BorderThickness" Value="0,0,1,1"/>
-        <Setter Property="Padding" Value="4,2"/>
+        <Setter Property="BorderThickness" Value="{StaticResource CellBorderThicknessDefault}"/>
+        <Setter Property="Padding" Value="{StaticResource GridCellPadding}"/>
     </Style>
 
     <!-- Shared DataGrid element styles used by MainWindow.xaml -->
     <Style x:Key="DefaultCellStyle" TargetType="DataGridCell">
       <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
-      <Setter Property="BorderThickness" Value="0,0,1,0"/>
+      <Setter Property="BorderThickness" Value="{StaticResource GridCellRightBorderThickness}"/>
       <Setter Property="SnapsToDevicePixels" Value="True"/>
     </Style>
 
     <Style x:Key="LastColumnCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource DefaultCellStyle}">
-      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="BorderThickness" Value="{StaticResource NoBorderThickness}"/>
     </Style>
 
     <Style x:Key="DefaultTextElementStyle" TargetType="TextBlock">
@@ -167,17 +218,33 @@
       <Setter Property="Margin" Value="{StaticResource HamburgerMargin}"/>
       <Setter Property="ToolTip" Value="Toggle menu"/>
       <Setter Property="Focusable" Value="False"/>
-      <Setter Property="Background" Value="Transparent"/>
-      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
+      <Setter Property="BorderThickness" Value="{StaticResource NoBorderThickness}"/>
       <Setter Property="Cursor" Value="Hand"/>
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="ToggleButton">
-            <Grid Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center">
-              <Rectangle Height="2" Fill="{DynamicResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Top" Margin="0,2,0,0"/>
-              <Rectangle Height="2" Fill="{DynamicResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Center"/>
-              <Rectangle Height="2" Fill="{DynamicResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
-            </Grid>
+            <!-- Full-size hit target -->
+            <Border x:Name="HitTarget" Background="{TemplateBinding Background}">
+              <Grid Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Rectangle Height="2" Fill="{DynamicResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Top" Margin="{StaticResource HamburgerStripeTopMargin}"/>
+                <Rectangle Height="2" Fill="{DynamicResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Center"/>
+                <Rectangle Height="2" Fill="{DynamicResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Bottom" Margin="{StaticResource HamburgerStripeBottomMargin}"/>
+              </Grid>
+            </Border>
+
+            <!-- Optional hover/pressed feedback -->
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="HitTarget" Property="Opacity" Value="0.9"/>
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="HitTarget" Property="Opacity" Value="0.8"/>
+              </Trigger>
+              <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="HitTarget" Property="Opacity" Value="0.9"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
           </ControlTemplate>
         </Setter.Value>
       </Setter>
@@ -186,7 +253,7 @@
     <!-- RoundedDataGridColumnHeader (Style) -->
     <Style x:Key="RoundedDataGridColumnHeader" TargetType="DataGridColumnHeader">
       <Setter Property="Background" Value="{StaticResource GridHeaderSolid}"/>
-      <Setter Property="Padding" Value="8,2,8,2"/>
+      <Setter Property="Padding" Value="{StaticResource DataGridColumnHeaderPadding}"/>
       <Setter Property="HorizontalContentAlignment" Value="Left"/>
       <Setter Property="VerticalContentAlignment" Value="Center"/>
       <Setter Property="SnapsToDevicePixels" Value="True"/>
@@ -224,7 +291,6 @@
                                   HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
 
-                <!-- simple triangular glyph (points up). shown when header.SortDirection is set -->
                 <Path x:Name="SortGlyph"
                       Grid.Column="1"
                       Width="10"
@@ -234,12 +300,10 @@
                       Fill="{StaticResource SortGlyphBrush}"
                       Visibility="Collapsed"
                       Data="M 0 6 L 5 0 L 10 6 Z" RenderTransformOrigin="0.5,0.5"/>
-
               </Grid>
             </Grid>
 
             <ControlTemplate.Triggers>
-              <!-- Show glyph when Sorted ascending or descending -->
               <Trigger Property="SortDirection" Value="{x:Null}">
                 <Setter TargetName="SortGlyph" Property="Visibility" Value="Collapsed"/>
               </Trigger>
@@ -249,7 +313,6 @@
               </Trigger>
               <Trigger Property="SortDirection" Value="Descending">
                 <Setter TargetName="SortGlyph" Property="Visibility" Value="Visible"/>
-                <!-- flip the triangle to point down -->
                 <Setter TargetName="SortGlyph" Property="RenderTransform">
                   <Setter.Value>
                     <ScaleTransform ScaleY="-1"/>
@@ -264,9 +327,9 @@
 
     <!-- PillStyle (Style for Border used in legends) -->
     <Style x:Key="PillStyle" TargetType="Border">
-      <Setter Property="CornerRadius" Value="4"/>
-      <Setter Property="Padding" Value="6,2"/>
-      <Setter Property="Margin" Value="2"/>
+      <Setter Property="CornerRadius" Value="{StaticResource PillCornerRadius}"/>
+      <Setter Property="Padding" Value="{StaticResource PillPadding}"/>
+      <Setter Property="Margin" Value="{StaticResource PillMargin}"/>
     </Style>
 
     <!-- RoundedTableBorder (Style for Border) -->
@@ -276,7 +339,7 @@
       <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
       <Setter Property="BorderThickness" Value="{StaticResource GridOuterBorderThickness}"/>
       <Setter Property="SnapsToDevicePixels" Value="True"/>
-      <Setter Property="Padding" Value="0"/>
+      <Setter Property="Padding" Value="{StaticResource NoPaddingThickness}"/>
       <Setter Property="ClipToBounds" Value="True"/>
     </Style>
 
@@ -290,16 +353,12 @@
         <Setter.Value>
           <ControlTemplate TargetType="ContentControl">
             <Grid SnapsToDevicePixels="True">
-              <!-- Outer border (drawn full size, visible stroke) -->
               <Border x:Name="OuterBorder"
                       Background="{TemplateBinding Background}"
                       BorderBrush="{TemplateBinding BorderBrush}"
                       BorderThickness="{TemplateBinding BorderThickness}"
                       CornerRadius="{StaticResource GridCornerRadius}"
                       SnapsToDevicePixels="True"/>
-
-              <!-- Inner content host - NO margin here (avoid double inset).
-                   The inner Grid gets the rounded clip so children cannot draw into the stroke area. -->
               <Grid>
                 <Grid.Clip>
                   <MultiBinding Converter="{StaticResource RoundedClipConverter}">
@@ -345,7 +404,7 @@
     <Style x:Key="SchedGridHeaderStyleDefault" TargetType="DataGridColumnHeader">
       <Setter Property="HorizontalContentAlignment" Value="Left"/>
       <Setter Property="VerticalContentAlignment" Value="Center"/>
-      <Setter Property="Padding" Value="8,2,8,2"/>
+      <Setter Property="Padding" Value="{StaticResource DataGridColumnHeaderPadding}"/>
       <Setter Property="FontWeight" Value="Normal"/>
       <Setter Property="SnapsToDevicePixels" Value="True"/>
       <Setter Property="Template" Value="{StaticResource SchedHeaderTemplate}"/>
@@ -355,10 +414,8 @@
     <!-- SchedGridCellText (Style for TextBlock in cells) -->
     <Style x:Key="SchedGridCellText" TargetType="TextBlock">
       <Setter Property="TextAlignment" Value="Left"/>
-      <Setter Property="Padding" Value="8,0,8,0"/>
+      <Setter Property="Padding" Value="{StaticResource CellTextPadding}"/>
       <Setter Property="FontFamily" Value="Consolas"/>
       <Setter Property="SnapsToDevicePixels" Value="True"/>
     </Style>
-    <!-- END: Added resources -->
-
 </ResourceDictionary>
