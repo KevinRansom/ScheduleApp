@@ -224,11 +224,15 @@
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="ToggleButton">
-            <Grid Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center">
-              <Rectangle Height="2" Fill="{DynamicResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Top" Margin="{StaticResource HamburgerStripeTopMargin}"/>
-              <Rectangle Height="2" Fill="{DynamicResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Center"/>
-              <Rectangle Height="2" Fill="{DynamicResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Bottom" Margin="{StaticResource HamburgerStripeBottomMargin}"/>
-            </Grid>
+            <!-- Root fills the ToggleButton and captures hit-testing via Transparent background -->
+            <Border Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+              <!-- Icon remains 18x18, centered -->
+              <Grid Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center" SnapsToDevicePixels="True">
+                <Rectangle Height="2" Fill="{DynamicResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Top" Margin="{StaticResource HamburgerStripeTopMargin}"/>
+                <Rectangle Height="2" Fill="{DynamicResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Center"/>
+                <Rectangle Height="2" Fill="{DynamicResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Bottom" Margin="{StaticResource HamburgerStripeBottomMargin}"/>
+              </Grid>
+            </Border>
           </ControlTemplate>
         </Setter.Value>
       </Setter>
