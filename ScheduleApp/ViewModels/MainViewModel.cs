@@ -59,6 +59,9 @@ namespace ScheduleApp.ViewModels
             LoadSetupCommand = new RelayCommand(LoadSetupDefault);
 
             LoadSetupDefault();
+
+            // Run schedule generation on app start: after loading setup and before any save action.
+            GenerateSchedule();
         }
 
         private void GenerateSchedule()

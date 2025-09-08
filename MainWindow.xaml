@@ -304,7 +304,7 @@
                             </DataGrid.InputBindings>
 
                             <DataGrid.Columns>
-                              <DataGridTextColumn Header="Room Number"
+                              <DataGridTextColumn Header="Supporter Staff"
                                                   Binding="{Binding Name}"
                                                   SortMemberPath="Name"
                                                   Width="*"
