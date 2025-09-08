@@ -22,6 +22,12 @@
     </LinearGradientBrush>
     <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#FFF5F5F5"/>
     <SolidColorBrush x:Key="MenuBorderBrush" Color="#FFCCCCCC"/>
+
+    <!-- Title bar themed brushes (theme name: title bar) -->
+    <SolidColorBrush x:Key="TitleBarBackgroundBrush" Color="#FF000080"/> <!-- navy -->
+    <SolidColorBrush x:Key="TitleBarBorderBrush" Color="#FF000033"/>
+    <SolidColorBrush x:Key="TitleBarForegroundBrush" Color="#FFFFFFFF"/> <!-- white for hamburger lines / icons -->
+
     <SolidColorBrush x:Key="PrimaryBackgroundBrush" Color="#FFFFFFFF"/>
     <SolidColorBrush x:Key="PrimaryBorderBrush" Color="#FFDDDDDD"/>
     <SolidColorBrush x:Key="AccentBrush" Color="#FF007ACC"/>
@@ -46,7 +52,7 @@
     <Thickness x:Key="ButtonBorderThickness">1</Thickness>
 
     <!-- New keys from audit / centralization -->
-    <CornerRadius x:Key="TopBarCornerRadius">12</CornerRadius>
+    <CornerRadius x:Key="TopBarCornerRadius">12,12,0,0</CornerRadius>
     <Thickness x:Key="TopBarPadding">6</Thickness>
     <Thickness x:Key="TopBarMargin">8</Thickness>
 
@@ -239,10 +245,10 @@
           <ControlTemplate TargetType="ToggleButton">
             <Border x:Name="RootBorder" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
               <Grid Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center" SnapsToDevicePixels="True">
-                <!-- use StaticResource here to avoid deferred lookup -->
-                <Rectangle x:Name="StripeTop" Height="2" Fill="{StaticResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Top" Margin="{StaticResource HamburgerStripeTopMargin}"/>
-                <Rectangle x:Name="StripeMid" Height="2" Fill="{StaticResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Center"/>
-                <Rectangle x:Name="StripeBottom" Height="2" Fill="{StaticResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Bottom" Margin="{StaticResource HamburgerStripeBottomMargin}"/>
+                <!-- hamburger stripes use TitleBarForegroundBrush for contrast on the navy title bar -->
+                <Rectangle x:Name="StripeTop" Height="2" Fill="{StaticResource TitleBarForegroundBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Top" Margin="{StaticResource HamburgerStripeTopMargin}"/>
+                <Rectangle x:Name="StripeMid" Height="2" Fill="{StaticResource TitleBarForegroundBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Center"/>
+                <Rectangle x:Name="StripeBottom" Height="2" Fill="{StaticResource TitleBarForegroundBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Bottom" Margin="{StaticResource HamburgerStripeBottomMargin}"/>
               </Grid>
             </Border>
 
@@ -457,4 +463,10 @@
         <Setter Property="Padding" Value="{StaticResource GridCellPadding}"/>
     </Style>
 
+    <CornerRadius x:Key="AppPaneCornerRadius">0,0,12,12</CornerRadius>
+
+    <!-- Title / app pane layout metrics -->
+    <Thickness x:Key="TopBarOuterMargin">8,8,8,0</Thickness>   <!-- left,top,right,bottom -->
+    <sys:Double x:Key="TopBarMinHeight">48</sys:Double>
+    <Thickness x:Key="AppPaneOuterMargin">8,0,8,8</Thickness>
 </ResourceDictionary>

@@ -35,59 +35,70 @@
   </Window.Resources>
 
   <DockPanel LastChildFill="True">
-    <!-- Top-aligned hamburger menu and main content -->
+    <!-- Top-aligned navy title bar with hamburger -->
     <Border DockPanel.Dock="Top"
             CornerRadius="{StaticResource TopBarCornerRadius}"
-            Background="{StaticResource MenuBackgroundBrush}"
-            BorderBrush="{StaticResource MenuBorderBrush}"
+            Background="{StaticResource TitleBarBackgroundBrush}"
+            BorderBrush="{StaticResource TitleBarBorderBrush}"
             BorderThickness="{StaticResource GridOuterBorderThickness}"
             Padding="{StaticResource TopBarPadding}"
             SnapsToDevicePixels="True"
-            Margin="{StaticResource TopBarMargin}">
-      <DockPanel LastChildFill="True">
-        <Grid DockPanel.Dock="Top">
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-          </Grid.ColumnDefinitions>
+            Margin="{StaticResource TopBarOuterMargin}"
+            MinHeight="{StaticResource TopBarMinHeight}">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-          <ToggleButton x:Name="HamburgerToggle"
-                        Style="{StaticResource HamburgerToggleButtonStyle}"/>
+        <!-- Hamburger sits on the navy title bar -->
+        <ToggleButton x:Name="HamburgerToggle"
+                      Style="{StaticResource HamburgerToggleButtonStyle}"/>
 
-          <Popup x:Name="HamburgerPopup"
-                 PlacementTarget="{Binding ElementName=HamburgerToggle}"
-                 Placement="Bottom"
-                 AllowsTransparency="True"
-                 StaysOpen="False"
-                 IsOpen="{Binding IsChecked, ElementName=HamburgerToggle, Mode=TwoWay}"
-                 Closed="HamburgerPopup_Closed">
-            <!-- Parent border provides the menu background and min width -->
-            <Border CornerRadius="{StaticResource PopupCornerRadius}"
-                    Background="{StaticResource MenuBackgroundBrush}"
-                    BorderBrush="{StaticResource MenuBorderBrush}"
-                    BorderThickness="{StaticResource GridOuterBorderThickness}"
-                    Padding="{StaticResource PopupPadding}"
-                    SnapsToDevicePixels="True"
-                    Margin="{StaticResource PopupMargin}"
-                    Effect="{StaticResource PopupShadowEffect}"
-                    MinWidth="200">
-              <!-- Use a vertical StackPanel; children will stretch because MenuPopupButton HorizontalAlignment=Stretch -->
-              <StackPanel Orientation="Vertical">
-                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuSchedule_Click" Content="Schedule"/>
-                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuPreview_Click" Content="Preview"/>
-                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuTeachers_Click" Content="Teachers"/>
-                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuSchool_Click" Content="School"/>
-                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuPreferences_Click" Content="Preferences"/>
-                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuAlgorithm_Click" Content="Algorithm"/>
-                <!-- New Exit item: last item before the separator -->
-                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuExit_Click" Content="Exit"/>
-                <Separator Margin="{StaticResource PopupSeparatorMargin}"/>
-                <Button Style="{StaticResource MenuPopupButton}" Click="AboutMenu_Click" Content="About"/>
-              </StackPanel>
-            </Border>
-          </Popup>
-        </Grid>
+        <Popup x:Name="HamburgerPopup"
+               PlacementTarget="{Binding ElementName=HamburgerToggle}"
+               Placement="Bottom"
+               AllowsTransparency="True"
+               StaysOpen="False"
+               IsOpen="{Binding IsChecked, ElementName=HamburgerToggle, Mode=TwoWay}"
+               Closed="HamburgerPopup_Closed">
+          <!-- Parent border provides the menu background and min width -->
+          <Border CornerRadius="{StaticResource PopupCornerRadius}"
+                  Background="{StaticResource MenuBackgroundBrush}"
+                  BorderBrush="{StaticResource MenuBorderBrush}"
+                  BorderThickness="{StaticResource GridOuterBorderThickness}"
+                  Padding="{StaticResource PopupPadding}"
+                  SnapsToDevicePixels="True"
+                  Margin="{StaticResource PopupMargin}"
+                  Effect="{StaticResource PopupShadowEffect}"
+                  MinWidth="200">
+            <StackPanel Orientation="Vertical">
+              <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuSchedule_Click" Content="Schedule"/>
+              <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuPreview_Click" Content="Preview"/>
+              <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuTeachers_Click" Content="Teachers"/>
+              <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuSchool_Click" Content="School"/>
+              <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuPreferences_Click" Content="Preferences"/>
+              <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuAlgorithm_Click" Content="Algorithm"/>
+              <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuExit_Click" Content="Exit"/>
+              <Separator Margin="{StaticResource PopupSeparatorMargin}"/>
+              <Button Style="{StaticResource MenuPopupButton}" Click="AboutMenu_Click" Content="About"/>
+            </StackPanel>
+          </Border>
+        </Popup>
+      </Grid>
+    </Border>
 
+    <!-- App pane: no top gap so it sits directly under the title bar -->
+    <Border DockPanel.Dock="Top"
+            CornerRadius="{StaticResource AppPaneCornerRadius}"
+            Background="{StaticResource PrimaryBackgroundBrush}"
+            BorderBrush="{StaticResource PrimaryBorderBrush}"
+            BorderThickness="{StaticResource GridOuterBorderThickness}"
+            SnapsToDevicePixels="True"
+            Margin="{StaticResource AppPaneOuterMargin}"
+            Padding="{StaticResource WindowContentPadding}">
+      <Grid>
+        <!-- Main tab control moved out of the title Border so navy bar is distinct -->
         <TabControl x:Name="MainTabControl" SelectedIndex="{Binding SelectedTabIndex}">
           <TabItem Header="Setup">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -786,7 +797,7 @@
             </Grid>
           </TabItem>
         </TabControl>
-      </DockPanel>
+      </Grid>
     </Border>
   </DockPanel>
 </Window>
