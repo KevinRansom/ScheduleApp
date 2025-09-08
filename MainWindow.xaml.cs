@@ -1,4 +1,6 @@
 ﻿using System.Windows;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace ScheduleApp
 {
@@ -8,6 +10,12 @@ namespace ScheduleApp
         {
             InitializeComponent();
             DataContext = new ScheduleApp.ViewModels.MainViewModel();
+
+            // Ensure maximize icon initial state (template must be applied first)
+            Loaded += (s, e) =>
+            {
+                UpdateMaximizeIcon();
+            };
         }
 
         // Ensure popup and toggle stay in sync: when popup closes (outside click or StaysOpen=false),
@@ -97,6 +105,43 @@ namespace ScheduleApp
                 WindowStartupLocation = WindowStartupLocation.CenterOwner
             };
             about.ShowDialog();
+        }
+
+        private void MaximizeRestore_Click(object sender, RoutedEventArgs e)
+        {
+            if (WindowState == WindowState.Maximized)
+            {
+                WindowState = WindowState.Normal;
+            }
+            else
+            {
+                WindowState = WindowState.Maximized;
+            }
+
+            UpdateMaximizeIcon();
+        }
+
+        private void UpdateMaximizeIcon()
+        {
+            if (MaximizeButton == null) return;
+
+            MaximizeButton.ApplyTemplate();
+            var icon = MaximizeButton.Template.FindName("PART_Icon", MaximizeButton) as Path;
+            if (icon == null) return;
+
+            var geomKey = WindowState == WindowState.Maximized ? "RestoreGeometry" : "MaximizeGeometry";
+            if (TryFindResource(geomKey) is Geometry g)
+                icon.Data = g;
+        }
+
+        private void Minimize_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

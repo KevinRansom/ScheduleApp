@@ -469,4 +469,138 @@
     <Thickness x:Key="TopBarOuterMargin">8,8,8,0</Thickness>   <!-- left,top,right,bottom -->
     <sys:Double x:Key="TopBarMinHeight">48</sys:Double>
     <Thickness x:Key="AppPaneOuterMargin">8,0,8,8</Thickness>
-</ResourceDictionary>
+
+    <!-- Title bar SVG/geometries -->
+    <Geometry x:Key="MinimizeGeometry">M0,6 L12,6</Geometry>
+    <Geometry x:Key="MaximizeGeometry">M0,0 L12,0 L12,10 L0,10 Z</Geometry>
+    <Geometry x:Key="RestoreGeometry">M2,3 L10,3 L10,11 L2,11 Z M0,1 L8,1 L8,9 L0,9 Z</Geometry>
+    <Geometry x:Key="CloseGeometry">M2,2 L10,10 M10,2 L2,10</Geometry>
+
+    <!-- Base title-bar button (visual baseline for the window controls) -->
+    <Style x:Key="TitleBarWindowButton" TargetType="Button">
+      <Setter Property="Width" Value="40"/>
+      <Setter Property="Height" Value="40"/>
+      <Setter Property="Padding" Value="4"/>
+      <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
+      <Setter Property="BorderThickness" Value="{StaticResource NoBorderThickness}"/>
+      <Setter Property="Foreground" Value="{StaticResource TitleBarForegroundBrush}"/>
+      <Setter Property="FontSize" Value="16"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border Background="{TemplateBinding Background}"
+                    CornerRadius="6"
+                    SnapsToDevicePixels="True">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#20FFFFFF"/>
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="#33FFFFFF"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <!-- Minimize button (shows a horizontal stroke) -->
+    <Style x:Key="TitleBarMinimizeButtonStyle" TargetType="Button" BasedOn="{StaticResource TitleBarWindowButton}">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border Background="{TemplateBinding Background}" CornerRadius="6" SnapsToDevicePixels="True">
+              <Grid>
+                <Path x:Name="PART_Icon"
+                      Data="{StaticResource MinimizeGeometry}"
+                      Stroke="{TemplateBinding Foreground}"
+                      StrokeThickness="2"
+                      Stretch="Uniform"
+                      Width="14" Height="14"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"/>
+              </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#20FFFFFF"/>
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="#33FFFFFF"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <!-- Maximize / Restore toggle button (icon Data will be swapped by code-behind) -->
+    <Style x:Key="TitleBarMaximizeButtonStyle" TargetType="Button" BasedOn="{StaticResource TitleBarWindowButton}">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border Background="{TemplateBinding Background}" CornerRadius="6" SnapsToDevicePixels="True">
+              <Grid>
+                <Path x:Name="PART_Icon"
+                      Data="{StaticResource MaximizeGeometry}"
+                      Stroke="{TemplateBinding Foreground}"
+                      StrokeThickness="1.6"
+                      Fill="Transparent"
+                      Stretch="Uniform"
+                      Width="14" Height="14"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"/>
+              </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#20FFFFFF"/>
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="#33FFFFFF"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <!-- Close button (red hover feedback) -->
+    <Style x:Key="TitleBarCloseButtonStyle" TargetType="Button" BasedOn="{StaticResource TitleBarWindowButton}">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="Root" Background="{TemplateBinding Background}" CornerRadius="6" SnapsToDevicePixels="True">
+              <Grid>
+                <Path x:Name="PART_Icon"
+                      Data="{StaticResource CloseGeometry}"
+                      Stroke="{TemplateBinding Foreground}"
+                      StrokeThickness="1.8"
+                      StrokeStartLineCap="Round"
+                      StrokeEndLineCap="Round"
+                      StrokeLineJoin="Round"
+                      Stretch="Uniform"
+                      Width="14" Height="14"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"/>
+              </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Root" Property="Background" Value="#B30000"/>
+                <Setter Property="Foreground" Value="#FFFFFFFF"/>
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="Root" Property="Background" Value="#E00000"/>
+                <Setter Property="Foreground" Value="#FFFFFFFF"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </ResourceDictionary>

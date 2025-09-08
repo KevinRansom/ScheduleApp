@@ -49,12 +49,15 @@
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="Auto"/>
           <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
         <!-- Hamburger sits on the navy title bar -->
         <ToggleButton x:Name="HamburgerToggle"
+                      Grid.Column="0"
                       Style="{StaticResource HamburgerToggleButtonStyle}"/>
 
+        <!-- (Popup unchanged) -->
         <Popup x:Name="HamburgerPopup"
                PlacementTarget="{Binding ElementName=HamburgerToggle}"
                Placement="Bottom"
@@ -62,7 +65,6 @@
                StaysOpen="False"
                IsOpen="{Binding IsChecked, ElementName=HamburgerToggle, Mode=TwoWay}"
                Closed="HamburgerPopup_Closed">
-          <!-- Parent border provides the menu background and min width -->
           <Border CornerRadius="{StaticResource PopupCornerRadius}"
                   Background="{StaticResource MenuBackgroundBrush}"
                   BorderBrush="{StaticResource MenuBorderBrush}"
@@ -85,6 +87,24 @@
             </StackPanel>
           </Border>
         </Popup>
+
+        <!-- Right-hand window controls -->
+        <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+          <Button x:Name="MinimizeButton"
+                  Style="{StaticResource TitleBarMinimizeButtonStyle}"
+                  Click="Minimize_Click"
+                  ToolTip="Minimize" />
+
+          <Button x:Name="MaximizeButton"
+                  Style="{StaticResource TitleBarMaximizeButtonStyle}"
+                  Click="MaximizeRestore_Click"
+                  ToolTip="Maximize" />
+
+          <Button x:Name="CloseButton"
+                  Style="{StaticResource TitleBarCloseButtonStyle}"
+                  Click="Close_Click"
+                  ToolTip="Close" />
+        </StackPanel>
       </Grid>
     </Border>
 
