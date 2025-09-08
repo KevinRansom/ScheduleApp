@@ -64,6 +64,7 @@
     <Compile Include="AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ScheduleApp\Behaviors\DataGridRowReorderBehavior.cs" />
     <Compile Include="ScheduleApp\Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="ScheduleApp\Converters\NotNullConverters.cs" />
     <Compile Include="ScheduleApp\Converters\TaskKindToBrushConverter.cs" />

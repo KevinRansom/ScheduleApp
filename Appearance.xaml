@@ -125,6 +125,7 @@
     <Thickness x:Key="NoBorderThickness">0</Thickness>
     <Thickness x:Key="NoPaddingThickness">0</Thickness>
     <Thickness x:Key="NoMarginThickness">0</Thickness>
+    <Thickness x:Key="NoMarginNothing">0</Thickness>
     <Thickness x:Key="GridBottomBorderThickness">0,0,0,1</Thickness>
 
     <!-- Pill metrics -->
@@ -144,6 +145,21 @@
         <Setter Property="FontFamily" Value="{StaticResource MonospaceFontFamily}"/>
         <Setter Property="SnapsToDevicePixels" Value="True"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <!-- Grip icon brush: black at ~40% opacity -->
+    <SolidColorBrush x:Key="GripIconBrush" Color="#66000000"/>
+
+    <!-- Drag grip style (subtle, small, vertically centered) -->
+    <Style x:Key="DragGripStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource BodyFontFamily}"/>
+        <Setter Property="FontSize" Value="13"/> <!-- smaller than body -->
+        <Setter Property="Foreground" Value="{StaticResource GripIconBrush}"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Cursor" Value="SizeAll"/>
+        <Setter Property="Padding" Value="0,3,0,3"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
     </Style>
 
     <!-- Control styles -->

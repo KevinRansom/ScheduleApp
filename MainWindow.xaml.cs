@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -158,6 +160,92 @@ namespace ScheduleApp
         private void Close_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        // Ensure thumbs don't try to start a resize when window is maximized.
+        private void ResizeThumb_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (WindowState == WindowState.Maximized)
+            {
+                e.Handled = true;
+                return;
+            }
+        }
+
+        // Central drag handler for all thumbs. Tag on each Thumb indicates direction.
+        private void ResizeThumb_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+            if (WindowState == WindowState.Maximized) return;
+            if (!(sender is Thumb t) || t.Tag == null) return;
+
+            string dir = t.Tag.ToString();
+            double horiz = e.HorizontalChange;
+            double vert = e.VerticalChange;
+
+            // Use ActualWidth/Height because Width/Height may be NaN if auto-sizing in some layouts.
+            double curWidth = Math.Max(0.0, this.ActualWidth);
+            double curHeight = Math.Max(0.0, this.ActualHeight);
+            double newLeft = this.Left;
+            double newTop = this.Top;
+            double newWidth = curWidth;
+            double newHeight = curHeight;
+
+            // Helpers to clamp to MinWidth/MinHeight
+            double minW = this.MinWidth > 0 ? this.MinWidth : 100;
+            double minH = this.MinHeight > 0 ? this.MinHeight : 100;
+
+            switch (dir)
+            {
+                case "Left":
+                    newWidth = Math.Max(minW, curWidth - horiz);
+                    newLeft = this.Left + (curWidth - newWidth);
+                    break;
+                case "Right":
+                    newWidth = Math.Max(minW, curWidth + horiz);
+                    break;
+                case "Top":
+                    newHeight = Math.Max(minH, curHeight - vert);
+                    newTop = this.Top + (curHeight - newHeight);
+                    break;
+                case "Bottom":
+                    newHeight = Math.Max(minH, curHeight + vert);
+                    break;
+                case "TopLeft":
+                    newWidth = Math.Max(minW, curWidth - horiz);
+                    newLeft = this.Left + (curWidth - newWidth);
+                    newHeight = Math.Max(minH, curHeight - vert);
+                    newTop = this.Top + (curHeight - newHeight);
+                    break;
+                case "TopRight":
+                    newWidth = Math.Max(minW, curWidth + horiz);
+                    newHeight = Math.Max(minH, curHeight - vert);
+                    newTop = this.Top + (curHeight - newHeight);
+                    break;
+                case "BottomLeft":
+                    newWidth = Math.Max(minW, curWidth - horiz);
+                    newLeft = this.Left + (curWidth - newWidth);
+                    newHeight = Math.Max(minH, curHeight + vert);
+                    break;
+                case "BottomRight":
+                    newWidth = Math.Max(minW, curWidth + horiz);
+                    newHeight = Math.Max(minH, curHeight + vert);
+                    break;
+                default:
+                    return;
+            }
+
+            // Apply computed values
+            // Prevent negative width/height or moving window off-screen excessively; keep simple clamps
+            if (newWidth >= minW)
+            {
+                this.Width = newWidth;
+                this.Left = newLeft;
+            }
+            if (newHeight >= minH)
+            {
+                this.Height = newHeight;
+                this.Top = newTop;
+            }
         }
     }
 }
