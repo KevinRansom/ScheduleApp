@@ -28,6 +28,14 @@
     <SolidColorBrush x:Key="SortGlyphBrush" Color="#FF444444"/>
     <SolidColorBrush x:Key="TransparentBrush" Color="Transparent"/>
 
+    <!-- Menu hover/pressed brushes (moved here so StaticResource resolves) -->
+    <SolidColorBrush x:Key="MenuItemHoverBackgroundBrush"   Color="#FFF0F0F0"/>
+    <SolidColorBrush x:Key="MenuItemPressedBackgroundBrush" Color="#FFE6E6E6"/>
+
+    <!-- Hamburger highlight brushes -->
+    <SolidColorBrush x:Key="HamburgerHighlightBackgroundBrush" Color="#1A007ACC"/>
+    <SolidColorBrush x:Key="HamburgerHighlightLineBrush" Color="#FF007ACC"/>
+
     <!-- Layout metrics -->
     <CornerRadius x:Key="GridCornerRadius">4</CornerRadius>
     <Thickness x:Key="GridOuterBorderThickness">1</Thickness>
@@ -55,8 +63,8 @@
     <!-- Typography -->
     <sys:Double x:Key="PageTitleFontSize">26</sys:Double>
     <sys:Double x:Key="BodyFontSize">13</sys:Double>
-    <sys:String x:Key="BodyFontFamily">Segoe UI</sys:String>
-    <sys:String x:Key="MonospaceFontFamily">Consolas</sys:String>
+    <FontFamily x:Key="BodyFontFamily">Segoe UI</FontFamily>
+    <FontFamily x:Key="MonospaceFontFamily">Consolas</FontFamily>
     <sys:Double x:Key="PageContentWidth">820</sys:Double>
 
     <CornerRadius x:Key="WindowCornerRadius">8</CornerRadius>
@@ -173,40 +181,45 @@
         <Setter Property="Foreground" Value="{StaticResource BrushUnscheduled}"/>
     </Style>
 
-    <!-- SchedGridHeaderStyle for DataGridColumnHeader -->
-    <Style x:Key="SchedGridHeaderStyle" TargetType="DataGridColumnHeader">
-        <Setter Property="Background" Value="{StaticResource GridHeaderGradient}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
-        <Setter Property="BorderThickness" Value="{StaticResource HeaderBorderThicknessDefault}"/>
-        <Setter Property="Padding" Value="{StaticResource GridHeaderPadding}"/>
-    </Style>
+    <!-- MenuPopupButton - menu items inside the hamburger popup -->
+    <Style x:Key="MenuPopupButton" TargetType="Button" BasedOn="{StaticResource IconButton}">
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+      <Setter Property="MinWidth" Value="0"/>
+      <Setter Property="Padding" Value="{StaticResource ButtonPadding}"/>
+      <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
+      <Setter Property="BorderBrush" Value="{StaticResource TransparentBrush}"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Foreground" Value="{StaticResource SortGlyphBrush}"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{DynamicResource ButtonCornerRadius}"
+                    SnapsToDevicePixels="True">
+              <ContentPresenter Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                RecognizesAccessKey="True"/>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
 
-    <!-- SchedGridCellStyle for DataGridCell -->
-    <Style x:Key="SchedGridCellStyle" TargetType="DataGridCell">
-        <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
-        <Setter Property="BorderThickness" Value="{StaticResource CellBorderThicknessDefault}"/>
-        <Setter Property="Padding" Value="{StaticResource GridCellPadding}"/>
-    </Style>
-
-    <!-- Shared DataGrid element styles used by MainWindow.xaml -->
-    <Style x:Key="DefaultCellStyle" TargetType="DataGridCell">
-      <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
-      <Setter Property="BorderThickness" Value="{StaticResource GridCellRightBorderThickness}"/>
-      <Setter Property="SnapsToDevicePixels" Value="True"/>
-    </Style>
-
-    <Style x:Key="LastColumnCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource DefaultCellStyle}">
-      <Setter Property="BorderThickness" Value="{StaticResource NoBorderThickness}"/>
-    </Style>
-
-    <Style x:Key="DefaultTextElementStyle" TargetType="TextBlock">
-      <Setter Property="Padding" Value="{StaticResource CellEditorPadding}"/>
-      <Setter Property="VerticalAlignment" Value="Center"/>
-    </Style>
-
-    <Style x:Key="DefaultEditingElementStyle" TargetType="TextBox">
-      <Setter Property="Padding" Value="{StaticResource CellEditorPadding}"/>
-      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Style.Triggers>
+        <Trigger Property="IsMouseOver" Value="True">
+          <Setter Property="Background" Value="{StaticResource MenuItemHoverBackgroundBrush}"/>
+        </Trigger>
+        <Trigger Property="IsPressed" Value="True">
+          <Setter Property="Background" Value="{StaticResource MenuItemPressedBackgroundBrush}"/>
+        </Trigger>
+        <Trigger Property="IsEnabled" Value="False">
+          <Setter Property="Opacity" Value="0.6"/>
+        </Trigger>
+      </Style.Triggers>
     </Style>
 
     <!-- HamburgerToggleButtonStyle -->
@@ -224,15 +237,27 @@
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="ToggleButton">
-            <!-- Root fills the ToggleButton and captures hit-testing via Transparent background -->
-            <Border Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
-              <!-- Icon remains 18x18, centered -->
+            <Border x:Name="RootBorder" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
               <Grid Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center" SnapsToDevicePixels="True">
-                <Rectangle Height="2" Fill="{DynamicResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Top" Margin="{StaticResource HamburgerStripeTopMargin}"/>
-                <Rectangle Height="2" Fill="{DynamicResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Center"/>
-                <Rectangle Height="2" Fill="{DynamicResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Bottom" Margin="{StaticResource HamburgerStripeBottomMargin}"/>
+                <!-- use StaticResource here to avoid deferred lookup -->
+                <Rectangle x:Name="StripeTop" Height="2" Fill="{StaticResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Top" Margin="{StaticResource HamburgerStripeTopMargin}"/>
+                <Rectangle x:Name="StripeMid" Height="2" Fill="{StaticResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Center"/>
+                <Rectangle x:Name="StripeBottom" Height="2" Fill="{StaticResource SchedGridLineBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Bottom" Margin="{StaticResource HamburgerStripeBottomMargin}"/>
               </Grid>
             </Border>
+
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="RootBorder" Property="Background" Value="{StaticResource HamburgerHighlightBackgroundBrush}"/>
+                <Setter TargetName="StripeTop" Property="Fill" Value="{StaticResource HamburgerHighlightLineBrush}"/>
+                <Setter TargetName="StripeMid" Property="Fill" Value="{StaticResource HamburgerHighlightLineBrush}"/>
+                <Setter TargetName="StripeBottom" Property="Fill" Value="{StaticResource HamburgerHighlightLineBrush}"/>
+              </Trigger>
+
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="RootBorder" Property="Background" Value="{StaticResource MenuItemHoverBackgroundBrush}"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
           </ControlTemplate>
         </Setter.Value>
       </Setter>
@@ -249,8 +274,8 @@
         <Setter.Value>
           <ControlTemplate TargetType="DataGridColumnHeader">
             <Grid SnapsToDevicePixels="True">
-              <Border Background="{TemplateBinding Background}"
-                      BorderBrush="{DynamicResource SchedGridLineBrush}">
+              <!-- use StaticResource here too -->
+              <Border Background="{TemplateBinding Background}" BorderBrush="{StaticResource SchedGridLineBrush}">
                 <Border.CornerRadius>
                   <MultiBinding Converter="{StaticResource HeaderCornerRadiusConverter}"
                                 ConverterParameter="{StaticResource GridCornerRadius}">
@@ -405,4 +430,31 @@
       <Setter Property="FontFamily" Value="{StaticResource MonospaceFontFamily}"/>
       <Setter Property="SnapsToDevicePixels" Value="True"/>
     </Style>
+
+    <!-- Added: default cell/text/editing styles used by MainWindow -->
+    <Style x:Key="DefaultTextElementStyle" TargetType="TextBlock" BasedOn="{StaticResource SchedGridCellText}">
+        <Setter Property="Margin" Value="{StaticResource CellElementMargin}"/>
+    </Style>
+
+    <Style x:Key="DefaultEditingElementStyle" TargetType="TextBox">
+        <Setter Property="Padding" Value="{StaticResource CellEditorPadding}"/>
+        <Setter Property="Margin" Value="{StaticResource CellElementMargin}"/>
+    </Style>
+
+    <Style x:Key="DefaultCellStyle" TargetType="DataGridCell">
+        <Setter Property="Padding" Value="{StaticResource GridCellPadding}"/>
+        <Setter Property="BorderThickness" Value="{StaticResource CellBorderThicknessDefault}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+    </Style>
+
+    <Style x:Key="LastColumnCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource DefaultCellStyle}">
+        <!-- last column: remove right vertical gridline so outer border draws it -->
+        <Setter Property="BorderThickness" Value="{StaticResource GridBottomBorderThickness}"/>
+    </Style>
+
+    <Style x:Key="SchedGridCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource DefaultCellStyle}">
+        <Setter Property="Padding" Value="{StaticResource GridCellPadding}"/>
+    </Style>
+
 </ResourceDictionary>

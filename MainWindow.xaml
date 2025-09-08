@@ -38,8 +38,8 @@
     <!-- Top-aligned hamburger menu and main content -->
     <Border DockPanel.Dock="Top"
             CornerRadius="{StaticResource TopBarCornerRadius}"
-            Background="{DynamicResource MenuBackgroundBrush}"
-            BorderBrush="{DynamicResource MenuBorderBrush}"
+            Background="{StaticResource MenuBackgroundBrush}"
+            BorderBrush="{StaticResource MenuBorderBrush}"
             BorderThickness="{StaticResource GridOuterBorderThickness}"
             Padding="{StaticResource TopBarPadding}"
             SnapsToDevicePixels="True"
@@ -61,23 +61,28 @@
                  StaysOpen="False"
                  IsOpen="{Binding IsChecked, ElementName=HamburgerToggle, Mode=TwoWay}"
                  Closed="HamburgerPopup_Closed">
+            <!-- Parent border provides the menu background and min width -->
             <Border CornerRadius="{StaticResource PopupCornerRadius}"
-                    Background="{DynamicResource MenuBackgroundBrush}"
-                    BorderBrush="{DynamicResource MenuBorderBrush}"
+                    Background="{StaticResource MenuBackgroundBrush}"
+                    BorderBrush="{StaticResource MenuBorderBrush}"
                     BorderThickness="{StaticResource GridOuterBorderThickness}"
                     Padding="{StaticResource PopupPadding}"
                     SnapsToDevicePixels="True"
                     Margin="{StaticResource PopupMargin}"
-                    Effect="{StaticResource PopupShadowEffect}">
-              <StackPanel Orientation="Vertical" MinWidth="200">
-                <Button Content="Schedule" Style="{StaticResource IconButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuSchedule_Click"/>
-                <Button Content="Preview" Style="{StaticResource IconButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuPreview_Click"/>
-                <Button Content="Teachers" Style="{StaticResource IconButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuTeachers_Click"/>
-                <Button Content="School" Style="{StaticResource IconButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuSchool_Click"/>
-                <Button Content="Preferences" Style="{StaticResource IconButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuPreferences_Click"/>
-                <Button Content="Algorithm" Style="{StaticResource IconButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuAlgorithm_Click"/>
+                    Effect="{StaticResource PopupShadowEffect}"
+                    MinWidth="200">
+              <!-- Use a vertical StackPanel; children will stretch because MenuPopupButton HorizontalAlignment=Stretch -->
+              <StackPanel Orientation="Vertical">
+                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuSchedule_Click" Content="Schedule"/>
+                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuPreview_Click" Content="Preview"/>
+                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuTeachers_Click" Content="Teachers"/>
+                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuSchool_Click" Content="School"/>
+                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuPreferences_Click" Content="Preferences"/>
+                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuAlgorithm_Click" Content="Algorithm"/>
+                <!-- New Exit item: last item before the separator -->
+                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuExit_Click" Content="Exit"/>
                 <Separator Margin="{StaticResource PopupSeparatorMargin}"/>
-                <Button Content="About" Style="{StaticResource IconButton}" Click="AboutMenu_Click"/>
+                <Button Style="{StaticResource MenuPopupButton}" Click="AboutMenu_Click" Content="About"/>
               </StackPanel>
             </Border>
           </Popup>
@@ -569,8 +574,11 @@
                                 <ItemsControl Grid.Row="1" ItemsSource="{Binding Tasks}">
                                   <ItemsControl.ItemTemplate>
                                     <DataTemplate>
+                                      <!-- ItemsControl DataTemplate Border -->
                                       <Border Margin="{StaticResource TaskItemMargin}" Padding="{StaticResource TaskItemPadding}"
-                                              Background="{Binding Kind, Converter={StaticResource TaskKindToBrushConverter}}">
+                                              Background="{Binding Kind, Converter={StaticResource TaskKindToBrushConverter},
+                                                                   FallbackValue={StaticResource TransparentBrush},
+                                                                   TargetNullValue={StaticResource TransparentBrush}}">
                                         <Grid>
                                           <Grid.ColumnDefinitions>
                                             <ColumnDefinition SharedSizeGroup="cSupport"/>
@@ -626,11 +634,15 @@
                                         SnapsToDevicePixels="True"
                                         Margin="{StaticResource NoMarginThickness}">
 
+                                <!-- DataGrid.RowStyle Setter -->
                                 <DataGrid.RowStyle>
                                   <Style TargetType="DataGridRow">
-                                    <Setter Property="Background" Value="{Binding Kind, Converter={StaticResource TaskKindToBrushConverter}}"/>
+                                    <Setter Property="Background"
+                                            Value="{Binding Kind, Converter={StaticResource TaskKindToBrushConverter},
+                                                            FallbackValue={StaticResource TransparentBrush},
+                                                            TargetNullValue={StaticResource TransparentBrush}}"/>
                                     <Setter Property="SnapsToDevicePixels" Value="True"/>
-                                   </Style>
+                                  </Style>
                                 </DataGrid.RowStyle>
 
                                 <DataGrid.Columns>

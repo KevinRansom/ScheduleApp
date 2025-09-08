@@ -75,6 +75,16 @@ namespace ScheduleApp
             // TODO: wire actual algorithm dialog or action
         }
 
+        // New: Exit application
+        private void MenuExit_Click(object sender, RoutedEventArgs e)
+        {
+            if (HamburgerToggle != null)
+                HamburgerToggle.IsChecked = false;
+
+            // Gracefully shut down the application
+            Application.Current.Shutdown();
+        }
+
         // Open the About (formerly Help) window with reduced content.
         private void AboutMenu_Click(object sender, RoutedEventArgs e)
         {
