@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Controls;         // <- for ListBox, SelectionChangedEventArgs
+using ScheduleApp.Models;             // <- for Teacher
 
 namespace ScheduleApp
 {
@@ -245,6 +248,24 @@ namespace ScheduleApp
             {
                 this.Height = newHeight;
                 this.Top = newTop;
+            }
+        }
+
+        // New: respond to multi-selection changes in the teacher list and update schedule view
+        private void TeacherListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                if (DataContext is ScheduleApp.ViewModels.MainViewModel vm && sender is ListBox lb)
+                {
+                    var selected = lb.SelectedItems.Cast<Teacher>().ToList();
+                    // Ask the ScheduleViewModel to display rows for all selected teachers
+                    vm.Schedule.ShowTeachers(selected);
+                }
+            }
+            catch
+            {
+                // swallow UI hookup errors to avoid breaking startup; real exceptions surface in debug
             }
         }
     }

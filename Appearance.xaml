@@ -23,6 +23,9 @@
     <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#FFF5F5F5"/>
     <SolidColorBrush x:Key="MenuBorderBrush" Color="#FFCCCCCC"/>
 
+    <!-- Secondary text brush used by list items and subtle labels -->
+    <SolidColorBrush x:Key="SecondaryTextBrush" Color="#FF666666"/>
+
     <!-- Title bar themed brushes (theme name: title bar) -->
     <SolidColorBrush x:Key="TitleBarBackgroundBrush" Color="#FF000080"/> <!-- navy -->
     <SolidColorBrush x:Key="TitleBarBorderBrush" Color="#FF000033"/>

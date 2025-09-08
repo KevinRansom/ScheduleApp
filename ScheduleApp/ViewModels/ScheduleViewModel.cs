@@ -133,5 +133,28 @@ namespace ScheduleApp.ViewModels
             // Refresh current selection (keeps the same SelectedTeacher if set)
             RefreshSelectedTeacherRows();
         }
+
+        // NEW: show schedules for multiple selected teachers
+        public void ShowTeachers(IEnumerable<Teacher> teachers)
+        {
+            SelectedTeacherRows.Clear();
+            if (teachers == null) return;
+
+            // Collect rows for each selected teacher (preserve each teacher's TeacherName and SortKey)
+            var rows = new List<TeacherScheduleRow>();
+            foreach (var t in teachers)
+            {
+                if (t == null) continue;
+                var key = t.Name ?? "";
+                if (_teacherRowsByName.TryGetValue(key, out var rlist))
+                {
+                    rows.AddRange(rlist);
+                }
+            }
+
+            // Order rows by TeacherName then by time so grid groups cleanly
+            foreach (var r in rows.OrderBy(r => r.TeacherName).ThenBy(r => r.SortKey))
+                SelectedTeacherRows.Add(r);
+        }
     }
 }

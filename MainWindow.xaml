@@ -758,21 +758,42 @@
                   </TabItem>
 
                   <TabItem Header="By Teacher">
-                    <Grid Margin="{StaticResource NoMarginThickness}">
-                      <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                      </Grid.RowDefinitions>
+                    <Grid Margin="{StaticResource NoMarginNothing}">
+                      <!-- Replace dropdown with scrollable teacher list (left) and schedule (right) -->
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="260"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="*"/>
+                      </Grid.ColumnDefinitions>
 
-                      <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="{StaticResource ToolbarRowBottomMarginSmall}">
-                        <TextBlock Text="Teacher:" VerticalAlignment="Center" Margin="{StaticResource InlineRightMarginSmall}"/>
-                        <ComboBox Width="240"
-                                  ItemsSource="{Binding Setup.Teachers}"
-                                  DisplayMemberPath="Name"
-                                  SelectedItem="{Binding Schedule.SelectedTeacher}"/>
-                      </StackPanel>
+                      <!-- Teacher list -->
+                      <Border Grid.Column="0" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginThickness}">
+                        <ListBox x:Name="TeacherListBox"
+                                 ItemsSource="{Binding Setup.Teachers}"
+                                 SelectionMode="Extended"
+                                 SelectionChanged="TeacherListBox_SelectionChanged"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                 Background="{StaticResource TransparentBrush}"
+                                 BorderThickness="0"
+                                 IsSynchronizedWithCurrentItem="False">
+                          <ListBox.ItemTemplate>
+                            <DataTemplate>
+                              <Grid Margin="{StaticResource CellElementMargin}">
+                                <Grid.ColumnDefinitions>
+                                  <ColumnDefinition Width="80"/>
+                                  <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
 
-                      <Border Grid.Row="1" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginNothing}">
+                                <TextBlock Grid.Column="0" Text="{Binding RoomNumber}" FontSize="11" Foreground="{StaticResource SecondaryTextBrush}" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="{Binding Name}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                              </Grid>
+                            </DataTemplate>
+                          </ListBox.ItemTemplate>
+                        </ListBox>
+                      </Border>
+
+                      <!-- Schedule grid for selected teacher -->
+                      <Border Grid.Column="2" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginNothing}">
                         <DataGrid ItemsSource="{Binding Schedule.SelectedTeacherRows}"
                                   AutoGenerateColumns="False"
                                   CanUserAddRows="False"
