@@ -10,7 +10,11 @@
         Height="800"
         Width="1200"
         UseLayoutRounding="True"
-        SnapsToDevicePixels="True">
+        SnapsToDevicePixels="True"
+        WindowStyle="None"
+        ResizeMode="CanResize"
+        AllowsTransparency="True"
+        Background="Transparent">
   <Window.Resources>
     <!-- Converters and non-appearance resources -->
     <conv:HeaderCornerRadiusConverter x:Key="HeaderCornerRadiusConverter"/>
@@ -35,7 +39,8 @@
   </Window.Resources>
 
   <DockPanel LastChildFill="True">
-    <!-- Top-aligned navy title bar with hamburger -->
+    <!-- Top-aligned navy title bar with hamburger
+         NOTE: MouseLeftButtonDown added so users can drag the window. Double-click toggles maximize. -->
     <Border DockPanel.Dock="Top"
             CornerRadius="{StaticResource TopBarCornerRadius}"
             Background="{StaticResource TitleBarBackgroundBrush}"
@@ -44,7 +49,8 @@
             Padding="{StaticResource TopBarPadding}"
             SnapsToDevicePixels="True"
             Margin="{StaticResource TopBarOuterMargin}"
-            MinHeight="{StaticResource TopBarMinHeight}">
+            MinHeight="{StaticResource TopBarMinHeight}"
+            MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
       <Grid>
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="Auto"/>

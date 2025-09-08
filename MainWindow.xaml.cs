@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -10,12 +11,6 @@ namespace ScheduleApp
         {
             InitializeComponent();
             DataContext = new ScheduleApp.ViewModels.MainViewModel();
-
-            // Ensure maximize icon initial state (template must be applied first)
-            Loaded += (s, e) =>
-            {
-                UpdateMaximizeIcon();
-            };
         }
 
         // Ensure popup and toggle stay in sync: when popup closes (outside click or StaysOpen=false),
@@ -107,18 +102,39 @@ namespace ScheduleApp
             about.ShowDialog();
         }
 
-        private void MaximizeRestore_Click(object sender, RoutedEventArgs e)
+        // Title-bar mouse handling: drag or double-click to toggle maximize/restore
+        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (WindowState == WindowState.Maximized)
+            if (e.ClickCount == 2)
             {
-                WindowState = WindowState.Normal;
+                ToggleMaximizeRestore();
             }
             else
             {
-                WindowState = WindowState.Maximized;
+                try
+                {
+                    DragMove();
+                }
+                catch
+                {
+                    // ignore if DragMove fails (e.g. during maximized state transitions)
+                }
             }
+        }
+
+        private void ToggleMaximizeRestore()
+        {
+            if (WindowState == WindowState.Maximized)
+                WindowState = WindowState.Normal;
+            else
+                WindowState = WindowState.Maximized;
 
             UpdateMaximizeIcon();
+        }
+
+        private void MaximizeRestore_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleMaximizeRestore();
         }
 
         private void UpdateMaximizeIcon()
