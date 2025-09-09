@@ -67,6 +67,7 @@
     <Compile Include="ScheduleApp\Behaviors\DataGridRowReorderBehavior.cs" />
     <Compile Include="ScheduleApp\Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="ScheduleApp\Converters\NotNullConverters.cs" />
+    <Compile Include="ScheduleApp\Converters\SupportTeacherDisplayConverter.cs" />
     <Compile Include="ScheduleApp\Converters\TaskKindToBrushConverter.cs" />
     <Compile Include="ScheduleApp\Converters\TeacherRowToBrushConverter.cs" />
     <Compile Include="ScheduleApp\Converters\TimeSpanToStringConverter.cs" />

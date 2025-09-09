@@ -37,6 +37,9 @@ namespace ScheduleApp.ViewModels
 
         private readonly string _defaultSetupPath;
 
+        // Guard to prevent re-entrant GenerateSchedule calls
+        private bool _isGenerating;
+
         public MainViewModel()
         {
             for (int h = 0; h < 24; h++)
@@ -66,51 +69,70 @@ namespace ScheduleApp.ViewModels
 
         private void GenerateSchedule()
         {
-            var day = new DayContext
-            {
-                Date = DateTime.Today,
-                Teachers = Setup.Teachers.ToList(),
-                Supports = Setup.Supports.ToList(),
-                Preferences = Setup.Preferences.ToList()
-            };
+            // Prevent reentry (e.g. tab selection handlers triggering GenerateSchedule while it is already running).
+            if (_isGenerating) return;
+            _isGenerating = true;
 
-            var teacherTasks = _scheduler.GenerateTeacherCoverageTasks(day);
-            var assigned = _scheduler.AssignSupportToTeacherTasks(day, teacherTasks);
-
-            foreach (var kvp in assigned.ToList())
+            try
             {
-                foreach (var t in kvp.Value)
+                try
                 {
-                    t.SupportName = kvp.Key;
+                    var day = new DayContext
+                    {
+                        Date = DateTime.Today,
+                        Teachers = Setup.Teachers.ToList(),
+                        Supports = Setup.Supports.ToList(),
+                        Preferences = Setup.Preferences.ToList()
+                    };
+
+                    var teacherTasks = _scheduler.GenerateTeacherCoverageTasks(day);
+                    var assigned = _scheduler.AssignSupportToTeacherTasks(day, teacherTasks);
+
+                    foreach (var kvp in assigned.ToList())
+                    {
+                        foreach (var t in kvp.Value)
+                        {
+                            t.SupportName = kvp.Key;
+                        }
+                    }
+
+                    _scheduler.ScheduleSupportSelfCare(day, assigned);
+
+                    var tabs = assigned.Keys
+                        .OrderBy(k => k)
+                        .Select(name =>
+                        {
+                            var vm = new SupportTabViewModel
+                            {
+                                SupportName = name == "Unscheduled" ? "Unscheduled Breaks" : name,
+                                Tasks = assigned[name].OrderBy(t => t.Start).ToList()
+                            };
+                            return vm;
+                        })
+                        .ToArray();
+
+                    Schedule.LoadTabs(tabs);
+
+                    // NEW: include teacher pages in the preview document
+                    PrintPreview.RefreshDocument(tabs, Setup.Teachers.ToList());
+
+                    var allAssignedTasks = assigned.Values.SelectMany(x => x).ToList();
+                    Schedule.LoadTeacherSchedules(DateTime.Today, Setup.Teachers.ToList(), allAssignedTasks);
+
+                    SelectedTabIndex = 1;
+
+                    SaveScheduleCommand.RaiseCanExecuteChanged();
+                }
+                catch (Exception ex)
+                {
+                    // Surface the exception so we can see why schedule generation fails
+                    MessageBox.Show("Failed to generate schedule:\n" + ex.Message, "Generate Schedule Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-
-            _scheduler.ScheduleSupportSelfCare(day, assigned);
-
-            var tabs = assigned.Keys
-                .OrderBy(k => k)
-                .Select(name =>
-                {
-                    var vm = new SupportTabViewModel
-                    {
-                        SupportName = name == "Unscheduled" ? "Unscheduled Breaks" : name,
-                        Tasks = assigned[name].OrderBy(t => t.Start).ToList()
-                    };
-                    return vm;
-                })
-                .ToArray();
-
-            Schedule.LoadTabs(tabs);
-
-            // NEW: include teacher pages in the preview document
-            PrintPreview.RefreshDocument(tabs, Setup.Teachers.ToList());
-
-            var allAssignedTasks = assigned.Values.SelectMany(x => x).ToList();
-            Schedule.LoadTeacherSchedules(DateTime.Today, Setup.Teachers.ToList(), allAssignedTasks);
-
-            SelectedTabIndex = 1;
-
-            SaveScheduleCommand.RaiseCanExecuteChanged();
+            finally
+            {
+                _isGenerating = false;
+            }
         }
 
         private bool ScheduleHasData()

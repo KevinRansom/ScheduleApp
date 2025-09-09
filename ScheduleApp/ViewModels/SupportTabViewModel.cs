@@ -23,7 +23,28 @@ namespace ScheduleApp.ViewModels
                 {
                     var task = GetTaskName(t);
                     var duration = t.DurationText; // always show duration
-                    var teacher = string.IsNullOrWhiteSpace(t.TeacherName) ? "Self" : t.TeacherName;
+
+                    // Show "Self" when this is a self-care/free/idle slot for the support staff
+                    string teacher;
+                    if (string.IsNullOrWhiteSpace(t.TeacherName))
+                    {
+                        teacher = "Self";
+                    }
+                    else
+                    {
+                        // If the teacher name equals the support name and the task is a self-care kind,
+                        // display "Self" instead of repeating the support's name.
+                        if (string.Equals(t.TeacherName, t.SupportName, StringComparison.OrdinalIgnoreCase)
+                            && (t.Kind == CoverageTaskKind.Break || t.Kind == CoverageTaskKind.Lunch || t.Kind == CoverageTaskKind.Idle))
+                        {
+                            teacher = "Self";
+                        }
+                        else
+                        {
+                            teacher = t.TeacherName;
+                        }
+                    }
+
                     var room = string.IsNullOrWhiteSpace(t.RoomNumber) ? "---" : t.RoomNumber;
 
                     return new[]

@@ -6,7 +6,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Controls;         // <- for ListBox, SelectionChangedEventArgs
-using ScheduleApp.Models;             // <- for Teacher
+using ScheduleApp.Models;             // <- for Teacher, Support
 
 namespace ScheduleApp
 {
@@ -228,6 +228,7 @@ namespace ScheduleApp
                     newWidth = Math.Max(minW, curWidth - horiz);
                     newLeft = this.Left + (curWidth - newWidth);
                     newHeight = Math.Max(minH, curHeight + vert);
+                    newTop = this.Top + (curHeight - newHeight);
                     break;
                 case "BottomRight":
                     newWidth = Math.Max(minW, curWidth + horiz);
@@ -256,16 +257,217 @@ namespace ScheduleApp
         {
             try
             {
-                if (DataContext is ScheduleApp.ViewModels.MainViewModel vm && sender is ListBox lb)
+                if (!(DataContext is ScheduleApp.ViewModels.MainViewModel vm) || !(sender is ListBox lb))
+                    return;
+
+                // Use OfType to avoid invalid casts if SelectedItems contains unexpected wrappers
+                var selectedTeachers = lb.SelectedItems.OfType<Teacher>().ToList();
+
+                // If nothing selected, clear the view
+                if (selectedTeachers.Count == 0)
                 {
-                    var selected = lb.SelectedItems.Cast<Teacher>().ToList();
-                    // Ask the ScheduleViewModel to display rows for all selected teachers
-                    vm.Schedule.ShowTeachers(selected);
+                    vm.Schedule.SelectedTeacherRows.Clear();
+                    return;
                 }
+
+                // Ask the ScheduleViewModel to display rows for all selected teachers
+                vm.Schedule.ShowTeachers(selectedTeachers);
             }
             catch
             {
                 // swallow UI hookup errors to avoid breaking startup; real exceptions surface in debug
+            }
+        }
+
+        // Added: handle Support list selection changes (wired from XAML).
+        // This handler is intentionally tolerant: it will invoke Schedule.ShowSupports if that method exists,
+        // otherwise it safely no-ops (prevents XAML wiring compile error).
+        private void SupportListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                if (!(DataContext is ScheduleApp.ViewModels.MainViewModel vm) || !(sender is ListBox lb))
+                    return;
+
+                var selectedSupports = lb.SelectedItems.OfType<Support>().ToList();
+
+                if (selectedSupports.Count == 0)
+                {
+                    vm.Schedule.SelectedSupportRows.Clear();
+                    return;
+                }
+
+                // Prefer direct method call if available
+                vm.Schedule.ShowSupports(selectedSupports);
+            }
+            catch
+            {
+                // swallow UI hookup errors to avoid breaking startup; real exceptions surface in debug
+            }
+        }
+
+        // New: respond to inner Schedule View tab selection changes and regenerate schedule
+        private void ScheduleViewInnerTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                // Only trigger when the TabControl is fully loaded (avoid initial XAML hookup)
+                if (!(sender is TabControl tc) || !tc.IsLoaded) return;
+
+                // Ignore SelectionChanged that bubbled from child controls (ListBox selections etc.)
+                // Only proceed when the TabControl itself raised the event.
+                if (!ReferenceEquals(e.OriginalSource, tc)) return;
+
+                // Commit any pending edits in the Setup data grids so changes are pushed to the view model
+                try
+                {
+                    // TeachersGrid and SupportsGrid are defined in XAML (Setup tab). Commit both cell and row edits.
+                    TeachersGrid?.CommitEdit(DataGridEditingUnit.Cell, true);
+                    TeachersGrid?.CommitEdit(DataGridEditingUnit.Row, true);
+
+                    SupportsGrid?.CommitEdit(DataGridEditingUnit.Cell, true);
+                    SupportsGrid?.CommitEdit(DataGridEditingUnit.Row, true);
+                }
+                catch
+                {
+                    // swallow commit errors; proceed to regenerate schedule
+                }
+
+                // Execute GenerateSchedule on the main view model if available
+                if (DataContext is ScheduleApp.ViewModels.MainViewModel vm && vm.GenerateScheduleCommand != null)
+                {
+                    if (vm.GenerateScheduleCommand.CanExecute(null))
+                        vm.GenerateScheduleCommand.Execute(null);
+                }
+            }
+            catch
+            {
+                // swallow to avoid UI breaks; exceptions surface during debugging
+            }
+        }
+
+        // Add this method to the MainWindow class (keeps behavior consistent with existing handlers)
+        private void ScheduleArea_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                if (!(DataContext is ScheduleApp.ViewModels.MainViewModel vm)) return;
+
+                // Run GenerateSchedule to pick up any edits made in Setup before showing schedule.
+                var cmd = vm.GenerateScheduleCommand;
+                if (cmd != null && cmd.CanExecute(null))
+                    cmd.Execute(null);
+            }
+            catch
+            {
+                // swallow — keep UI responsive; debugging will show exceptions
+            }
+        }
+
+        // Replace existing MainTabControl_SelectionChanged implementation with this
+        private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                if (!(sender is TabControl tc) || !tc.IsLoaded) return;
+
+                // Only handle when the TabControl itself raised the event (avoid bubbled events).
+                if (!ReferenceEquals(e.OriginalSource, tc)) return;
+
+                // Only regenerate when the Schedule View tab is selected (index 1)
+                if (tc.SelectedIndex != 1) return;
+
+                // 1) Force the focused editor (ComboBox/TextBox inside DataGrid) to update its binding source.
+                try
+                {
+                    var focused = Keyboard.FocusedElement as DependencyObject;
+                    if (focused is FrameworkElement fe)
+                    {
+                        // Try common binding targets used inside the DataGrids:
+                        var be = fe.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedItemProperty)
+                                 ?? fe.GetBindingExpression(System.Windows.Controls.ComboBox.SelectedValueProperty)
+                                 ?? fe.GetBindingExpression(System.Windows.Controls.Primitives.RangeBase.ValueProperty)
+                                 ?? fe.GetBindingExpression(System.Windows.Controls.TextBox.TextProperty);
+
+                        be?.UpdateSource();
+                    }
+                }
+                catch
+                {
+                    // ignore binding update failures; we'll still try commit below
+                }
+
+                // 2) Commit any pending DataGrid edits (cell + row) on Setup grids.
+                try
+                {
+                    TeachersGrid?.CommitEdit(DataGridEditingUnit.Cell, true);
+                    TeachersGrid?.CommitEdit(DataGridEditingUnit.Row, true);
+
+                    SupportsGrid?.CommitEdit(DataGridEditingUnit.Cell, true);
+                    SupportsGrid?.CommitEdit(DataGridEditingUnit.Row, true);
+                }
+                catch
+                {
+                    // ignore commit errors
+                }
+
+                // 3) Move logical focus off editors (helps end edit mode)
+                try
+                {
+                    var scope = FocusManager.GetFocusScope(this);
+                    FocusManager.SetFocusedElement(scope, MainTabControl);
+                    Keyboard.ClearFocus();
+                }
+                catch
+                {
+                    // ignore
+                }
+
+                // 4) Run GenerateSchedule at ApplicationIdle so all UI/binding operations finish first
+                if (DataContext is ScheduleApp.ViewModels.MainViewModel vm && vm.GenerateScheduleCommand != null)
+                {
+                    if (vm.GenerateScheduleCommand.CanExecute(null))
+                    {
+                        Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            try
+                            {
+                                if (vm.GenerateScheduleCommand.CanExecute(null))
+                                    vm.GenerateScheduleCommand.Execute(null);
+
+                                // After regenerating the schedule, refresh the schedule view content for any
+                                // currently-selected supports/teachers so the Selected*Rows collections
+                                // are rebuilt from the new schedule data (prevents showing stale times).
+                                try
+                                {
+                                    var selectedSupports = SupportListBox?.SelectedItems?.OfType<Support>().ToList();
+                                    if (selectedSupports != null && selectedSupports.Count > 0)
+                                    {
+                                        vm.Schedule.ShowSupports(selectedSupports);
+                                    }
+
+                                    var selectedTeachers = TeacherListBox?.SelectedItems?.OfType<Teacher>().ToList();
+                                    if (selectedTeachers != null && selectedTeachers.Count > 0)
+                                    {
+                                        vm.Schedule.ShowTeachers(selectedTeachers);
+                                    }
+                                }
+                                catch
+                                {
+                                    // ignore refresh failures
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show("Failed to regenerate schedule:\n" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            }
+                        }), System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("MainTabControl_SelectionChanged error: " + ex);
             }
         }
     }

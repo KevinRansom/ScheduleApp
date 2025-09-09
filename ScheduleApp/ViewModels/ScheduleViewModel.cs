@@ -38,6 +38,15 @@ namespace ScheduleApp.ViewModels
                 SupportTabs.Add(tabs[i]);
             }
             Raise(nameof(SupportTabs));
+
+            // Build support lookup for quick access by support name
+            _supportRowsByName.Clear();
+            foreach (var tab in tabs ?? Array.Empty<SupportTabViewModel>())
+            {
+                var key = tab?.SupportName ?? string.Empty;
+                // store a copy (defensive) to avoid accidental external mutation
+                _supportRowsByName[key] = (tab?.Tasks ?? new List<CoverageTask>()).ToList();
+            }
         }
 
         // --- NEW: Teacher view state ---
@@ -155,6 +164,46 @@ namespace ScheduleApp.ViewModels
             // Order rows by TeacherName then by time so grid groups cleanly
             foreach (var r in rows.OrderBy(r => r.TeacherName).ThenBy(r => r.SortKey))
                 SelectedTeacherRows.Add(r);
+        }
+
+        // --- NEW: Support view state ---
+        private readonly Dictionary<string, List<CoverageTask>> _supportRowsByName
+            = new Dictionary<string, List<CoverageTask>>(StringComparer.OrdinalIgnoreCase);
+
+        public ObservableCollection<CoverageTask> SelectedSupportRows { get; }
+            = new ObservableCollection<CoverageTask>();
+
+        // Show schedules for the selected support staff (supports may be multi-selected)
+        public void ShowSupports(IEnumerable<Support> supports)
+        {
+            SelectedSupportRows.Clear();
+            if (supports == null) return;
+
+            var rows = new List<CoverageTask>();
+            foreach (var s in supports)
+            {
+                if (s == null) continue;
+                var key = s.Name ?? string.Empty;
+
+                // Try direct match first
+                if (_supportRowsByName.TryGetValue(key, out var list))
+                {
+                    rows.AddRange(list);
+                    continue;
+                }
+
+                // Fallback: handle the special "Unscheduled" display name used in tabs
+                if (string.Equals(key, "Unscheduled", StringComparison.OrdinalIgnoreCase))
+                {
+                    // tab display uses "Unscheduled Breaks" — try that too
+                    if (_supportRowsByName.TryGetValue("Unscheduled Breaks", out var ulist))
+                        rows.AddRange(ulist);
+                }
+            }
+
+            // Order by support name then by start time for a grouped, chronological display
+            foreach (var r in rows.OrderBy(r => r.SupportName).ThenBy(r => r.Start))
+                SelectedSupportRows.Add(r);
         }
     }
 }
