@@ -98,20 +98,67 @@ namespace ScheduleApp.ViewModels
 
                     _scheduler.ScheduleSupportSelfCare(day, assigned);
 
-                    var tabs = assigned.Keys
-                        .OrderBy(k => k)
-                        .Select(name =>
+                    // Build tabs: preserve user support ordering first, then any extra supports,
+                    // and append Unscheduled (displayed as "Unscheduled Breaks") at the end.
+                    var tabsList = new List<SupportTabViewModel>();
+
+                    // preserve Setup.Supports order (use names as provided)
+                    var supportOrder = Setup.Supports.Select(s => s.Name).Where(n => !string.IsNullOrWhiteSpace(n)).ToList();
+                    foreach (var sname in supportOrder)
+                    {
+                        if (assigned.TryGetValue(sname, out var list))
                         {
-                            var vm = new SupportTabViewModel
+                            tabsList.Add(new SupportTabViewModel
                             {
-                                SupportName = name == "Unscheduled" ? "Unscheduled Breaks" : name,
-                                Tasks = assigned[name].OrderBy(t => t.Start).ToList()
-                            };
-                            return vm;
-                        })
-                        .ToArray();
+                                SupportName = sname,
+                                Tasks = list.OrderBy(t => t.Start).ToList()
+                            });
+                        }
+                        else
+                        {
+                            tabsList.Add(new SupportTabViewModel
+                            {
+                                SupportName = sname,
+                                Tasks = new List<CoverageTask>()
+                            });
+                        }
+                    }
+
+                    // add any remaining assigned keys not in setup (except "Unscheduled" which we handle last)
+                    var extras = assigned.Keys
+                        .Where(k => !supportOrder.Contains(k, StringComparer.OrdinalIgnoreCase))
+                        .Where(k => !string.Equals(k, "Unscheduled", StringComparison.OrdinalIgnoreCase))
+                        .OrderBy(k => k);
+                    foreach (var key in extras)
+                    {
+                        tabsList.Add(new SupportTabViewModel
+                        {
+                            SupportName = key,
+                            Tasks = assigned[key].OrderBy(t => t.Start).ToList()
+                        });
+                    }
+
+                    // Finally append Unscheduled as "Unscheduled Breaks" if present
+                    if (assigned.TryGetValue("Unscheduled", out var unschedList) && unschedList != null)
+                    {
+                        var displayName = "Unscheduled Breaks";
+                        // Update tasks to use the display name so schedule rows match the tab label
+                        foreach (var t in unschedList)
+                            t.SupportName = displayName;
+
+                        tabsList.Add(new SupportTabViewModel
+                        {
+                            SupportName = displayName,
+                            Tasks = unschedList.OrderBy(t => t.Start).ToList()
+                        });
+                    }
+
+                    var tabs = tabsList.ToArray();
 
                     Schedule.LoadTabs(tabs);
+
+                    // NEW: update the left-hand support entries list used by the By Support list
+                    Schedule.UpdateSupportEntries(tabs);
 
                     // NEW: include teacher pages in the preview document
                     PrintPreview.RefreshDocument(tabs, Setup.Teachers.ToList());

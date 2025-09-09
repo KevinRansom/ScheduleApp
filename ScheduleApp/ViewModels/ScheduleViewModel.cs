@@ -10,6 +10,9 @@ namespace ScheduleApp.ViewModels
     {
         public ObservableCollection<SupportTabViewModel> SupportTabs { get; } = new ObservableCollection<SupportTabViewModel>();
 
+        // NEW: flattened support entries used by the By Support left-hand list
+        public ObservableCollection<SupportStaffEntry> SupportEntries { get; } = new ObservableCollection<SupportStaffEntry>();
+
         // View mode: "Text", "Visual", "Grid"
         private string _viewMode = "Visual";
         public string ViewMode
@@ -47,6 +50,26 @@ namespace ScheduleApp.ViewModels
                 // store a copy (defensive) to avoid accidental external mutation
                 _supportRowsByName[key] = (tab?.Tasks ?? new List<CoverageTask>()).ToList();
             }
+        }
+
+        // NEW: Update the SupportEntries collection from the set of tabs.
+        // This keeps the left-hand list in the same order as the tabs and appends Unscheduled Breaks when present.
+        public void UpdateSupportEntries(SupportTabViewModel[] tabs)
+        {
+            SupportEntries.Clear();
+            if (tabs == null || tabs.Length == 0) return;
+
+            foreach (var t in tabs)
+            {
+                var name = t?.SupportName ?? string.Empty;
+                if (string.IsNullOrWhiteSpace(name)) continue;
+
+                var isUnscheduled = string.Equals(name, "Unscheduled Breaks", StringComparison.OrdinalIgnoreCase)
+                                    || string.Equals(name, "Unscheduled", StringComparison.OrdinalIgnoreCase);
+
+                SupportEntries.Add(new SupportStaffEntry(name, isUnscheduled));
+            }
+            Raise(nameof(SupportEntries));
         }
 
         // --- NEW: Teacher view state ---

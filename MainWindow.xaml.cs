@@ -279,9 +279,7 @@ namespace ScheduleApp
             }
         }
 
-        // Added: handle Support list selection changes (wired from XAML).
-        // This handler is intentionally tolerant: it will invoke Schedule.ShowSupports if that method exists,
-        // otherwise it safely no-ops (prevents XAML wiring compile error).
+        // Updated selection handler to use SupportStaffEntry and map to Support by Name (no assignment changes).
         private void SupportListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
@@ -289,15 +287,17 @@ namespace ScheduleApp
                 if (!(DataContext is ScheduleApp.ViewModels.MainViewModel vm) || !(sender is ListBox lb))
                     return;
 
-                var selectedSupports = lb.SelectedItems.OfType<Support>().ToList();
+                var selectedEntries = lb.SelectedItems.OfType<ScheduleApp.Models.SupportStaffEntry>().ToList();
 
-                if (selectedSupports.Count == 0)
+                if (selectedEntries.Count == 0)
                 {
                     vm.Schedule.SelectedSupportRows.Clear();
                     return;
                 }
 
-                // Prefer direct method call if available
+                // Map entries to lightweight Support objects by name so ScheduleViewModel.ShowSupports can reuse its lookup logic.
+                var selectedSupports = selectedEntries.Select(en => new Support { Name = en.Name }).ToList();
+
                 vm.Schedule.ShowSupports(selectedSupports);
             }
             catch

@@ -615,7 +615,7 @@
                         <Border Grid.Column="0" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginNothing}">
                           <ListBox x:Name="SupportListBox"
                                    beh:AutoSelectFirstBehavior.EnableAutoSelect="True"
-                                   ItemsSource="{Binding Setup.Supports}"
+                                   ItemsSource="{Binding Schedule.SupportEntries}"
                                    SelectionMode="Extended"
                                    SelectionChanged="SupportListBox_SelectionChanged"
                                    ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -625,7 +625,20 @@
                             <ListBox.ItemTemplate>
                               <DataTemplate>
                                 <Grid Margin="{StaticResource CellElementMargin}">
-                                  <TextBlock Text="{Binding Name}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                  <TextBlock Text="{Binding Name}" FontWeight="SemiBold" VerticalAlignment="Center">
+                                    <TextBlock.Style>
+                                      <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+                                        <Setter Property="FontStyle" Value="Normal"/>
+                                        <Style.Triggers>
+                                          <DataTrigger Binding="{Binding IsUnscheduled}" Value="True">
+                                            <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
+                                            <Setter Property="FontStyle" Value="Italic"/>
+                                          </DataTrigger>
+                                        </Style.Triggers>
+                                      </Style>
+                                    </TextBlock.Style>
+                                  </TextBlock>
                                 </Grid>
                               </DataTemplate>
                             </ListBox.ItemTemplate>

@@ -80,6 +80,7 @@
     <Compile Include="ScheduleApp\Models\RoomPreference.cs" />
     <Compile Include="ScheduleApp\Models\SetupData.cs" />
     <Compile Include="ScheduleApp\Models\Support.cs" />
+    <Compile Include="ScheduleApp\Models\SupportStaffEntry.cs" />
     <Compile Include="ScheduleApp\Models\Teacher.cs" />
     <Compile Include="ScheduleApp\Models\TeacherScheduleRow.cs" />
     <Compile Include="ScheduleApp\Services\PrintService.cs" />

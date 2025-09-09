@@ -10,6 +10,9 @@
         <ResourceDictionary Source="Appearance.xaml"/>
       </ResourceDictionary.MergedDictionaries>
 
+      <!-- ADD: primary text brush so Foreground never resolves to UnsetValue -->
+      <SolidColorBrush x:Key="PrimaryTextBrush" Color="#FF111111"/>
+
       <!-- Converters used by MainWindow.xaml -->
       <conv:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter"/>
       <conv:TaskKindToBrushConverter x:Key="TaskKindToBrushConverter"
