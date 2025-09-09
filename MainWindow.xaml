@@ -162,11 +162,7 @@
                       <ColumnDefinition Width="420" />
                     </Grid.ColumnDefinitions>
 
-                    <TabControl x:Name="SetupInnerTab"
-                                Grid.Column="0"
-                                Margin="{StaticResource RightColumnGapLarge}"
-                                Style="{StaticResource RoundedTabControl}"
-                                Padding="6">
+                    <TabControl x:Name="SetupInnerTab" Grid.Column="0" Margin="{StaticResource RightColumnGapLarge}">
                       <TabItem Header="Classrooms and Teachers">
                         <Grid Margin="{StaticResource PageSectionMarginLarge}">
                           <Grid.ColumnDefinitions>
@@ -859,9 +855,10 @@
                         </StackPanel>
 
                         <FlowDocumentScrollViewer x:Name="PrintPreviewViewer"
-                            Document="{Binding PrintPreview.Document}"
-                            Focusable="True"
-                            PreviewMouseLeftButtonDown="ScheduleArea_PreviewMouseLeftButtonDown" />
+    Grid.Row="1"
+    Document="{Binding PrintPreview.Document}"
+    Focusable="True"
+    PreviewMouseLeftButtonDown="ScheduleArea_PreviewMouseLeftButtonDown" />
                       </Grid>
                     </TabItem>
                   </TabControl>

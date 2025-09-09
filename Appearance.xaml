@@ -645,9 +645,72 @@
 
     <!-- Rounded TabControl template: draws a rounded border around the selected tab content and clips children -->
     <Style x:Key="RoundedTabControl" TargetType="TabControl">
-      <Setter Property="Background" Value="{StaticResource PrimaryBackgroundBrush}"/>
-      <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
+      <Setter Property="Background" Value="{DynamicResource PrimaryBackgroundBrush}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBorderBrush}"/>
+      <Setter Property="FontFamily" Value="{DynamicResource BodyFontFamily}"/>
+      <Setter Property="FontSize" Value="{DynamicResource BodyFontSize}"/>
       <Setter Property="SnapsToDevicePixels" Value="True"/>
+      <!-- NO Padding here: keep headers aligned with the control's left edge -->
+
+      <Setter Property="ItemContainerStyle">
+        <Setter.Value>
+          <Style TargetType="TabItem">
+            <Setter Property="Margin" Value="{DynamicResource TabHeaderMargin}"/>
+            <Setter Property="Padding" Value="{DynamicResource TabHeaderPadding}"/>
+            <Setter Property="FontWeight" Value="{DynamicResource TabHeaderFontWeight}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource TransparentBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBorderBrush}"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Template">
+              <Setter.Value>
+                <ControlTemplate TargetType="TabItem">
+                  <!-- moved comment out of attribute list in original file -->
+                  <Border x:Name="Bd"
+                          Background="{TemplateBinding Background}"
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          BorderThickness="1"
+                          CornerRadius="{DynamicResource TabHeaderCornerRadius}"
+                          Margin="0,0,0,-1"
+                          SnapsToDevicePixels="True">
+                    <Grid>
+                      <Rectangle x:Name="Accent"
+                                 Height="{DynamicResource TabAccentThickness}"
+                                 Fill="{DynamicResource AccentBrush}"
+                                 VerticalAlignment="Top"
+                                 Visibility="Collapsed"/>
+                      <ContentPresenter Margin="{TemplateBinding Padding}"
+                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                        RecognizesAccessKey="True"/>
+                    </Grid>
+                  </Border>
+
+                  <ControlTemplate.Triggers>
+                    <Trigger Property="IsSelected" Value="True">
+                      <Setter TargetName="Bd" Property="Background" Value="{DynamicResource PrimaryBackgroundBrush}"/>
+                      <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryBorderBrush}"/>
+                      <Setter TargetName="Bd" Property="BorderThickness" Value="1,1,1,0"/> <!-- merge with content border -->
+                      <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+                      <Setter TargetName="Accent" Property="Visibility" Value="Visible"/>
+                      <Setter TargetName="Bd" Property="Panel.ZIndex" Value="1"/>
+                    </Trigger>
+
+                    <Trigger Property="IsMouseOver" Value="True">
+                      <Setter TargetName="Bd" Property="Background" Value="{DynamicResource MenuItemHoverBackgroundBrush}"/>
+                    </Trigger>
+
+                    <Trigger Property="IsEnabled" Value="False">
+                      <Setter Property="Opacity" Value="0.6"/>
+                    </Trigger>
+                  </ControlTemplate.Triggers>
+                </ControlTemplate>
+              </Setter.Value>
+            </Setter>
+          </Style>
+        </Setter.Value>
+      </Setter>
+
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="TabControl">
@@ -657,9 +720,9 @@
                 <RowDefinition Height="*"/>
               </Grid.RowDefinitions>
 
-              <!-- Tab headers -->
+              <!-- Tab headers: explicit zero margin so headers are flush-left -->
               <TabPanel x:Name="HeaderPanel"
-                        Background="{StaticResource TransparentBrush}"
+                        Background="{DynamicResource TransparentBrush}"
                         IsItemsHost="True"
                         Margin="0"/>
 
@@ -690,11 +753,11 @@
       </Setter>
     </Style>
 
-    <!-- Tab metrics -->
+    <!-- Tab metrics (ensure no negative left inset) -->
     <Thickness x:Key="TabHeaderPadding">16,8</Thickness>
     <Thickness x:Key="TabHeaderMargin">0,0,6,0</Thickness>
     <CornerRadius x:Key="TabHeaderCornerRadius">6,6,0,0</CornerRadius>
     <FontWeight x:Key="TabHeaderFontWeight">SemiBold</FontWeight>
-    <Thickness x:Key="TabStripMargin">0,0,0,-1</Thickness> <!-- flush-left; -1 overlaps content border to remove the seam -->
+    <Thickness x:Key="TabStripMargin">0</Thickness>
     <sys:Double x:Key="TabAccentThickness">2</sys:Double>
   </ResourceDictionary>
