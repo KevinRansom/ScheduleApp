@@ -448,22 +448,28 @@
       <Setter Property="SeparatorBrush" Value="{StaticResource SchedGridLineBrush}"/>
     </Style>
 
-    <!-- SchedGridCellText -->
+    <!-- SchedGridCellText: for display (TextBlock) -->
     <Style x:Key="SchedGridCellText" TargetType="TextBlock">
       <Setter Property="TextAlignment" Value="Left"/>
       <Setter Property="Padding" Value="{StaticResource CellTextPadding}"/>
       <Setter Property="FontFamily" Value="{StaticResource MonospaceFontFamily}"/>
+      <Setter Property="FontSize" Value="{StaticResource BodyFontSize}"/>
+      <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
       <Setter Property="SnapsToDevicePixels" Value="True"/>
     </Style>
 
-    <!-- Added: default cell/text/editing styles used by MainWindow -->
-    <Style x:Key="DefaultTextElementStyle" TargetType="TextBlock" BasedOn="{StaticResource SchedGridCellText}">
-        <Setter Property="Margin" Value="{StaticResource CellElementMargin}"/>
-    </Style>
-
+    <!-- DefaultEditingElementStyle: for editing (TextBox) -->
     <Style x:Key="DefaultEditingElementStyle" TargetType="TextBox">
-        <Setter Property="Padding" Value="{StaticResource CellEditorPadding}"/>
-        <Setter Property="Margin" Value="{StaticResource CellElementMargin}"/>
+      <Setter Property="Padding" Value="{StaticResource CellEditorPadding}"/>
+      <Setter Property="Margin" Value="{StaticResource CellElementMargin}"/>
+      <Setter Property="FontFamily" Value="{StaticResource MonospaceFontFamily}"/>
+      <Setter Property="FontSize" Value="{StaticResource BodyFontSize}"/>
+      <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+      <Setter Property="SnapsToDevicePixels" Value="True"/>
+      <!-- Optional (keeps visuals closer to display mode):
+           <Setter Property="Background" Value="Transparent"/>
+           <Setter Property="BorderThickness" Value="0"/>
+      -->
     </Style>
 
     <Style x:Key="DefaultCellStyle" TargetType="DataGridCell">
@@ -618,6 +624,67 @@
                 <Setter Property="Foreground" Value="#FFFFFFFF"/>
               </Trigger>
             </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <!-- Display style used by Setup grids for read-only TextBlocks in cells -->
+    <Style x:Key="DefaultTextElementStyle" TargetType="TextBlock">
+      <Setter Property="Margin" Value="{StaticResource CellElementMargin}"/>
+      <Setter Property="FontFamily" Value="{StaticResource BodyFontFamily}"/>
+      <Setter Property="FontSize" Value="{StaticResource BodyFontSize}"/>
+      <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="SnapsToDevicePixels" Value="True"/>
+      <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+    </Style>
+
+    <!-- Corner radius for tab content area (top-left kept square to meet tab strip) -->
+    <CornerRadius x:Key="TabContentCornerRadius">0,6,6,6</CornerRadius>
+
+    <!-- Rounded TabControl template: draws a rounded border around the selected tab content and clips children -->
+    <Style x:Key="RoundedTabControl" TargetType="TabControl">
+      <Setter Property="Background" Value="{StaticResource PrimaryBackgroundBrush}"/>
+      <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
+      <Setter Property="SnapsToDevicePixels" Value="True"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="TabControl">
+            <Grid SnapsToDevicePixels="True" KeyboardNavigation.TabNavigation="Local">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+              </Grid.RowDefinitions>
+
+              <!-- Tab headers -->
+              <TabPanel x:Name="HeaderPanel"
+                        Background="{StaticResource TransparentBrush}"
+                        IsItemsHost="True"
+                        Margin="0"/>
+
+              <!-- Rounded content area -->
+              <Border Grid.Row="1"
+                      Background="{TemplateBinding Background}"
+                      BorderBrush="{TemplateBinding BorderBrush}"
+                      BorderThickness="{StaticResource GridOuterBorderThickness}"
+                      CornerRadius="{StaticResource TabContentCornerRadius}"
+                      SnapsToDevicePixels="True">
+                <Grid ClipToBounds="True">
+                  <Grid.Clip>
+                    <MultiBinding Converter="{StaticResource RoundedClipConverter}">
+                      <Binding RelativeSource="{RelativeSource Self}" Path="ActualWidth"/>
+                      <Binding RelativeSource="{RelativeSource Self}" Path="ActualHeight"/>
+                      <Binding Source="{StaticResource TabContentCornerRadius}"/>
+                      <Binding Source="{StaticResource GridOuterBorderStroke}"/>
+                    </MultiBinding>
+                  </Grid.Clip>
+                  <ContentPresenter x:Name="PART_SelectedContentHost"
+                                    Margin="{TemplateBinding Padding}"
+                                    ContentSource="SelectedContent"/>
+                </Grid>
+              </Border>
+            </Grid>
           </ControlTemplate>
         </Setter.Value>
       </Setter>

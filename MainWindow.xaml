@@ -68,6 +68,17 @@
                         Grid.Column="0"
                         Style="{StaticResource HamburgerToggleButtonStyle}"/>
 
+          <!-- Title text -->
+          <TextBlock Grid.Column="1"
+                     Text="Coverage Schedule App"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Left"
+                     Margin="8,0,0,0"
+                     Foreground="{StaticResource TitleBarForegroundBrush}"
+                     FontSize="16"
+                     FontWeight="SemiBold"
+                     IsHitTestVisible="False"/>
+
           <!-- (Popup unchanged) -->
           <Popup x:Name="HamburgerPopup"
                  PlacementTarget="{Binding ElementName=HamburgerToggle}"
@@ -151,7 +162,11 @@
                       <ColumnDefinition Width="420" />
                     </Grid.ColumnDefinitions>
 
-                    <TabControl x:Name="SetupInnerTab" Grid.Column="0" Margin="{StaticResource RightColumnGapLarge}">
+                    <TabControl x:Name="SetupInnerTab"
+                                Grid.Column="0"
+                                Margin="{StaticResource RightColumnGapLarge}"
+                                Style="{StaticResource RoundedTabControl}"
+                                Padding="6">
                       <TabItem Header="Classrooms and Teachers">
                         <Grid Margin="{StaticResource PageSectionMarginLarge}">
                           <Grid.ColumnDefinitions>
@@ -313,12 +328,12 @@
                                                   Width="*"
                                                   CellStyle="{StaticResource DefaultCellStyle}">
                                 <DataGridTextColumn.ElementStyle>
-                                  <Style TargetType="TextBlock">
+                                  <Style TargetType="TextBlock" BasedOn="{StaticResource DefaultTextElementStyle}">
                                     <Setter Property="Margin" Value="{StaticResource CellElementMargin}"/>
                                   </Style>
                                 </DataGridTextColumn.ElementStyle>
                                 <DataGridTextColumn.EditingElementStyle>
-                                  <Style TargetType="TextBox">
+                                  <Style TargetType="TextBox" BasedOn="{StaticResource DefaultEditingElementStyle}">
                                     <Setter Property="Padding" Value="{StaticResource CellEditorPadding}"/>
                                   </Style>
                                 </DataGridTextColumn.EditingElementStyle>
@@ -654,11 +669,10 @@
                                     CanUserDeleteRows="False"
                                     IsReadOnly="True"
                                     HeadersVisibility="Column"
-                                    GridLinesVisibility="All"
+                                    GridLinesVisibility="Horizontal"
                                     HorizontalGridLinesBrush="{StaticResource SchedGridLineBrush}"
-                                    VerticalGridLinesBrush="{StaticResource SchedGridLineBrush}"
-                                    ColumnHeaderStyle="{StaticResource SchedGridHeaderStyleDefault}"
-                                    CellStyle="{StaticResource SchedGridCellStyle}"
+                                    ColumnHeaderStyle="{StaticResource RoundedDataGridColumnHeader}"
+                                    CellStyle="{StaticResource DefaultCellStyle}"
                                     BorderThickness="{StaticResource NoBorderThickness}"
                                     Background="{StaticResource TransparentBrush}"
                                     SnapsToDevicePixels="True"
@@ -676,38 +690,43 @@
                             </DataGrid.RowStyle>
 
                             <DataGrid.Columns>
-                              <!-- 1) Start Time (first column) -->
-                              <DataGridTextColumn Header="Start Time" Binding="{Binding StartText}" Width="*">
+                              <!-- 1) Start Time -->
+                              <DataGridTextColumn Header="Start Time" Binding="{Binding StartText}" Width="*"
+                                                  CellStyle="{StaticResource DefaultCellStyle}">
                                 <DataGridTextColumn.ElementStyle>
-                                  <StaticResource ResourceKey="SchedGridCellText"/>
+                                  <StaticResource ResourceKey="DefaultTextElementStyle"/>
                                 </DataGridTextColumn.ElementStyle>
                               </DataGridTextColumn>
 
                               <!-- 2) Support Staff -->
-                              <DataGridTextColumn Header="Support Staff" Binding="{Binding SupportName}" Width="2*">
+                              <DataGridTextColumn Header="Support Staff" Binding="{Binding SupportName}" Width="2*"
+                                                  CellStyle="{StaticResource DefaultCellStyle}">
                                 <DataGridTextColumn.ElementStyle>
-                                  <StaticResource ResourceKey="SchedGridCellText"/>
+                                  <StaticResource ResourceKey="DefaultTextElementStyle"/>
                                 </DataGridTextColumn.ElementStyle>
                               </DataGridTextColumn>
 
-                              <!-- 3) Teacher (uses converter to show "Self" when appropriate) -->
-                              <DataGridTextColumn Header="Teacher" Binding="{Binding ., Converter={StaticResource SupportTeacherDisplayConverter}}" Width="2*">
+                              <!-- 3) Teacher -->
+                              <DataGridTextColumn Header="Teacher" Binding="{Binding ., Converter={StaticResource SupportTeacherDisplayConverter}}" Width="2*"
+                                                  CellStyle="{StaticResource DefaultCellStyle}">
                                 <DataGridTextColumn.ElementStyle>
-                                  <StaticResource ResourceKey="SchedGridCellText"/>
+                                  <StaticResource ResourceKey="DefaultTextElementStyle"/>
                                 </DataGridTextColumn.ElementStyle>
                               </DataGridTextColumn>
 
                               <!-- 4) Activity -->
-                              <DataGridTextColumn Header="Activity" Binding="{Binding TaskName}" Width="*">
+                              <DataGridTextColumn Header="Activity" Binding="{Binding TaskName}" Width="*"
+                                                  CellStyle="{StaticResource DefaultCellStyle}">
                                 <DataGridTextColumn.ElementStyle>
-                                  <StaticResource ResourceKey="SchedGridCellText"/>
+                                  <StaticResource ResourceKey="DefaultTextElementStyle"/>
                                 </DataGridTextColumn.ElementStyle>
                               </DataGridTextColumn>
 
-                              <!-- 5) Duration -->
-                              <DataGridTextColumn Header="Duration" Binding="{Binding DurationText}" Width="*">
+                              <!-- 5) Duration (last column uses LastColumnCellStyle like Setup grids) -->
+                              <DataGridTextColumn Header="Duration" Binding="{Binding DurationText}" Width="*"
+                                                  CellStyle="{StaticResource LastColumnCellStyle}">
                                 <DataGridTextColumn.ElementStyle>
-                                  <StaticResource ResourceKey="SchedGridCellText"/>
+                                  <StaticResource ResourceKey="DefaultTextElementStyle"/>
                                 </DataGridTextColumn.ElementStyle>
                               </DataGridTextColumn>
                             </DataGrid.Columns>
@@ -762,11 +781,10 @@
                                     CanUserDeleteRows="False"
                                     IsReadOnly="True"
                                     HeadersVisibility="Column"
-                                    GridLinesVisibility="All"
+                                    GridLinesVisibility="Horizontal"
                                     HorizontalGridLinesBrush="{StaticResource SchedGridLineBrush}"
-                                    VerticalGridLinesBrush="{StaticResource SchedGridLineBrush}"
-                                    ColumnHeaderStyle="{StaticResource SchedGridHeaderStyleDefault}"
-                                    CellStyle="{StaticResource SchedGridCellStyle}"
+                                    ColumnHeaderStyle="{StaticResource RoundedDataGridColumnHeader}"
+                                    CellStyle="{StaticResource DefaultCellStyle}"
                                     BorderThickness="{StaticResource NoBorderThickness}"
                                     Background="{StaticResource TransparentBrush}"
                                     SnapsToDevicePixels="True"
@@ -779,30 +797,40 @@
                                 <Setter Property="SnapsToDevicePixels" Value="True"/>
                               </Style>
                             </DataGrid.RowStyle>
+
                             <DataGrid.Columns>
-                              <DataGridTextColumn Header="Start Time" Binding="{Binding Start}" Width="*">
+                              <DataGridTextColumn Header="Start Time" Binding="{Binding Start}" Width="*"
+                                                  CellStyle="{StaticResource DefaultCellStyle}">
                                 <DataGridTextColumn.ElementStyle>
-                                  <StaticResource ResourceKey="SchedGridCellText"/>
+                                  <StaticResource ResourceKey="DefaultTextElementStyle"/>
                                 </DataGridTextColumn.ElementStyle>
                               </DataGridTextColumn>
-                              <DataGridTextColumn Header="Name" Binding="{Binding TeacherName}" Width="2*">
+
+                              <DataGridTextColumn Header="Name" Binding="{Binding TeacherName}" Width="2*"
+                                                  CellStyle="{StaticResource DefaultCellStyle}">
                                 <DataGridTextColumn.ElementStyle>
-                                  <StaticResource ResourceKey="SchedGridCellText"/>
+                                  <StaticResource ResourceKey="DefaultTextElementStyle"/>
                                 </DataGridTextColumn.ElementStyle>
                               </DataGridTextColumn>
-                              <DataGridTextColumn Header="Support Staff" Binding="{Binding SupportStaff}" Width="2*">
+
+                              <DataGridTextColumn Header="Support Staff" Binding="{Binding SupportStaff}" Width="2*"
+                                                  CellStyle="{StaticResource DefaultCellStyle}">
                                 <DataGridTextColumn.ElementStyle>
-                                  <StaticResource ResourceKey="SchedGridCellText"/>
+                                  <StaticResource ResourceKey="DefaultTextElementStyle"/>
                                 </DataGridTextColumn.ElementStyle>
                               </DataGridTextColumn>
-                              <DataGridTextColumn Header="Activity" Binding="{Binding Activity}" Width="*">
+
+                              <DataGridTextColumn Header="Activity" Binding="{Binding Activity}" Width="*"
+                                                  CellStyle="{StaticResource DefaultCellStyle}">
                                 <DataGridTextColumn.ElementStyle>
-                                  <StaticResource ResourceKey="SchedGridCellText"/>
+                                  <StaticResource ResourceKey="DefaultTextElementStyle"/>
                                 </DataGridTextColumn.ElementStyle>
                               </DataGridTextColumn>
-                              <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" Width="*">
+
+                              <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" Width="*"
+                                                  CellStyle="{StaticResource LastColumnCellStyle}">
                                 <DataGridTextColumn.ElementStyle>
-                                  <StaticResource ResourceKey="SchedGridCellText"/>
+                                  <StaticResource ResourceKey="DefaultTextElementStyle"/>
                                 </DataGridTextColumn.ElementStyle>
                               </DataGridTextColumn>
                             </DataGrid.Columns>
@@ -858,14 +886,12 @@
       <Grid.Resources>
         <Style TargetType="Thumb" x:Key="ResizeThumbStyle">
           <Setter Property="SnapsToDevicePixels" Value="True"/>
-          <!-- make thumb invisible but keep hit-testing -->
           <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
           <Setter Property="BorderBrush" Value="{StaticResource TransparentBrush}"/>
           <Setter Property="BorderThickness" Value="0"/>
           <Setter Property="Template">
             <Setter.Value>
               <ControlTemplate TargetType="Thumb">
-                <!-- Invisible but hit-testable area -->
                 <Border Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
