@@ -53,22 +53,33 @@ namespace ScheduleApp.ViewModels
         }
 
         // NEW: Update the SupportEntries collection from the set of tabs.
-        // This keeps the left-hand list in the same order as the tabs and appends Unscheduled Breaks when present.
+        // Ensure any "Unscheduled Breaks" entry is placed first, then the remaining tabs in order.
         public void UpdateSupportEntries(SupportTabViewModel[] tabs)
         {
             SupportEntries.Clear();
             if (tabs == null || tabs.Length == 0) return;
 
+            // Find any unscheduled entries (match either display name or "Unscheduled")
+            var unscheduledKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Unscheduled Breaks", "Unscheduled" };
+
+            // Add Unscheduled entries first (preserve original order among unscheduled if multiple)
+            foreach (var t in tabs.Where(tt => tt != null && unscheduledKeys.Contains(tt.SupportName)))
+            {
+                var name = t.SupportName;
+                if (string.IsNullOrWhiteSpace(name)) continue;
+                SupportEntries.Add(new SupportStaffEntry(name, isUnscheduled: true));
+            }
+
+            // Then add all other tab names in the incoming order, skipping any unscheduled already added
             foreach (var t in tabs)
             {
-                var name = t?.SupportName ?? string.Empty;
+                if (t == null) continue;
+                var name = t.SupportName;
                 if (string.IsNullOrWhiteSpace(name)) continue;
-
-                var isUnscheduled = string.Equals(name, "Unscheduled Breaks", StringComparison.OrdinalIgnoreCase)
-                                    || string.Equals(name, "Unscheduled", StringComparison.OrdinalIgnoreCase);
-
-                SupportEntries.Add(new SupportStaffEntry(name, isUnscheduled));
+                if (unscheduledKeys.Contains(name)) continue; // already added
+                SupportEntries.Add(new SupportStaffEntry(name, isUnscheduled: false));
             }
+
             Raise(nameof(SupportEntries));
         }
 

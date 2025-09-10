@@ -8,7 +8,7 @@
         xmlns:beh="clr-namespace:ScheduleApp.Behaviors"
         mc:Ignorable="d"
         Title="Support Coverage Scheduler"
-        Height="800"
+        Height="600"
         Width="1200"
         UseLayoutRounding="True"
         SnapsToDevicePixels="True"
@@ -322,19 +322,7 @@
                                                   Binding="{Binding Name}"
                                                   SortMemberPath="Name"
                                                   Width="*"
-                                                  CellStyle="{StaticResource DefaultCellStyle}">
-                                <DataGridTextColumn.ElementStyle>
-                                  <Style TargetType="TextBlock" BasedOn="{StaticResource DefaultTextElementStyle}">
-                                    <Setter Property="Margin" Value="{StaticResource CellElementMargin}"/>
-                                  </Style>
-                                </DataGridTextColumn.ElementStyle>
-                                <DataGridTextColumn.EditingElementStyle>
-                                  <Style TargetType="TextBox" BasedOn="{StaticResource DefaultEditingElementStyle}">
-                                    <Setter Property="Padding" Value="{StaticResource CellEditorPadding}"/>
-                                  </Style>
-                                </DataGridTextColumn.EditingElementStyle>
-                              </DataGridTextColumn>
-
+                                                  CellStyle="{StaticResource DefaultCellStyle}" />
                               <DataGridTemplateColumn Header="Start Time"
                                                       SortMemberPath="Start"
                                                       Width="*"
@@ -632,7 +620,8 @@
                                    ScrollViewer.VerticalScrollBarVisibility="Auto"
                                    Background="{StaticResource TransparentBrush}"
                                    BorderThickness="0"
-                                   IsSynchronizedWithCurrentItem="False">
+                                   IsSynchronizedWithCurrentItem="False"
+                                   ItemContainerStyle="{StaticResource RoundedListBoxItemStyle}">
                             <ListBox.ItemTemplate>
                               <DataTemplate>
                                 <Grid Margin="{StaticResource CellElementMargin}">
@@ -740,7 +729,7 @@
                           <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Teacher list -->
+                        <!-- Teacher list (no room number column) -->
                         <Border Grid.Column="0" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginNothing}">
                           <ListBox x:Name="TeacherListBox"
                                    beh:AutoSelectFirstBehavior.EnableAutoSelect="True"
@@ -751,17 +740,16 @@
                                    ScrollViewer.VerticalScrollBarVisibility="Auto"
                                    Background="{StaticResource TransparentBrush}"
                                    BorderThickness="0"
-                                   IsSynchronizedWithCurrentItem="False">
+                                   IsSynchronizedWithCurrentItem="False"
+                                   ItemContainerStyle="{StaticResource RoundedListBoxItemStyle}">
                             <ListBox.ItemTemplate>
                               <DataTemplate>
+                                <!-- single-column template: just show teacher name -->
                                 <Grid Margin="{StaticResource CellElementMargin}">
-                                  <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="80"/>
-                                    <ColumnDefinition Width="*"/>
-                                  </Grid.ColumnDefinitions>
-
-                                  <TextBlock Grid.Column="0" Text="{Binding RoomNumber}" FontSize="11" Foreground="{StaticResource SecondaryTextBrush}" VerticalAlignment="Center"/>
-                                  <TextBlock Grid.Column="1" Text="{Binding Name}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                  <TextBlock Text="{Binding Name}"
+                                             FontWeight="SemiBold"
+                                             VerticalAlignment="Center"
+                                             Margin="8,0,0,0"/>
                                 </Grid>
                               </DataTemplate>
                             </ListBox.ItemTemplate>

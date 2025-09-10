@@ -213,7 +213,8 @@
       <Setter Property="MinWidth" Value="0"/>
       <Setter Property="Padding" Value="{StaticResource ButtonPadding}"/>
       <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
-      <Setter Property="BorderBrush" Value="{StaticResource TransparentBrush}"/>
+      <!-- Replaced invalid TemplateBinding-in-Setter with a concrete resource so the Setter is valid -->
+      <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
       <Setter Property="BorderThickness" Value="0"/>
       <Setter Property="Foreground" Value="{StaticResource SortGlyphBrush}"/>
       <Setter Property="Cursor" Value="Hand"/>
@@ -713,43 +714,43 @@
 
       <Setter Property="Template">
         <Setter.Value>
-          <ControlTemplate TargetType="TabControl">
-            <Grid SnapsToDevicePixels="True" KeyboardNavigation.TabNavigation="Local">
-              <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-              </Grid.RowDefinitions>
+                <ControlTemplate TargetType="TabControl">
+                    <Grid SnapsToDevicePixels="True" KeyboardNavigation.TabNavigation="Local">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
-              <!-- Tab headers: explicit zero margin so headers are flush-left -->
-              <TabPanel x:Name="HeaderPanel"
+                        <!-- Tab headers: explicit zero margin so headers are flush-left -->
+                        <TabPanel x:Name="HeaderPanel"
                         Background="{DynamicResource TransparentBrush}"
                         IsItemsHost="True"
                         Margin="0"/>
 
-              <!-- Rounded content area -->
-              <Border Grid.Row="1"
+                        <!-- Rounded content area -->
+                        <Border Grid.Row="1"
                       Background="{TemplateBinding Background}"
                       BorderBrush="{TemplateBinding BorderBrush}"
                       BorderThickness="{StaticResource GridOuterBorderThickness}"
                       CornerRadius="{StaticResource TabContentCornerRadius}"
                       SnapsToDevicePixels="True">
-                <Grid ClipToBounds="True">
-                  <Grid.Clip>
-                    <MultiBinding Converter="{StaticResource RoundedClipConverter}">
-                      <Binding RelativeSource="{RelativeSource Self}" Path="ActualWidth"/>
-                      <Binding RelativeSource="{RelativeSource Self}" Path="ActualHeight"/>
-                      <Binding Source="{StaticResource TabContentCornerRadius}"/>
-                      <Binding Source="{StaticResource GridOuterBorderStroke}"/>
-                    </MultiBinding>
-                  </Grid.Clip>
-                  <ContentPresenter x:Name="PART_SelectedContentHost"
+                            <Grid ClipToBounds="True">
+                                <Grid.Clip>
+                                    <MultiBinding Converter="{StaticResource RoundedClipConverter}">
+                                        <Binding RelativeSource="{RelativeSource Self}" Path="ActualWidth"/>
+                                        <Binding RelativeSource="{RelativeSource Self}" Path="ActualHeight"/>
+                                        <Binding Source="{StaticResource TabContentCornerRadius}"/>
+                                        <Binding Source="{StaticResource GridOuterBorderStroke}"/>
+                                    </MultiBinding>
+                                </Grid.Clip>
+                                <ContentPresenter x:Name="PART_SelectedContentHost"
                                     Margin="{TemplateBinding Padding}"
                                     ContentSource="SelectedContent"/>
-                </Grid>
-              </Border>
-            </Grid>
-          </ControlTemplate>
-        </Setter.Value>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
       </Setter>
     </Style>
 
@@ -760,4 +761,47 @@
     <FontWeight x:Key="TabHeaderFontWeight">SemiBold</FontWeight>
     <Thickness x:Key="TabStripMargin">0</Thickness>
     <sys:Double x:Key="TabAccentThickness">2</sys:Double>
+
+    <!-- Rounded selection for ListBox items -->
+    <CornerRadius x:Key="ListBoxSelectionCornerRadius">3</CornerRadius>
+
+    <Style x:Key="RoundedListBoxItemStyle" TargetType="ListBoxItem">
+      <Setter Property="SnapsToDevicePixels" Value="True"/>
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Padding" Value="6,6"/>
+      <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="ListBoxItem">
+            <Border x:Name="Bd"
+                    Background="{TemplateBinding Background}"
+                    Padding="{TemplateBinding Padding}"
+                    CornerRadius="{StaticResource ListBoxSelectionCornerRadius}"
+                    BorderThickness="0"
+                    SnapsToDevicePixels="True">
+              <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Margin="0"/>
+            </Border>
+
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsSelected" Value="True">
+                <!-- selection fill + subtle outline -->
+                <Setter TargetName="Bd" Property="Background" Value="#D9F0FF"/> <!-- light blue fill -->
+                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+                <Setter TargetName="Bd" Property="BorderThickness" Value="1"/>
+              </Trigger>
+
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Bd" Property="Background" Value="#20F0F8FF"/>
+              </Trigger>
+
+              <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.6"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
   </ResourceDictionary>

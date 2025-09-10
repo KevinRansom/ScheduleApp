@@ -22,6 +22,9 @@ namespace ScheduleApp.ViewModels
         public ScheduleViewModel Schedule { get; } = new ScheduleViewModel();
         public PrintPreviewViewModel PrintPreview { get; } = new PrintPreviewViewModel();
 
+        // New: display-only teacher list (contains synthetic "Unscheduled Breaks" entry at index 0)
+        public ObservableCollection<Teacher> DisplayTeachers { get; } = new ObservableCollection<Teacher>();
+
         public ObservableCollection<string> Tabs { get; } = new ObservableCollection<string> { "Setup", "Schedule View", "Print Preview" };
 
         private int _selectedTabIndex;
@@ -42,6 +45,7 @@ namespace ScheduleApp.ViewModels
 
         public MainViewModel()
         {
+            // existing initialization...
             for (int h = 0; h < 24; h++)
             {
                 QuarterHours.Add(new TimeSpan(h, 0, 0));
@@ -62,6 +66,9 @@ namespace ScheduleApp.ViewModels
             LoadSetupCommand = new RelayCommand(LoadSetupDefault);
 
             LoadSetupDefault();
+
+            // Populate DisplayTeachers initially so UI shows Unscheduled immediately
+            UpdateDisplayTeachers();
 
             // Run schedule generation on app start: after loading setup and before any save action.
             GenerateSchedule();
@@ -166,6 +173,9 @@ namespace ScheduleApp.ViewModels
                     var allAssignedTasks = assigned.Values.SelectMany(x => x).ToList();
                     Schedule.LoadTeacherSchedules(DateTime.Today, Setup.Teachers.ToList(), allAssignedTasks);
 
+                    // Update the display-only teacher list so UI shows "Unscheduled Breaks" first
+                    UpdateDisplayTeachers();
+
                     SelectedTabIndex = 1;
 
                     SaveScheduleCommand.RaiseCanExecuteChanged();
@@ -180,6 +190,34 @@ namespace ScheduleApp.ViewModels
             {
                 _isGenerating = false;
             }
+        }
+
+        // New helper: populate DisplayTeachers with a synthetic Unscheduled entry first,
+        // then the real Setup.Teachers (do not mutate Setup.Teachers).
+        private void UpdateDisplayTeachers()
+        {
+            DisplayTeachers.Clear();
+
+            var unsched = new Teacher
+            {
+                Name = "Unscheduled Breaks",
+                RoomNumber = "---",
+                Start = TimeSpan.Zero,
+                End = TimeSpan.Zero
+            };
+
+            DisplayTeachers.Add(unsched);
+
+            // Append real teachers, skipping any real entry that already has that name
+            foreach (var t in Setup.Teachers)
+            {
+                if (t == null) continue;
+                if (string.Equals(t.Name, unsched.Name, StringComparison.OrdinalIgnoreCase)) continue;
+                DisplayTeachers.Add(t);
+            }
+
+            // Notify if needed
+            Raise(nameof(DisplayTeachers));
         }
 
         private bool ScheduleHasData()

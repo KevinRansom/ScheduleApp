@@ -31,26 +31,42 @@ namespace ScheduleApp
         {
             if (MainTabControl != null)
                 MainTabControl.SelectedIndex = 1; // Schedule View
+
+            // Also select the top-level Schedule inner tab "By Support" so the user lands on that view.
+            // Safe-guard: only set if the inner TabControl is present.
+            if (ScheduleViewInnerTabControl != null)
+                ScheduleViewInnerTabControl.SelectedIndex = 0; // By Support
+
             if (HamburgerToggle != null)
                 HamburgerToggle.IsChecked = false;
         }
 
-        // Navigate to the Print Preview tab (index 2) and close popup.
+        // Navigate to the Print Preview inner tab (inside Schedule View) and close popup.
         private void MenuPreview_Click(object sender, RoutedEventArgs e)
         {
+            // Select the top-level Schedule View tab
             if (MainTabControl != null)
-                MainTabControl.SelectedIndex = 2; // Print Preview
+                MainTabControl.SelectedIndex = 1; // Schedule View
+
+            // Select the inner Schedule tab "Print Preview" (index 2). Guard against null.
+            if (ScheduleViewInnerTabControl != null)
+                ScheduleViewInnerTabControl.SelectedIndex = 2; // Print Preview
+
             if (HamburgerToggle != null)
                 HamburgerToggle.IsChecked = false;
         }
 
-        // Navigate to Setup tab and inner Teachers tab
+        // Navigate to Schedule View and select the By Teacher inner tab
         private void MenuTeachers_Click(object sender, RoutedEventArgs e)
         {
+            // Select the top-level Schedule View tab
             if (MainTabControl != null)
-                MainTabControl.SelectedIndex = 0; // Setup
-            if (SetupInnerTab != null)
-                SetupInnerTab.SelectedIndex = 0; // Classrooms and Teachers
+                MainTabControl.SelectedIndex = 1; // Schedule View
+
+            // Select the inner Schedule tab "By Teacher" (index 1). Guard against null.
+            if (ScheduleViewInnerTabControl != null)
+                ScheduleViewInnerTabControl.SelectedIndex = 1; // By Teacher
+
             if (HamburgerToggle != null)
                 HamburgerToggle.IsChecked = false;
         }
