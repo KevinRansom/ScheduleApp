@@ -176,7 +176,9 @@ namespace ScheduleApp.ViewModels
                     // Update the display-only teacher list so UI shows "Unscheduled Breaks" first
                     UpdateDisplayTeachers();
 
-                    SelectedTabIndex = 1;
+                    // Ensure the view model keeps Schedule View selected after generation.
+                    // Set to 0 because Schedule View is the first top-level tab in MainWindow.xaml
+                    SelectedTabIndex = 0;
 
                     SaveScheduleCommand.RaiseCanExecuteChanged();
                 }

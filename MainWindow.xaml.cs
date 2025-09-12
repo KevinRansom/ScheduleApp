@@ -26,11 +26,11 @@ namespace ScheduleApp
                 HamburgerToggle.IsChecked = false;
         }
 
-        // Navigate to the Schedule View tab (index 1) and close popup.
+        // Navigate to the Schedule View tab (top-level index 0) and close popup.
         private void MenuSchedule_Click(object sender, RoutedEventArgs e)
         {
             if (MainTabControl != null)
-                MainTabControl.SelectedIndex = 1; // Schedule View
+                MainTabControl.SelectedIndex = 0; // Schedule View
 
             // Also select the top-level Schedule inner tab "By Support" so the user lands on that view.
             // Safe-guard: only set if the inner TabControl is present.
@@ -46,7 +46,7 @@ namespace ScheduleApp
         {
             // Select the top-level Schedule View tab
             if (MainTabControl != null)
-                MainTabControl.SelectedIndex = 1; // Schedule View
+                MainTabControl.SelectedIndex = 0; // Schedule View
 
             // Select the inner Schedule tab "Print Preview" (index 2). Guard against null.
             if (ScheduleViewInnerTabControl != null)
@@ -61,7 +61,7 @@ namespace ScheduleApp
         {
             // Select the top-level Schedule View tab
             if (MainTabControl != null)
-                MainTabControl.SelectedIndex = 1; // Schedule View
+                MainTabControl.SelectedIndex = 0; // Schedule View
 
             // Select the inner Schedule tab "By Teacher" (index 1). Guard against null.
             if (ScheduleViewInnerTabControl != null)
@@ -71,11 +71,11 @@ namespace ScheduleApp
                 HamburgerToggle.IsChecked = false;
         }
 
-        // Navigate to Setup tab (School area) — selects Setup but does not change inner tab.
+        // Navigate to Setup tab (top-level index 1) — selects Setup but does not change inner tab.
         private void MenuSchool_Click(object sender, RoutedEventArgs e)
         {
             if (MainTabControl != null)
-                MainTabControl.SelectedIndex = 0; // Setup
+                MainTabControl.SelectedIndex = 1; // Setup
             if (HamburgerToggle != null)
                 HamburgerToggle.IsChecked = false;
         }
@@ -84,7 +84,7 @@ namespace ScheduleApp
         private void MenuPreferences_Click(object sender, RoutedEventArgs e)
         {
             if (MainTabControl != null)
-                MainTabControl.SelectedIndex = 0; // Setup
+                MainTabControl.SelectedIndex = 1; // Setup
             if (SetupInnerTab != null)
                 SetupInnerTab.SelectedIndex = 2; // Classroom Support Preferences
             if (HamburgerToggle != null)
@@ -390,8 +390,8 @@ namespace ScheduleApp
                 // Only handle when the TabControl itself raised the event (avoid bubbled events).
                 if (!ReferenceEquals(e.OriginalSource, tc)) return;
 
-                // Only regenerate when the Schedule View tab is selected (index 1)
-                if (tc.SelectedIndex != 1) return;
+                // Only regenerate when the Schedule View tab is selected (top-level index 0)
+                if (tc.SelectedIndex != 0) return;
 
                 // 1) Force the focused editor (ComboBox/TextBox inside DataGrid) to update its binding source.
                 try
