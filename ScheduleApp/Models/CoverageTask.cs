@@ -13,7 +13,7 @@ namespace ScheduleApp.Models
     public class CoverageTask
     {
         public string RoomNumber { get; set; } // --- for self-care/idle
-        public string TeacherName { get; set; } // "Self" for self-care, "" for idle
+        public string TeacherName { get; set; } // For self-care: support name
         public string SupportName { get; set; } // filled for support timelines
         public CoverageTaskKind Kind { get; set; }
         public DateTime Start { get; set; }
@@ -21,39 +21,27 @@ namespace ScheduleApp.Models
         public int BufferAfterMinutes { get; set; } // 5 for 10-min breaks, 0 otherwise
 
         public DateTime EffectiveEnd => End.AddMinutes(BufferAfterMinutes);
-
         public int Minutes => (int)Math.Round((End - Start).TotalMinutes);
 
-        // Display helpers for aligned columns in visual/text views
         public string TaskName
         {
             get
             {
-                if (Kind == CoverageTaskKind.Coverage) return Minutes >= 25 ? "Lunch" : "Break";
-                if (Kind == CoverageTaskKind.Lunch) return "Lunch";
-                if (Kind == CoverageTaskKind.Break) return "Break";
-                return "Free"; // Idle shown as Free
+                if (Kind == CoverageTaskKind.Coverage) return "Coverage";
+                if (Kind == CoverageTaskKind.Lunch)    return "Lunch";
+                if (Kind == CoverageTaskKind.Break)    return "Break";
+                return "Free";
             }
         }
 
-        public string DurationText
-        {
-            get
-            {
-                // Show minutes for Break/Lunch/Free; empty for other kinds
-                if (TaskName == "Break" || TaskName == "Lunch" || TaskName == "Free")
-                    return Minutes + "min";
-                return "";
-            }
-        }
+        public string DurationText => Minutes + "min";
 
+        // UPDATED: for self-care/idle show the support staff name when provided
         public string TeacherDisplay
         {
             get
             {
-                // For self-care/free rows show Self; otherwise actual teacher
-                if (Kind == CoverageTaskKind.Coverage) return string.IsNullOrWhiteSpace(TeacherName) ? "Self" : TeacherName;
-                return "Self";
+                return string.IsNullOrWhiteSpace(TeacherName) ? "Self" : TeacherName;
             }
         }
 
@@ -61,7 +49,6 @@ namespace ScheduleApp.Models
         {
             get
             {
-                // Coverage shows actual room, others as ---
                 if (Kind == CoverageTaskKind.Coverage)
                     return string.IsNullOrWhiteSpace(RoomNumber) ? "---" : RoomNumber;
                 return "---";
@@ -93,13 +80,11 @@ namespace ScheduleApp.Models
             get
             {
                 var start = Start.ToString("HH:mm");
-                string who = Kind == CoverageTaskKind.Coverage
-                    ? string.Format("Teacher: {0} | Room: {1}", TeacherDisplay, RoomDisplay)
-                    : "Teacher: Self | Room: ---";
+                string who = string.Format("Teacher: {0} | Room: {1}", TeacherDisplay, RoomDisplay);
 
                 string kindPart;
                 if (Kind == CoverageTaskKind.Coverage)
-                    kindPart = Minutes >= 25 ? "Lunch: 30min" : "Break: 10min";
+                    kindPart = Minutes >= 25 ? "Coverage: Lunch 30min" : "Coverage: Break 10min";
                 else if (Kind == CoverageTaskKind.Lunch) kindPart = "Lunch: 30min";
                 else if (Kind == CoverageTaskKind.Break) kindPart = "Break: 10min";
                 else kindPart = string.Format("Free: {0}min", Minutes);

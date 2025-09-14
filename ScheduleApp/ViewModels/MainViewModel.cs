@@ -22,23 +22,30 @@ namespace ScheduleApp.ViewModels
         public ScheduleViewModel Schedule { get; } = new ScheduleViewModel();
         public PrintPreviewViewModel PrintPreview { get; } = new PrintPreviewViewModel();
 
-        public ObservableCollection<string> Tabs { get; } = new ObservableCollection<string> { "Setup", "Schedule View", "Print Preview" };
+        // New: display-only teacher list (contains synthetic "Unscheduled Breaks" entry at index 0)
+        public ObservableCollection<Teacher> DisplayTeachers { get; } = new ObservableCollection<Teacher>();
+
+        public ObservableCollection<string> Tabs { get; } = new ObservableCollection<string> { "Team Lineup", "Schedule View", "Print Preview" };
 
         private int _selectedTabIndex;
         public int SelectedTabIndex { get { return _selectedTabIndex; } set { _selectedTabIndex = value; Raise(); } }
 
         private readonly SchedulerService _scheduler = new SchedulerService();
+        private readonly PrintService _printService = new PrintService();
 
         public RelayCommand GenerateScheduleCommand { get; }
         public RelayCommand SaveScheduleCommand { get; }
-        public RelayCommand SaveSetupCommand { get; }   // NEW
-        public RelayCommand LoadSetupCommand { get; }   // NEW
+        public RelayCommand SaveSetupCommand { get; }
+        public RelayCommand LoadSetupCommand { get; }
 
-        private readonly string _defaultSetupPath;       // NEW
+        private readonly string _defaultSetupPath;
+
+        // Guard to prevent re-entrant GenerateSchedule calls
+        private bool _isGenerating;
 
         public MainViewModel()
         {
-            // Populate 24-hour quarter increments
+            // existing initialization...
             for (int h = 0; h < 24; h++)
             {
                 QuarterHours.Add(new TimeSpan(h, 0, 0));
@@ -47,7 +54,6 @@ namespace ScheduleApp.ViewModels
                 QuarterHours.Add(new TimeSpan(h, 45, 0));
             }
 
-            // Compute default setup path and ensure directory
             var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             var dir = Path.Combine(appData, "ScheduleApp");
             Directory.CreateDirectory(dir);
@@ -56,51 +62,164 @@ namespace ScheduleApp.ViewModels
             GenerateScheduleCommand = new RelayCommand(GenerateSchedule);
             SaveScheduleCommand = new RelayCommand(SaveSchedule, ScheduleHasData);
 
-            SaveSetupCommand = new RelayCommand(SaveSetupDefault); // NEW
-            LoadSetupCommand = new RelayCommand(LoadSetupDefault); // NEW
+            SaveSetupCommand = new RelayCommand(SaveSetupDefault);
+            LoadSetupCommand = new RelayCommand(LoadSetupDefault);
 
-            // Auto-load default file on startup (if present)
             LoadSetupDefault();
+
+            // Populate DisplayTeachers initially so UI shows Unscheduled immediately
+            UpdateDisplayTeachers();
+
+            // Run schedule generation on app start: after loading setup and before any save action.
+            GenerateSchedule();
         }
 
         private void GenerateSchedule()
         {
-            var day = new DayContext
-            {
-                Date = DateTime.Today,
-                Teachers = Setup.Teachers.ToList(),
-                Supports = Setup.Supports.ToList(),
-                Preferences = Setup.Preferences.ToList()
-            };
+            // Prevent reentry (e.g. tab selection handlers triggering GenerateSchedule while it is already running).
+            if (_isGenerating) return;
+            _isGenerating = true;
 
-            var teacherTasks = _scheduler.GenerateTeacherCoverageTasks(day);
-            var assigned = _scheduler.AssignSupportToTeacherTasks(day, teacherTasks);
-
-            // Inject support names for self-care and idle insertion
-            foreach (var kvp in assigned.ToList())
+            try
             {
-                foreach (var t in kvp.Value)
+                try
                 {
-                    t.SupportName = kvp.Key;
+                    var day = new DayContext
+                    {
+                        Date = DateTime.Today,
+                        Teachers = Setup.Teachers.ToList(),
+                        Supports = Setup.Supports.ToList(),
+                        Preferences = Setup.Preferences.ToList()
+                    };
+
+                    var teacherTasks = _scheduler.GenerateTeacherCoverageTasks(day);
+                    var assigned = _scheduler.AssignSupportToTeacherTasks(day, teacherTasks);
+
+                    foreach (var kvp in assigned.ToList())
+                    {
+                        foreach (var t in kvp.Value)
+                        {
+                            t.SupportName = kvp.Key;
+                        }
+                    }
+
+                    _scheduler.ScheduleSupportSelfCare(day, assigned);
+
+                    // Build tabs: preserve user support ordering first, then any extra supports,
+                    // and append Unscheduled (displayed as "Unscheduled Breaks") at the end.
+                    var tabsList = new List<SupportTabViewModel>();
+
+                    // preserve Setup.Supports order (use names as provided)
+                    var supportOrder = Setup.Supports.Select(s => s.Name).Where(n => !string.IsNullOrWhiteSpace(n)).ToList();
+                    foreach (var sname in supportOrder)
+                    {
+                        if (assigned.TryGetValue(sname, out var list))
+                        {
+                            tabsList.Add(new SupportTabViewModel
+                            {
+                                SupportName = sname,
+                                Tasks = list.OrderBy(t => t.Start).ToList()
+                            });
+                        }
+                        else
+                        {
+                            tabsList.Add(new SupportTabViewModel
+                            {
+                                SupportName = sname,
+                                Tasks = new List<CoverageTask>()
+                            });
+                        }
+                    }
+
+                    // add any remaining assigned keys not in setup (except "Unscheduled" which we handle last)
+                    var extras = assigned.Keys
+                        .Where(k => !supportOrder.Contains(k, StringComparer.OrdinalIgnoreCase))
+                        .Where(k => !string.Equals(k, "Unscheduled", StringComparison.OrdinalIgnoreCase))
+                        .OrderBy(k => k);
+                    foreach (var key in extras)
+                    {
+                        tabsList.Add(new SupportTabViewModel
+                        {
+                            SupportName = key,
+                            Tasks = assigned[key].OrderBy(t => t.Start).ToList()
+                        });
+                    }
+
+                    // Finally append Unscheduled as "Unscheduled Breaks" if present
+                    if (assigned.TryGetValue("Unscheduled", out var unschedList) && unschedList != null)
+                    {
+                        var displayName = "Unscheduled Breaks";
+                        // Update tasks to use the display name so schedule rows match the tab label
+                        foreach (var t in unschedList)
+                            t.SupportName = displayName;
+
+                        tabsList.Add(new SupportTabViewModel
+                        {
+                            SupportName = displayName,
+                            Tasks = unschedList.OrderBy(t => t.Start).ToList()
+                        });
+                    }
+
+                    var tabs = tabsList.ToArray();
+
+                    Schedule.LoadTabs(tabs);
+
+                    // NEW: update the left-hand support entries list used by the By Support list
+                    Schedule.UpdateSupportEntries(tabs);
+
+                    // NEW: include teacher pages in the preview document
+                    PrintPreview.RefreshDocument(tabs, Setup.Teachers.ToList());
+
+                    var allAssignedTasks = assigned.Values.SelectMany(x => x).ToList();
+                    Schedule.LoadTeacherSchedules(DateTime.Today, Setup.Teachers.ToList(), allAssignedTasks);
+
+                    // Update the display-only teacher list so UI shows "Unscheduled Breaks" first
+                    UpdateDisplayTeachers();
+
+                    // Ensure the view model keeps Schedule View selected after generation.
+                    // Set to 0 because Schedule View is the first top-level tab in MainWindow.xaml
+                    SelectedTabIndex = 0;
+
+                    SaveScheduleCommand.RaiseCanExecuteChanged();
+                }
+                catch (Exception ex)
+                {
+                    // Surface the exception so we can see why schedule generation fails
+                    MessageBox.Show("Failed to generate schedule:\n" + ex.Message, "Generate Schedule Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-
-            _scheduler.ScheduleSupportSelfCare(day, assigned);
-
-            // Build tabs
-            var tabs = assigned.Keys.OrderBy(k => k).Select(name =>
+            finally
             {
-                var vm = new SupportTabViewModel { SupportName = name, Tasks = assigned[name].OrderBy(t => t.Start).ToList() };
-                return vm;
-            }).ToArray();
+                _isGenerating = false;
+            }
+        }
 
-            Schedule.LoadTabs(tabs);
-            PrintPreview.RefreshDocument(tabs);
+        // New helper: populate DisplayTeachers with a synthetic Unscheduled entry first,
+        // then the real Setup.Teachers (do not mutate Setup.Teachers).
+        private void UpdateDisplayTeachers()
+        {
+            DisplayTeachers.Clear();
 
-            SelectedTabIndex = 1; // switch to Schedule View
+            var unsched = new Teacher
+            {
+                Name = "Unscheduled Breaks",
+                RoomNumber = "---",
+                Start = TimeSpan.Zero,
+                End = TimeSpan.Zero
+            };
 
-            // Enable Save when data exists
-            SaveScheduleCommand.RaiseCanExecuteChanged();
+            DisplayTeachers.Add(unsched);
+
+            // Append real teachers, skipping any real entry that already has that name
+            foreach (var t in Setup.Teachers)
+            {
+                if (t == null) continue;
+                if (string.Equals(t.Name, unsched.Name, StringComparison.OrdinalIgnoreCase)) continue;
+                DisplayTeachers.Add(t);
+            }
+
+            // Notify if needed
+            Raise(nameof(DisplayTeachers));
         }
 
         private bool ScheduleHasData()
@@ -110,60 +229,54 @@ namespace ScheduleApp.ViewModels
                 var tabsProp = Schedule?.GetType().GetProperty("SupportTabs");
                 var tabs = tabsProp?.GetValue(Schedule) as IEnumerable;
                 if (tabs == null) return false;
-                foreach (var _ in tabs) return true; // has at least one
+                foreach (var _ in tabs) return true;
                 return false;
             }
             catch { return false; }
         }
 
+        // Save as PDF (PDFsharp): choose folder via SaveFileDialog, then generate file with timestamped name.
         private void SaveSchedule()
         {
-            var dlg = new SaveFileDialog
+            try
             {
-                Title = "Save Schedule",
-                FileName = $"Schedule_{DateTime.Today:yyyyMMdd}.csv",
-                Filter = "CSV files (*.csv)|*.csv|Text files (*.txt)|*.txt",
-                AddExtension = true,
-                OverwritePrompt = true
-            };
-
-            if (dlg.ShowDialog() != true) return;
-
-            var sb = new StringBuilder();
-            sb.AppendLine("Support,Task,Duration,Teacher,Room,Start,Kind");
-
-            var tabsProp = Schedule.GetType().GetProperty("SupportTabs");
-            var tabs = (IEnumerable)tabsProp.GetValue(Schedule);
-
-            foreach (var tab in tabs)
-            {
-                var supportName = ToStringSafe(GetProp(tab, "SupportName"));
-
-                var tasksEnum = (IEnumerable)GetProp(tab, "Tasks");
-                if (tasksEnum == null) continue;
-
-                foreach (var task in tasksEnum)
+                var tabsList = Schedule.SupportTabs?.ToArray();
+                if (tabsList == null || tabsList.Length == 0)
                 {
-                    var taskName   = ToStringSafe(GetProp(task, "TaskName"));
-                    var duration   = ToStringSafe(GetProp(task, "DurationText"));
-                    var teacher    = ToStringSafe(GetProp(task, "TeacherDisplay"));
-                    var room       = ToStringSafe(GetProp(task, "RoomDisplay"));
-                    var start      = ToStringSafe(GetProp(task, "StartText"));
-                    var kind       = ToStringSafe(GetProp(task, "Kind"));
-
-                    sb.AppendLine(string.Join(",",
-                        Csv(supportName),
-                        Csv(taskName),
-                        Csv(duration),
-                        Csv(teacher),
-                        Csv(room),
-                        Csv(start),
-                        Csv(kind)));
+                    MessageBox.Show("No schedules to print.", "Save", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
                 }
-            }
 
-            File.WriteAllText(dlg.FileName, sb.ToString(), Encoding.UTF8);
-            MessageBox.Show("Schedule saved successfully.", "Save Schedule", MessageBoxButton.OK, MessageBoxImage.Information);
+                var defaultName = $"BreakSchedule_{DateTime.Today:yyyy-MM-dd}.pdf";
+                var dlg = new SaveFileDialog
+                {
+                    Title = "Save Schedule as PDF",
+                    FileName = defaultName,
+                    Filter = "PDF Document (*.pdf)|*.pdf",
+                    AddExtension = true,
+                    OverwritePrompt = true
+                };
+                if (dlg.ShowDialog() != true) return;
+
+                var outputDir = Path.GetDirectoryName(dlg.FileName)
+                                 ?? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+                var staffNames = string.Join(", ", Setup.Teachers.Select(t => t.Name));
+
+                // NEW: include teacher schedules in the PDF
+                var savedPath = _printService.SaveScheduleAsPdf(
+                    tabsList,
+                    Setup.Teachers.ToList(),
+                    outputDir,
+                    staffNames,
+                    appVersion: "1.0");
+
+                MessageBox.Show($"Saved to:\n{savedPath}", "Save PDF", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to save to PDF:\n" + ex.Message, "Save", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         // NEW: Save entire Setup (Teachers, Supports, Preferences) to default file
@@ -175,7 +288,10 @@ namespace ScheduleApp.ViewModels
                 {
                     Teachers = Setup.Teachers?.ToList() ?? new List<Teacher>(),
                     Supports = Setup.Supports?.ToList() ?? new List<Support>(),
-                    Preferences = Setup.Preferences?.ToList() ?? new List<RoomPreference>()
+                    Preferences = Setup.Preferences?.ToList() ?? new List<RoomPreference>(),
+                    SchoolName = Setup.SchoolName,
+                    SchoolAddress = Setup.SchoolAddress,
+                    SchoolPhone = Setup.SchoolPhone
                 };
 
                 var serializer = new XmlSerializer(typeof(SetupData));
@@ -211,6 +327,11 @@ namespace ScheduleApp.ViewModels
                     if (data.Teachers != null) foreach (var t in data.Teachers) Setup.Teachers.Add(t);
                     if (data.Supports != null) foreach (var s in data.Supports) Setup.Supports.Add(s);
                     if (data.Preferences != null) foreach (var p in data.Preferences) Setup.Preferences.Add(p);
+
+                    // restore institution details
+                    Setup.SchoolName = data.SchoolName;
+                    Setup.SchoolAddress = data.SchoolAddress;
+                    Setup.SchoolPhone = data.SchoolPhone;
                 }
             }
             catch (Exception ex)

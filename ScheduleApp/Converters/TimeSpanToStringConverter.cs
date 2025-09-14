@@ -4,22 +4,20 @@ using System.Windows.Data;
 
 namespace ScheduleApp.Converters
 {
-    public class TimeSpanToStringConverter : IValueConverter
+    public sealed class TimeSpanToStringConverter : IValueConverter
     {
+        public string Format { get; set; } = "hh\\:mm";
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var ts = value as TimeSpan?;
-            if (ts == null) return "";
-            var t = ts.Value;
-            return new DateTime(1, 1, 1, t.Hours, t.Minutes, 0).ToString("HH:mm");
+            if (value is TimeSpan ts) return ts.ToString(Format, CultureInfo.InvariantCulture);
+            return string.Empty;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            TimeSpan ts;
-            if (TimeSpan.TryParse(value as string, out ts))
-                return ts;
-            return TimeSpan.Zero;
+            if (value is string s && TimeSpan.TryParse(s, CultureInfo.InvariantCulture, out var ts)) return ts;
+            return Binding.DoNothing;
         }
     }
 }

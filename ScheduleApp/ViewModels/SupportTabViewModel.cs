@@ -17,15 +17,34 @@ namespace ScheduleApp.ViewModels
                 var ordered = Tasks.OrderBy(t => t.Start).ToArray();
                 if (ordered.Length == 0) return string.Empty;
 
-                // Headers
                 var headers = new[] { "Support", "Task", "Duration", "Teacher", "Room", "Start" };
 
-                // Rows
                 var rows = ordered.Select(t =>
                 {
                     var task = GetTaskName(t);
-                    var duration = (task == "Break" || task == "Lunch" || task == "Free") ? (t.Minutes.ToString() + "min") : "";
-                    var teacher = string.IsNullOrWhiteSpace(t.TeacherName) ? "Self" : t.TeacherName;
+                    var duration = t.DurationText; // always show duration
+
+                    // Show "Self" when this is a self-care/free/idle slot for the support staff
+                    string teacher;
+                    if (string.IsNullOrWhiteSpace(t.TeacherName))
+                    {
+                        teacher = "Self";
+                    }
+                    else
+                    {
+                        // If the teacher name equals the support name and the task is a self-care kind,
+                        // display "Self" instead of repeating the support's name.
+                        if (string.Equals(t.TeacherName, t.SupportName, StringComparison.OrdinalIgnoreCase)
+                            && (t.Kind == CoverageTaskKind.Break || t.Kind == CoverageTaskKind.Lunch || t.Kind == CoverageTaskKind.Idle))
+                        {
+                            teacher = "Self";
+                        }
+                        else
+                        {
+                            teacher = t.TeacherName;
+                        }
+                    }
+
                     var room = string.IsNullOrWhiteSpace(t.RoomNumber) ? "---" : t.RoomNumber;
 
                     return new[]
@@ -39,7 +58,6 @@ namespace ScheduleApp.ViewModels
                     };
                 }).ToArray();
 
-                // Column widths include headers
                 var colWidths = new int[headers.Length];
                 for (int c = 0; c < colWidths.Length; c++)
                 {
@@ -59,11 +77,10 @@ namespace ScheduleApp.ViewModels
 
         private static string GetTaskName(CoverageTask t)
         {
-            if (t.Kind == CoverageTaskKind.Coverage)
-                return t.Minutes >= 25 ? "Lunch" : "Break";
-            if (t.Kind == CoverageTaskKind.Lunch) return "Lunch";
-            if (t.Kind == CoverageTaskKind.Break) return "Break";
-            return "Free"; // previously Idle
+            if (t.Kind == CoverageTaskKind.Coverage) return "Coverage";
+            if (t.Kind == CoverageTaskKind.Lunch)    return "Lunch";
+            if (t.Kind == CoverageTaskKind.Break)    return "Break";
+            return "Free";
         }
     }
 }

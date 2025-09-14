@@ -59,9 +59,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\HeaderCornerConverters.cs" />
+    <Compile Include="Converters\RoundedClipConverter.cs" />
+    <Compile Include="AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainWindow.EventHandlers.cs" />
+    <Compile Include="ScheduleApp\Behaviors\AutoSelectFirstBehavior.cs" />
+    <Compile Include="ScheduleApp\Behaviors\DataGridRowReorderBehavior.cs" />
     <Compile Include="ScheduleApp\Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="ScheduleApp\Converters\NotNullConverters.cs" />
+    <Compile Include="ScheduleApp\Converters\SupportTeacherDisplayConverter.cs" />
     <Compile Include="ScheduleApp\Converters\TaskKindToBrushConverter.cs" />
+    <Compile Include="ScheduleApp\Converters\TeacherRowToBrushConverter.cs" />
     <Compile Include="ScheduleApp\Converters\TimeSpanToStringConverter.cs" />
     <Compile Include="ScheduleApp\Infrastructure\RelayCommand.cs" />
     <Compile Include="ScheduleApp\Infrastructure\RelayCommand.Generic.cs" />
@@ -71,7 +81,9 @@
     <Compile Include="ScheduleApp\Models\RoomPreference.cs" />
     <Compile Include="ScheduleApp\Models\SetupData.cs" />
     <Compile Include="ScheduleApp\Models\Support.cs" />
+    <Compile Include="ScheduleApp\Models\SupportStaffEntry.cs" />
     <Compile Include="ScheduleApp\Models\Teacher.cs" />
+    <Compile Include="ScheduleApp\Models\TeacherScheduleRow.cs" />
     <Compile Include="ScheduleApp\Services\PrintService.cs" />
     <Compile Include="ScheduleApp\Services\SchedulerService.cs" />
     <Compile Include="ScheduleApp\ViewModels\BaseViewModel.cs" />
@@ -80,6 +92,12 @@
     <Compile Include="ScheduleApp\ViewModels\ScheduleViewModel.cs" />
     <Compile Include="ScheduleApp\ViewModels\SetupViewModel.cs" />
     <Compile Include="ScheduleApp\ViewModels\SupportTabViewModel.cs" />
+    <Page Include="AboutWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Appearance.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -92,6 +110,9 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="ResizeThumbStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ScheduleApp\Assets\icons.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -124,6 +145,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- PDFsharp 6.1+ for .NET Framework -->
+    <PackageReference Include="PdfSharp" Version="6.1.0" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using ScheduleApp.Models;
@@ -15,17 +16,23 @@ namespace ScheduleApp.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var kind = (CoverageTaskKind)value;
+            // Defensive: reject UnsetValue / null / wrong type and return a valid Brush
+            if (value == null || value == DependencyProperty.UnsetValue)
+                return Brushes.Transparent;
+
+            if (!(value is CoverageTaskKind kind))
+                return Brushes.Transparent;
+
             switch (kind)
             {
-                case CoverageTaskKind.Coverage: return CoverageBrush;
-                case CoverageTaskKind.Break: return BreakBrush;
-                case CoverageTaskKind.Lunch: return LunchBrush;
-                case CoverageTaskKind.Idle: return IdleBrush;
-                default: return Brushes.Transparent;
+                case CoverageTaskKind.Coverage: return CoverageBrush ?? Brushes.Transparent;
+                case CoverageTaskKind.Break:    return BreakBrush ?? Brushes.Transparent;
+                case CoverageTaskKind.Lunch:    return LunchBrush ?? Brushes.Transparent;
+                case CoverageTaskKind.Idle:     return IdleBrush ?? Brushes.Transparent;
+                default:                        return Brushes.Transparent;
             }
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) { return null; }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
     }
 }

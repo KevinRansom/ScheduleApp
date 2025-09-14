@@ -1,7 +1,10 @@
 using System.Linq;
+using System.Windows;
 using System.Windows.Documents;
+using Microsoft.Win32;
 using ScheduleApp.Infrastructure;
 using ScheduleApp.Services;
+using ScheduleApp.Models; // NEW
 
 namespace ScheduleApp.ViewModels
 {
@@ -26,9 +29,16 @@ namespace ScheduleApp.ViewModels
             ExportPdfCommand = new RelayCommand(ExportPdf, () => SelectedTab != null);
         }
 
+        // OLD signature kept for compatibility (supports-only)
         public void RefreshDocument(SupportTabViewModel[] tabs)
         {
             Document = _printService.BuildFlowDocument(tabs);
+        }
+
+        // NEW: supports + teachers
+        public void RefreshDocument(SupportTabViewModel[] tabs, System.Collections.Generic.IList<Teacher> teachers)
+        {
+            Document = _printService.BuildFlowDocument(tabs, teachers);
         }
 
         private void PrintAll()
@@ -46,8 +56,24 @@ namespace ScheduleApp.ViewModels
         private void ExportPdf()
         {
             if (SelectedTab == null) return;
-            var doc = _printService.BuildFlowDocument(new[] { SelectedTab });
-            _printService.PrintToPdf(doc, SelectedTab.SupportName + ".pdf");
+
+            var defaultName = $"BreakSchedule_{System.DateTime.Today:yyyy-MM-dd}.pdf";
+            var dlg = new SaveFileDialog
+            {
+                Title = "Save Schedule as PDF",
+                FileName = defaultName,
+                Filter = "PDF Document (*.pdf)|*.pdf",
+                AddExtension = true,
+                OverwritePrompt = true
+            };
+            if (dlg.ShowDialog() != true) return;
+
+            var outputDir = System.IO.Path.GetDirectoryName(dlg.FileName)
+                             ?? System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
+
+            _printService.SaveScheduleAsPdf(new[] { SelectedTab }, outputDir, staffNames: "", appVersion: "1.0");
+
+            MessageBox.Show("PDF saved.", "Export", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }
