@@ -4,7 +4,10 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes; // <- added to resolve 'Path'
- 
+using System.Linq; // for OfType
+using System.ComponentModel; // using for INotifyPropertyChanged
+using System.Collections.Specialized; // for NotifyCollectionChangedEventArgs
+
 namespace ScheduleApp
 {
     public partial class MainWindow : Window
@@ -13,6 +16,27 @@ namespace ScheduleApp
         {
             InitializeComponent();
             DataContext = new ScheduleApp.ViewModels.MainViewModel();
+
+            // Auto-save hookup: subscribe to setup collection / property notifications.
+            var vm = DataContext as ScheduleApp.ViewModels.MainViewModel;
+            if (vm != null && vm.Setup != null)
+            {
+                // Top-level setup property changes (SchoolName, SaveFolder, etc.)
+                vm.Setup.PropertyChanged += Setup_PropertyChanged;
+
+                // Collections: additions/removals/moves
+                vm.Setup.Teachers.CollectionChanged += SetupCollectionChanged;
+                vm.Setup.Supports.CollectionChanged += SetupCollectionChanged;
+                vm.Setup.Preferences.CollectionChanged += SetupCollectionChanged;
+
+                // If items implement INotifyPropertyChanged, listen for item-level changes
+                foreach (var it in vm.Setup.Teachers.OfType<INotifyPropertyChanged>())
+                    it.PropertyChanged += Item_PropertyChanged;
+                foreach (var it in vm.Setup.Supports.OfType<INotifyPropertyChanged>())
+                    it.PropertyChanged += Item_PropertyChanged;
+                foreach (var it in vm.Setup.Preferences.OfType<INotifyPropertyChanged>())
+                    it.PropertyChanged += Item_PropertyChanged;
+            }
         }
 
         // Ensure popup and toggle stay in sync: when popup closes (outside click or StaysOpen=false),

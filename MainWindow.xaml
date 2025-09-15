@@ -6,6 +6,7 @@
         xmlns:conv="clr-namespace:ScheduleApp.Converters"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:beh="clr-namespace:ScheduleApp.Behaviors"
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         mc:Ignorable="d"
         Title="Support Coverage Scheduler"
         Height="600"
@@ -35,9 +36,24 @@
 
     <!-- Time item template -->
     <DataTemplate x:Key="TimeItemTemplate">
-      <TextBlock Text="{Binding Converter={StaticResource TimeSpanToStringConverter}}" />
+      <TextBlock Text="{Binding Converter={StaticResource TimeSpanToStringConverter}}"
+                 Style="{StaticResource DefaultTextElementStyle}" />
     </DataTemplate>
     <conv:SupportTeacherDisplayConverter x:Key="SupportTeacherDisplayConverter"/>
+
+    <!-- Default sort: Support view by Start (DateTime) -->
+    <CollectionViewSource x:Key="SupportRowsView" Source="{Binding Schedule.SelectedSupportRows}">
+      <CollectionViewSource.SortDescriptions>
+        <scm:SortDescription PropertyName="Start" Direction="Ascending"/>
+      </CollectionViewSource.SortDescriptions>
+    </CollectionViewSource>
+
+    <!-- Default sort: Teacher view by SortKey (DateTime) -->
+    <CollectionViewSource x:Key="TeacherRowsView" Source="{Binding Schedule.SelectedTeacherRows}">
+      <CollectionViewSource.SortDescriptions>
+        <scm:SortDescription PropertyName="SortKey" Direction="Ascending"/>
+      </CollectionViewSource.SortDescriptions>
+    </CollectionViewSource>
   </Window.Resources>
 
   <Grid>
@@ -230,7 +246,7 @@
 
                         <Border Grid.Column="2" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginNothing}">
                           <DataGrid x:Name="SupportDataGrid"
-                                    ItemsSource="{Binding Schedule.SelectedSupportRows}"
+                                    ItemsSource="{Binding Source={StaticResource SupportRowsView}}"
                                     AutoGenerateColumns="False"
                                     CanUserAddRows="False"
                                     CanUserDeleteRows="False"
@@ -309,7 +325,7 @@
 
                         <Border Grid.Column="2" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginNothing}">
                           <DataGrid x:Name="TeacherDataGrid"
-                                    ItemsSource="{Binding Schedule.SelectedTeacherRows}"
+                                    ItemsSource="{Binding Source={StaticResource TeacherRowsView}}"
                                     AutoGenerateColumns="False"
                                     CanUserAddRows="False"
                                     CanUserDeleteRows="False"
@@ -427,7 +443,9 @@
                                     beh:DataGridRowReorderBehavior.EnableRowReorder="True"
                                     ScrollViewer.VerticalScrollBarVisibility="Auto"
                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                    VerticalAlignment="Stretch">
+                                    VerticalAlignment="Stretch"
+                                    RowEditEnding="SetupDataGrid_RowEditEnding"
+                                    CellEditEnding="SetupDataGrid_CellEditEnding">
                             <DataGrid.InputBindings>
                               <KeyBinding Key="Up" Modifiers="Control"
                                           Command="{Binding DataContext.Setup.MoveTeacherUpCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
@@ -474,7 +492,8 @@
                                               SelectedItem="{Binding Start, Mode=TwoWay}"
                                               ItemTemplate="{StaticResource TimeItemTemplate}"
                                               MinWidth="120"
-                                              Padding="{StaticResource CellEditorPadding}"/>
+                                              Padding="{StaticResource CellEditorPadding}"
+                                              Style="{StaticResource DefaultEditingComboBoxStyle}"/>
                                   </DataTemplate>
                                 </DataGridTemplateColumn.CellEditingTemplate>
                               </DataGridTemplateColumn>
@@ -493,7 +512,8 @@
                                               SelectedItem="{Binding End, Mode=TwoWay}"
                                               ItemTemplate="{StaticResource TimeItemTemplate}"
                                               MinWidth="120"
-                                              Padding="{StaticResource CellEditorPadding}"/>
+                                              Padding="{StaticResource CellEditorPadding}"
+                                              Style="{StaticResource DefaultEditingComboBoxStyle}"/>
                                   </DataTemplate>
                                 </DataGridTemplateColumn.CellEditingTemplate>
                               </DataGridTemplateColumn>
@@ -547,8 +567,9 @@
                                     beh:DataGridRowReorderBehavior.EnableRowReorder="True"
                                     ScrollViewer.VerticalScrollBarVisibility="Auto"
                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                    VerticalAlignment="Stretch">
-
+                                    VerticalAlignment="Stretch"
+                                    RowEditEnding="SetupDataGrid_RowEditEnding"
+                                    CellEditEnding="SetupDataGrid_CellEditEnding">
                             <DataGrid.InputBindings>
                               <KeyBinding Key="Up" Modifiers="Control"
                                           Command="{Binding DataContext.Setup.MoveSupportUpCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
@@ -578,7 +599,8 @@
                                               SelectedItem="{Binding Start, Mode=TwoWay}"
                                               ItemTemplate="{StaticResource TimeItemTemplate}"
                                               MinWidth="120"
-                                              Padding="{StaticResource CellEditorPadding}"/>
+                                              Padding="{StaticResource CellEditorPadding}"
+                                              Style="{StaticResource DefaultEditingComboBoxStyle}"/>
                                   </DataTemplate>
                                 </DataGridTemplateColumn.CellEditingTemplate>
                               </DataGridTemplateColumn>
@@ -653,8 +675,9 @@
                                     beh:DataGridRowReorderBehavior.EnableRowReorder="True"
                                     ScrollViewer.VerticalScrollBarVisibility="Auto"
                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                    VerticalAlignment="Stretch">
-
+                                    VerticalAlignment="Stretch"
+                                    RowEditEnding="SetupDataGrid_RowEditEnding"
+                                    CellEditEnding="SetupDataGrid_CellEditEnding">
                             <DataGrid.InputBindings>
                               <KeyBinding Key="Up" Modifiers="Control"
                                           Command="{Binding DataContext.Setup.MovePreferenceUpCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
@@ -693,7 +716,8 @@
                                               DisplayMemberPath="Name"
                                               SelectedValuePath="Name"
                                               SelectedValue="{Binding PreferredSupportName}"
-                                              Margin="{StaticResource CellElementMargin}"/>
+                                              Margin="{StaticResource CellElementMargin}"
+                                              Style="{StaticResource DefaultEditingComboBoxStyle}"/>
                                   </DataTemplate>
                                 </DataGridTemplateColumn.CellEditingTemplate>
                               </DataGridTemplateColumn>
@@ -720,16 +744,6 @@
                   </TabControl>
                   <Grid Grid.Column="1" Margin="{StaticResource NoMarginNothing}">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                      <Button Content="Generate Schedule"
-                              Style="{StaticResource IconButton}"
-                              MinWidth="260" Height="44"
-                              Margin="{StaticResource PrimaryActionMarginBottomLarge}"
-                              Command="{Binding GenerateScheduleCommand}"/>
-                      <Button Content="Load Data"
-                              Style="{StaticResource IconButton}"
-                              MinWidth="260" Height="44"
-                              Margin="{StaticResource PrimaryActionMarginBottomLarge}"
-                              Command="{Binding LoadSetupCommand}"/>
                       <Button Content="Save Data"
                               Style="{StaticResource IconButton}"
                               MinWidth="260" Height="44"
@@ -750,10 +764,13 @@
                       <ColumnDefinition Width="Auto"/>
                       <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
+
                     <Grid.RowDefinitions>
-                      <RowDefinition Height="Auto"/>
-                      <RowDefinition Height="Auto"/>
-                      <RowDefinition Height="Auto"/>
+                      <RowDefinition Height="Auto"/> <!-- School Name -->
+                      <RowDefinition Height="Auto"/> <!-- Address -->
+                      <RowDefinition Height="Auto"/> <!-- Telephone -->
+                      <RowDefinition Height="Auto"/> <!-- Separator (line) -->
+                      <RowDefinition Height="Auto"/> <!-- Schedule Save Folder -->
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0" Grid.Column="0" Margin="{StaticResource FormLabelMargin}" VerticalAlignment="Center" Text="School Name"/>
@@ -772,6 +789,51 @@
                     <TextBlock Grid.Row="2" Grid.Column="0" Margin="{StaticResource FormLabelMarginLastRow}" VerticalAlignment="Center" Text="Telephone"/>
                     <TextBox   Grid.Row="2" Grid.Column="1"
                                Text="{Binding Setup.SchoolPhone, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <!-- Horizontal separator line with extra left/right padding -->
+                    <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                            Height="1"
+                            Background="{StaticResource SchedGridLineBrush}"
+                            SnapsToDevicePixels="True"
+                            Margin="24,24,24,24"
+                            HorizontalAlignment="Stretch"/>
+
+                    <!-- Row: Schedule Save Folder -->
+                    <TextBlock Grid.Row="4" Grid.Column="0"
+                               Margin="{StaticResource FormLabelMarginLastRow}"
+                               VerticalAlignment="Center"
+                               Text="Schedule Save Folder"/>
+
+                    <Grid Grid.Row="4" Grid.Column="1" Margin="{StaticResource FormFieldMarginBottom}">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/> <!-- Explore column -->
+                      </Grid.ColumnDefinitions>
+
+                      <TextBox Grid.Column="0"
+                               Text="{Binding Setup.SaveFolder, UpdateSourceTrigger=PropertyChanged}"
+                               VerticalAlignment="Center"/>
+
+                      <!-- Browse now uses the same RoundedActionButton style as Add/Remove in the Classrooms dialog -->
+                      <Button Grid.Column="1"
+                              Content="Browse…"
+                              Style="{StaticResource RoundedActionButtonSmallRadius}"
+                              Margin="8,0,8,0"
+                              MinWidth="68"
+                              HorizontalContentAlignment="Center"
+                              VerticalContentAlignment="Center"
+                              Command="{Binding Setup.BrowseSaveFolderCommand}"/>
+
+                      <!-- Explore matches the same look -->
+                      <Button Grid.Column="2"
+                              Content="Explore"
+                              Style="{StaticResource RoundedActionButtonSmallRadius}"
+                              MinWidth="68"
+                              HorizontalContentAlignment="Center"
+                              VerticalContentAlignment="Center"
+                              Command="{Binding Setup.ExploreSaveFolderCommand}"/>
+                    </Grid>
                   </Grid>
                 </ContentControl>
               </Grid>

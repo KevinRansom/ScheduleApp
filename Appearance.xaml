@@ -206,6 +206,27 @@
         <Setter Property="Foreground" Value="{StaticResource BrushUnscheduled}"/>
     </Style>
 
+    <!-- Add this new style near the other button styles (e.g. next to RoundedActionButton) -->
+    <Style x:Key="RoundedActionButtonSmallRadius" TargetType="Button" BasedOn="{StaticResource RoundedActionButton}">
+  <Style.Resources>
+    <!-- Slight corner radius for these small action buttons -->
+    <CornerRadius x:Key="ButtonCornerRadius">4</CornerRadius>
+  </Style.Resources>
+
+  <!-- Ensure the content is centered and not clipped:
+       - zero vertical padding so ContentPresenter centers the text exactly
+       - a slightly taller Height so the font sits comfortably
+       - explicit alignment and sensible defaults -->
+  <Setter Property="Padding" Value="10,0"/>
+  <Setter Property="MinWidth" Value="72"/>
+  <Setter Property="Height" Value="24"/>
+  <Setter Property="FontSize" Value="{StaticResource BodyFontSize}"/>
+  <Setter Property="Foreground" Value="{StaticResource BrushUnscheduled}"/>
+  <Setter Property="HorizontalContentAlignment" Value="Center"/>
+  <Setter Property="VerticalContentAlignment" Value="Center"/>
+  <Setter Property="SnapsToDevicePixels" Value="True"/>
+</Style>
+
     <!-- MenuPopupButton - menu items inside the hamburger popup -->
     <Style x:Key="MenuPopupButton" TargetType="Button" BasedOn="{StaticResource IconButton}">
       <Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -586,8 +607,8 @@
               <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="#20FFFFFF"/>
               </Trigger>
-              <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Background" Value="#33FFFFFF"/>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#33FFFFFF"/>
               </Trigger>
             </ControlTemplate.Triggers>
           </ControlTemplate>
@@ -663,52 +684,53 @@
             <Setter Property="Background" Value="{DynamicResource TransparentBrush}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBorderBrush}"/>
             <Setter Property="SnapsToDevicePixels" Value="True"/>
-            <Setter Property="Template">
-              <Setter.Value>
-                <ControlTemplate TargetType="TabItem">
-                  <!-- moved comment out of attribute list in original file -->
-                  <Border x:Name="Bd"
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <!-- moved comment out of attribute list in original file -->
+                                <Border x:Name="Bd"
                           Background="{TemplateBinding Background}"
                           BorderBrush="{TemplateBinding BorderBrush}"
                           BorderThickness="1"
                           CornerRadius="{DynamicResource TabHeaderCornerRadius}"
                           Margin="0,0,0,-1"
                           SnapsToDevicePixels="True">
-                    <Grid>
-                      <Rectangle x:Name="Accent"
+                                    <Grid>
+                                        <Rectangle x:Name="Accent"
                                  Height="{DynamicResource TabAccentThickness}"
                                  Fill="{DynamicResource AccentBrush}"
                                  VerticalAlignment="Top"
                                  Visibility="Collapsed"/>
-                      <ContentPresenter Margin="{TemplateBinding Padding}"
+                                        <ContentPresenter Margin="{TemplateBinding Padding}"
                                         HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                         VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                         RecognizesAccessKey="True"/>
-                    </Grid>
-                  </Border>
+                                    </Grid>
+                                </Border>
 
-                  <ControlTemplate.Triggers>
-                    <Trigger Property="IsSelected" Value="True">
-                      <Setter TargetName="Bd" Property="Background" Value="{DynamicResource PrimaryBackgroundBrush}"/>
-                      <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryBorderBrush}"/>
-                      <Setter TargetName="Bd" Property="BorderThickness" Value="1,1,1,0"/> <!-- merge with content border -->
-                      <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
-                      <Setter TargetName="Accent" Property="Visibility" Value="Visible"/>
-                      <Setter TargetName="Bd" Property="Panel.ZIndex" Value="1"/>
-                    </Trigger>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Bd" Property="Background" Value="{DynamicResource PrimaryBackgroundBrush}"/>
+                                        <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryBorderBrush}"/>
+                                        <Setter TargetName="Bd" Property="BorderThickness" Value="1,1,1,0"/>
+                                        <!-- merge with content border -->
+                                        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+                                        <Setter TargetName="Accent" Property="Visibility" Value="Visible"/>
+                                        <Setter TargetName="Bd" Property="Panel.ZIndex" Value="1"/>
+                                    </Trigger>
 
-                    <Trigger Property="IsMouseOver" Value="True">
-                      <Setter TargetName="Bd" Property="Background" Value="{DynamicResource MenuItemHoverBackgroundBrush}"/>
-                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Bd" Property="Background" Value="{DynamicResource MenuItemHoverBackgroundBrush}"/>
+                                    </Trigger>
 
-                    <Trigger Property="IsEnabled" Value="False">
-                      <Setter Property="Opacity" Value="0.6"/>
-                    </Trigger>
-                  </ControlTemplate.Triggers>
-                </ControlTemplate>
-              </Setter.Value>
-            </Setter>
-          </Style>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity" Value="0.6"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
         </Setter.Value>
       </Setter>
 
@@ -803,5 +825,16 @@
           </ControlTemplate>
         </Setter.Value>
       </Setter>
+    </Style>
+
+    <!-- ComboBox used for in-cell editing (match TextBox editing style) -->
+    <Style x:Key="DefaultEditingComboBoxStyle" TargetType="ComboBox">
+      <Setter Property="FontFamily" Value="{StaticResource MonospaceFontFamily}"/>
+      <Setter Property="FontSize" Value="{StaticResource BodyFontSize}"/>
+      <Setter Property="Padding" Value="{StaticResource CellEditorPadding}"/>
+      <Setter Property="Margin" Value="{StaticResource CellElementMargin}"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="HorizontalContentAlignment" Value="Left"/>
+      <Setter Property="SnapsToDevicePixels" Value="True"/>
     </Style>
   </ResourceDictionary>

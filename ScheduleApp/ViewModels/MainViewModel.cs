@@ -62,7 +62,8 @@ namespace ScheduleApp.ViewModels
             GenerateScheduleCommand = new RelayCommand(GenerateSchedule);
             SaveScheduleCommand = new RelayCommand(SaveSchedule, ScheduleHasData);
 
-            SaveSetupCommand = new RelayCommand(SaveSetupDefault);
+            // keep a user-invoked save that shows feedback
+            SaveSetupCommand = new RelayCommand(() => SaveSetupDefault());
             LoadSetupCommand = new RelayCommand(LoadSetupDefault);
 
             LoadSetupDefault();
@@ -235,7 +236,7 @@ namespace ScheduleApp.ViewModels
             catch { return false; }
         }
 
-        // Save as PDF (PDFsharp): choose folder via SaveFileDialog, then generate file with timestamped name.
+        // Save as PDF (PDFsharp): use configured folder if present; otherwise prompt.
         private void SaveSchedule()
         {
             try
@@ -248,22 +249,39 @@ namespace ScheduleApp.ViewModels
                 }
 
                 var defaultName = $"BreakSchedule_{DateTime.Today:yyyy-MM-dd}.pdf";
-                var dlg = new SaveFileDialog
-                {
-                    Title = "Save Schedule as PDF",
-                    FileName = defaultName,
-                    Filter = "PDF Document (*.pdf)|*.pdf",
-                    AddExtension = true,
-                    OverwritePrompt = true
-                };
-                if (dlg.ShowDialog() != true) return;
+                string outputDir = null;
 
-                var outputDir = Path.GetDirectoryName(dlg.FileName)
-                                 ?? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                // Prefer user-configured folder
+                if (!string.IsNullOrWhiteSpace(Setup.SaveFolder))
+                {
+                    outputDir = Setup.SaveFolder;
+                    try
+                    {
+                        System.IO.Directory.CreateDirectory(outputDir);
+                    }
+                    catch
+                    {
+                        outputDir = null; // fall back to dialog
+                    }
+                }
+
+                if (string.IsNullOrWhiteSpace(outputDir))
+                {
+                    var dlg = new Microsoft.Win32.SaveFileDialog
+                    {
+                        Title = "Save Schedule as PDF",
+                        FileName = defaultName,
+                        Filter = "PDF Document (*.pdf)|*.pdf",
+                        AddExtension = true,
+                        OverwritePrompt = true
+                    };
+                    if (dlg.ShowDialog() != true) return;
+                    outputDir = System.IO.Path.GetDirectoryName(dlg.FileName)
+                               ?? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                }
 
                 var staffNames = string.Join(", ", Setup.Teachers.Select(t => t.Name));
 
-                // NEW: include teacher schedules in the PDF
                 var savedPath = _printService.SaveScheduleAsPdf(
                     tabsList,
                     Setup.Teachers.ToList(),
@@ -279,7 +297,14 @@ namespace ScheduleApp.ViewModels
             }
         }
 
-        // NEW: Save entire Setup (Teachers, Supports, Preferences) to default file
+        // NEW: publicly callable silent save (used by auto-save)
+        public void SaveSetupSilent()
+        {
+            SaveSetupDefault();
+        }
+
+        // NEW/UPDATED: Save entire Setup (Teachers, Supports, Preferences) to default file
+        // now accepts an optional flag to control user feedback
         private void SaveSetupDefault()
         {
             try
@@ -291,7 +316,8 @@ namespace ScheduleApp.ViewModels
                     Preferences = Setup.Preferences?.ToList() ?? new List<RoomPreference>(),
                     SchoolName = Setup.SchoolName,
                     SchoolAddress = Setup.SchoolAddress,
-                    SchoolPhone = Setup.SchoolPhone
+                    SchoolPhone = Setup.SchoolPhone,
+                    SaveFolder = Setup.SaveFolder // <-- add
                 };
 
                 var serializer = new XmlSerializer(typeof(SetupData));
@@ -300,7 +326,6 @@ namespace ScheduleApp.ViewModels
                     serializer.Serialize(fs, data);
                 }
 
-                MessageBox.Show("Setup saved.", "Save Setup", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {

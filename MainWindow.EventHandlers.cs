@@ -5,6 +5,10 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using System.Windows.Shapes;
+using System.Windows.Controls.Primitives; // for DataGridColumnHeader / DataGridRowHeader / ScrollBar
+using System.Windows.Media;              // <-- add this for VisualTreeHelper
+using System.Collections.Specialized;
+using System.ComponentModel;
 using ScheduleApp.Models;
 using ScheduleApp.ViewModels;
 
@@ -196,11 +200,32 @@ namespace ScheduleApp
             }
         }
 
+        // Helper to walk up the visual tree
+        private static T FindAncestor<T>(DependencyObject d) where T : DependencyObject
+        {
+            while (d != null)
+            {
+                if (d is T t) return t;
+                d = System.Windows.Media.VisualTreeHelper.GetParent(d); // fully-qualified
+            }
+            return null;
+        }
+
         // Central click handler used in several schedule display controls to force regenerate (wired in XAML)
         private void ScheduleArea_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             try
             {
+                // Ignore clicks on DataGrid chrome (headers/row headers/scrollbars) so sorting won't regenerate
+                var src = e.OriginalSource as DependencyObject;
+                if (src != null &&
+                    (FindAncestor<DataGridColumnHeader>(src) != null ||
+                     FindAncestor<DataGridRowHeader>(src) != null ||
+                     FindAncestor<ScrollBar>(src) != null))
+                {
+                    return;
+                }
+
                 if (!(DataContext is MainViewModel vm)) return;
 
                 var cmd = vm.GenerateScheduleCommand;
@@ -210,6 +235,142 @@ namespace ScheduleApp
             catch
             {
                 // swallow to keep UI responsive
+            }
+        }
+
+        // --- Auto-save support for Setup data ---------------------------------
+
+        // Called when Setup.* collections (Teachers/Supports/Preferences) change (add/remove/move)
+        private void SetupCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            try
+            {
+                // Attach/detach item-level PropertyChanged if items implement INotifyPropertyChanged
+                if (e.NewItems != null)
+                {
+                    foreach (var it in e.NewItems)
+                        if (it is INotifyPropertyChanged npc) npc.PropertyChanged += Item_PropertyChanged;
+                }
+                if (e.OldItems != null)
+                {
+                    foreach (var it in e.OldItems)
+                        if (it is INotifyPropertyChanged npc) npc.PropertyChanged -= Item_PropertyChanged;
+                }
+
+                CommitAndSaveSetup();
+            }
+            catch
+            {
+                // swallow to keep UI stable
+            }
+        }
+
+        // Top-level Setup property changed (SchoolName, SchoolAddress, SchoolPhone, SaveFolder, etc.)
+        private void Setup_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            try
+            {
+                CommitAndSaveSetup();
+            }
+            catch
+            {
+                // ignore
+            }
+        }
+
+        // If an item in the collections implements INotifyPropertyChanged, changes will be captured here
+        private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            try
+            {
+                CommitAndSaveSetup();
+            }
+            catch
+            {
+                // ignore
+            }
+        }
+
+        // debounce timestamp to avoid rapid re-entry
+        private DateTime _lastAutoSave = DateTime.MinValue;
+
+        // Ensure edits are committed, then save (deferred to avoid re-entrancy)
+        private void SetupDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            try
+            {
+                // Defer commit+save until DataGrid has completed its own commit sequence.
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    try
+                    {
+                        CommitAndSaveSetup();
+                    }
+                    catch
+                    {
+                        // ignore
+                    }
+                }), DispatcherPriority.ApplicationIdle);
+            }
+            catch
+            {
+                // ignore
+            }
+        }
+
+        private void SetupDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+        {
+            try
+            {
+                // Defer commit+save until DataGrid has completed its own commit sequence.
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    try
+                    {
+                        CommitAndSaveSetup();
+                    }
+                    catch
+                    {
+                        // ignore
+                    }
+                }), DispatcherPriority.ApplicationIdle);
+            }
+            catch
+            {
+                // ignore
+            }
+        }
+
+        // Centralized commit + invoke SaveSetupCommand on the view model (ApplicationIdle)
+        // with a small debounce to avoid repeated saves / re-entry.
+        private void CommitAndSaveSetup()
+        {
+            try
+            {
+                if (!(DataContext is MainViewModel vm) || vm.SaveSetupCommand == null) return;
+
+                // simple debounce: skip if we saved very recently
+                var now = DateTime.UtcNow;
+                if ((now - _lastAutoSave).TotalMilliseconds < 300) return;
+                _lastAutoSave = now;
+
+                // Schedule save at ApplicationIdle so UI bindings have time to propagate
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    try
+                    {
+                        if (vm.SaveSetupCommand.CanExecute(null))
+                            vm.SaveSetupCommand.Execute(null);
+                    }
+                    catch
+                    {
+                        // swallow save errors (non-fatal)
+                    }
+                }), DispatcherPriority.ApplicationIdle);
+            }
+            catch
+            {
+                // ignore
             }
         }
     }

@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Diagnostics; // <-- added
 
 namespace ScheduleApp.ViewModels
 {
@@ -25,6 +26,10 @@ namespace ScheduleApp.ViewModels
         private string _schoolPhone;
         public string SchoolPhone { get { return _schoolPhone; } set { _schoolPhone = value; Raise(); } }
 
+        // New: default folder to save schedules
+        private string _saveFolder;
+        public string SaveFolder { get { return _saveFolder; } set { _saveFolder = value; Raise(); } }
+
         private Teacher _selectedTeacher;
         public Teacher SelectedTeacher { get { return _selectedTeacher; } set { _selectedTeacher = value; Raise(); } }
 
@@ -35,11 +40,17 @@ namespace ScheduleApp.ViewModels
         public RoomPreference SelectedPreference { get { return _selectedPreference; } set { _selectedPreference = value; Raise(); } }
 
         public RelayCommand AddTeacherCommand { get; }
-        public RelayCommand<IList> RemoveTeacherCommand { get; }      // changed
+        public RelayCommand<IList> RemoveTeacherCommand { get; }
         public RelayCommand AddSupportCommand { get; }
-        public RelayCommand<IList> RemoveSupportCommand { get; }      // changed
+        public RelayCommand<IList> RemoveSupportCommand { get; }
         public RelayCommand AddPreferenceCommand { get; }
-        public RelayCommand<IList> RemovePreferenceCommand { get; }   // changed
+        public RelayCommand<IList> RemovePreferenceCommand { get; }
+
+        // New: browse for save folder
+        public RelayCommand BrowseSaveFolderCommand { get; }
+
+        // New: open configured folder in Explorer
+        public RelayCommand ExploreSaveFolderCommand { get; }
 
         // Keyboard move commands
         public RelayCommand MoveTeacherUpCommand { get; }
@@ -58,6 +69,9 @@ namespace ScheduleApp.ViewModels
             AddPreferenceCommand = new RelayCommand(AddPreference);
             RemovePreferenceCommand = new RelayCommand<IList>(RemovePreferences, sel => sel != null && sel.Count > 0);
 
+            BrowseSaveFolderCommand = new RelayCommand(BrowseSaveFolder);
+            ExploreSaveFolderCommand = new RelayCommand(ExploreSaveFolder); // <-- added
+
             MoveTeacherUpCommand = new RelayCommand(MoveTeacherUp, () => SelectedTeacher != null && Teachers.IndexOf(SelectedTeacher) > 0);
             MoveTeacherDownCommand = new RelayCommand(MoveTeacherDown, () => SelectedTeacher != null && Teachers.IndexOf(SelectedTeacher) >= 0 && Teachers.IndexOf(SelectedTeacher) < Teachers.Count - 1);
 
@@ -66,6 +80,64 @@ namespace ScheduleApp.ViewModels
 
             MovePreferenceUpCommand = new RelayCommand(MovePreferenceUp, () => SelectedPreference != null && Preferences.IndexOf(SelectedPreference) > 0);
             MovePreferenceDownCommand = new RelayCommand(MovePreferenceDown, () => SelectedPreference != null && Preferences.IndexOf(SelectedPreference) >= 0 && Preferences.IndexOf(SelectedPreference) < Preferences.Count - 1);
+        }
+
+        private void ExploreSaveFolder()
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(SaveFolder))
+                {
+                    MessageBox.Show("No folder configured. Use Browse… to select a folder first.", "Open Folder", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                if (!System.IO.Directory.Exists(SaveFolder))
+                {
+                    MessageBox.Show("The configured folder does not exist:\n" + SaveFolder, "Open Folder", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Open in File Explorer
+                var psi = new ProcessStartInfo
+                {
+                    FileName = SaveFolder,
+                    UseShellExecute = true,
+                    Verb = "open"
+                };
+                Process.Start(psi);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to open folder:\n" + ex.Message, "Open Folder", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void BrowseSaveFolder()
+        {
+            try
+            {
+                // Uses WinForms dialog (available in .NET Framework 4.8). Ensure reference to System.Windows.Forms.
+                using (var dlg = new System.Windows.Forms.FolderBrowserDialog
+                {
+                    Description = "Select folder to save schedules (PDF)",
+                    ShowNewFolderButton = true,
+                    SelectedPath = string.IsNullOrWhiteSpace(SaveFolder)
+                        ? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+                        : SaveFolder
+                })
+                {
+                    var result = dlg.ShowDialog();
+                    if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dlg.SelectedPath))
+                    {
+                        SaveFolder = dlg.SelectedPath;
+                    }
+                }
+            }
+            catch
+            {
+                // keep UI stable
+            }
         }
 
         private void AddTeacher()

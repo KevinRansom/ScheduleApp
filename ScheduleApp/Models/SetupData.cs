@@ -12,5 +12,8 @@ namespace ScheduleApp.Models
         public string SchoolName { get; set; }
         public string SchoolAddress { get; set; }
         public string SchoolPhone { get; set; }
+
+        // New: default folder to save schedules (PDFs)
+        public string SaveFolder { get; set; }
     }
 }
