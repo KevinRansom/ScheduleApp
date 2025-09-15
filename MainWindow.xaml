@@ -163,25 +163,37 @@
             <TabItem Header="Schedule">
               <Grid Margin="{StaticResource PageSectionMarginSmall}">
                 <Grid.RowDefinitions>
+                  <!-- ADDED: Title row -->
+                  <RowDefinition Height="Auto"/>
                   <RowDefinition Height="Auto"/>
                   <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <Grid Grid.Row="0" Margin="{StaticResource ToolbarRowBottomMarginSmall}">
+                <!-- Schedule title (now exactly matches Team Lineup/Preferences) -->
+                <TextBlock Grid.Row="0"
+                           Text="Schedule"
+                           FontFamily="{StaticResource BodyFontFamily}"
+                           FontSize="{StaticResource PageTitleFontSize}"
+                           FontWeight="Normal"
+                           Foreground="{StaticResource PrimaryTextBrush}"
+                           HorizontalAlignment="Left"
+                           Margin="{StaticResource TitleMarginBottomLarge}"/>
+
+                <Grid Grid.Row="1" Margin="{StaticResource ToolbarRowBottomMarginSmall}">
                   <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                   </Grid.ColumnDefinitions>
 
-                  <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center">
-                    <Button Content="Save…" Style="{StaticResource IconButton}"
-                            Command="{Binding SaveScheduleCommand}"
-                            Margin="{StaticResource NoMarginNothing}"/>
-                    <TextBlock Text="Each tab shows a support's day. Waiting time counts as working time."
-                               VerticalAlignment="Center" Margin="{StaticResource SidePanelLeftMargin}"/>
-                  </StackPanel>
-
                   <StackPanel Orientation="Horizontal" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right">
+                    <!-- Moved Print buttons into the Schedule toolbar -->
+                    <Button Content="Print All" Style="{StaticResource IconButton}"
+                            Command="{Binding PrintPreview.PrintAllCommand}"
+                            Margin="{StaticResource ToolbarButtonMarginLarge}"/>
+                    <Button Content="Export PDF" Style="{StaticResource IconButton}"
+                            Command="{Binding PrintPreview.ExportPdfCommand}"
+                            Margin="{StaticResource ToolbarButtonMarginSmall}"/>
+
                     <Border Background="{StaticResource BrushCoverage}" Style="{StaticResource PillStyle}">
                       <TextBlock Text="Coverage" />
                     </Border>
@@ -200,7 +212,7 @@
                   </StackPanel>
                 </Grid>
 
-                <Border Grid.Row="1"
+                <Border Grid.Row="2"
                         Margin="20"
                         Padding="6"
                         Background="{StaticResource PrimaryBackgroundBrush}"
@@ -385,10 +397,7 @@
                                     ItemsSource="{Binding Schedule.SupportTabs}"
                                     DisplayMemberPath="SupportName"
                                     SelectedItem="{Binding PrintPreview.SelectedTab}" />
-                          <Button Content="Print All" Style="{StaticResource IconButton}" Command="{Binding PrintPreview.PrintAllCommand}" Margin="{StaticResource ToolbarButtonMarginLarge}"/>
                           <Button Content="Print Selected" Style="{StaticResource IconButton}" Command="{Binding PrintPreview.PrintSelectedCommand}" Margin="{StaticResource ToolbarButtonMarginSmall}"
-                                  IsEnabled="{Binding PrintPreview.SelectedTab, Converter={StaticResource NotNullToTrue}}"/>
-                          <Button Content="Export PDF" Style="{StaticResource IconButton}" Command="{Binding PrintPreview.ExportPdfCommand}" Margin="{StaticResource ToolbarButtonMarginSmall}"
                                   IsEnabled="{Binding PrintPreview.SelectedTab, Converter={StaticResource NotNullToTrue}}"/>
                         </StackPanel>
 
@@ -412,14 +421,18 @@
                   <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
+                <!-- Team Lineup title (explicit baseline for the other two) -->
                 <TextBlock Text="Team Lineup"
+                           FontFamily="{StaticResource BodyFontFamily}"
                            FontSize="{StaticResource PageTitleFontSize}"
+                           FontWeight="Normal"
+                           Foreground="{StaticResource PrimaryTextBrush}"
+                           HorizontalAlignment="Left"
                            Margin="{StaticResource TitleMarginBottomLarge}"/>
 
                 <Grid Grid.Row="1">
                   <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="420" />
+                    <ColumnDefinition Width="*"/>
                   </Grid.ColumnDefinitions>
 
                   <TabControl x:Name="SetupInnerTab" Grid.Column="0" Margin="{StaticResource RightColumnGapLarge}">
@@ -750,35 +763,42 @@
                       </Grid>
                     </TabItem>
                   </TabControl>
-                  <Grid Grid.Column="1" Margin="{StaticResource NoMarginNothing}">
-                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                      <Button Content="Save Data"
-                              Style="{StaticResource IconButton}"
-                              MinWidth="260" Height="44"
-                              Margin="{StaticResource NoMarginNothing}"
-                              Command="{Binding SaveSetupCommand}"/>
-                    </StackPanel>
-                  </Grid>
                 </Grid>
               </Grid>
             </TabItem>
 
-            <!-- 3) School Details moved to top-level -->
+            <!-- 3) Preferences -->
             <TabItem Header="Preferences">
               <Grid Margin="{StaticResource PageSectionMarginLarge}">
-                <ContentControl Margin="{StaticResource NoMarginThickness}">
-                  <Grid Margin="{StaticResource FormInnerMargin}">
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto"/>
+                  <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Header (unchanged) -->
+                <TextBlock Grid.Row="0"
+                           Text="Preferences"
+                           FontFamily="{StaticResource BodyFontFamily}"
+                           FontSize="{StaticResource PageTitleFontSize}"
+                           FontWeight="Normal"
+                           Foreground="{StaticResource PrimaryTextBrush}"
+                           HorizontalAlignment="Left"
+                           Margin="{StaticResource TitleMarginBottomLarge}"/>
+
+                <ContentControl Grid.Row="1" Margin="{StaticResource NoMarginThickness}">
+                  <!-- CHANGED: remove the left inset so labels align with the header text -->
+                  <Grid Margin="0">
                     <Grid.ColumnDefinitions>
                       <ColumnDefinition Width="Auto"/>
                       <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
-                      <RowDefinition Height="Auto"/> <!-- School Name -->
-                      <RowDefinition Height="Auto"/> <!-- Address -->
-                      <RowDefinition Height="Auto"/> <!-- Telephone -->
-                      <RowDefinition Height="Auto"/> <!-- Separator (line) -->
-                      <RowDefinition Height="Auto"/> <!-- Schedule Save Folder -->
+                      <RowDefinition Height="Auto"/>
+                      <RowDefinition Height="Auto"/>
+                      <RowDefinition Height="Auto"/>
+                      <RowDefinition Height="Auto"/>
+                      <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0" Grid.Column="0" Margin="{StaticResource FormLabelMargin}" VerticalAlignment="Center" Text="School Name"/>
@@ -798,15 +818,14 @@
                     <TextBox   Grid.Row="2" Grid.Column="1"
                                Text="{Binding Setup.SchoolPhone, UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <!-- Horizontal separator line with extra left/right padding -->
+                    <!-- CHANGED: align separator with the same left column as labels/header -->
                     <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
                             Height="1"
                             Background="{StaticResource SchedGridLineBrush}"
                             SnapsToDevicePixels="True"
-                            Margin="24,24,24,24"
+                            Margin="0,24,0,24"
                             HorizontalAlignment="Stretch"/>
 
-                    <!-- Row: Schedule Save Folder -->
                     <TextBlock Grid.Row="4" Grid.Column="0"
                                Margin="{StaticResource FormLabelMarginLastRow}"
                                VerticalAlignment="Center"
@@ -816,14 +835,13 @@
                       <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/> <!-- Explore column -->
+                        <ColumnDefinition Width="Auto"/>
                       </Grid.ColumnDefinitions>
 
                       <TextBox Grid.Column="0"
                                Text="{Binding Setup.SaveFolder, UpdateSourceTrigger=PropertyChanged}"
                                VerticalAlignment="Center"/>
 
-                      <!-- Browse now uses the same RoundedActionButton style as Add/Remove in the Classrooms dialog -->
                       <Button Grid.Column="1"
                               Content="Browse…"
                               Style="{StaticResource RoundedActionButtonSmallRadius}"
@@ -833,7 +851,6 @@
                               VerticalContentAlignment="Center"
                               Command="{Binding Setup.BrowseSaveFolderCommand}"/>
 
-                      <!-- Explore matches the same look -->
                       <Button Grid.Column="2"
                               Content="Explore"
                               Style="{StaticResource RoundedActionButtonSmallRadius}"
@@ -847,7 +864,6 @@
               </Grid>
             </TabItem>
 
-            <!-- other top-level tabs could go here -->
           </TabControl>
         </Grid>
       </Border>

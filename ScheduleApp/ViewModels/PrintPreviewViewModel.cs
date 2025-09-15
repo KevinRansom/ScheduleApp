@@ -5,6 +5,7 @@ using Microsoft.Win32;
 using ScheduleApp.Infrastructure;
 using ScheduleApp.Services;
 using ScheduleApp.Models; // NEW
+using System.IO; // <- added
 
 namespace ScheduleApp.ViewModels
 {
@@ -57,23 +58,67 @@ namespace ScheduleApp.ViewModels
         {
             if (SelectedTab == null) return;
 
-            var defaultName = $"BreakSchedule_{System.DateTime.Today:yyyy-MM-dd}.pdf";
-            var dlg = new SaveFileDialog
+            try
             {
-                Title = "Save Schedule as PDF",
-                FileName = defaultName,
-                Filter = "PDF Document (*.pdf)|*.pdf",
-                AddExtension = true,
-                OverwritePrompt = true
-            };
-            if (dlg.ShowDialog() != true) return;
+                // Try to get configured save folder and teacher list from the main view model (preferences)
+                var mainVm = Application.Current?.MainWindow?.DataContext as MainViewModel;
+                string outputDir = null;
+                System.Collections.Generic.IList<Teacher> teachers = null;
 
-            var outputDir = System.IO.Path.GetDirectoryName(dlg.FileName)
-                             ?? System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
+                if (mainVm?.Setup != null)
+                {
+                    if (!string.IsNullOrWhiteSpace(mainVm.Setup.SaveFolder))
+                    {
+                        try
+                        {
+                            Directory.CreateDirectory(mainVm.Setup.SaveFolder);
+                            outputDir = mainVm.Setup.SaveFolder;
+                        }
+                        catch
+                        {
+                            outputDir = null; // fall back to prompting
+                        }
+                    }
 
-            _printService.SaveScheduleAsPdf(new[] { SelectedTab }, outputDir, staffNames: "", appVersion: "1.0");
+                    // capture teacher list for teacher pages (may be empty)
+                    teachers = mainVm.Setup.Teachers?.ToList();
+                }
 
-            MessageBox.Show("PDF saved.", "Export", MessageBoxButton.OK, MessageBoxImage.Information);
+                // If no configured folder, ask the user for a file location (backwards compatible)
+                if (string.IsNullOrWhiteSpace(outputDir))
+                {
+                    var defaultName = $"BreakSchedule_{System.DateTime.Today:yyyy-MM-dd}.pdf";
+                    var dlg = new SaveFileDialog
+                    {
+                        Title = "Save Schedule as PDF",
+                        FileName = defaultName,
+                        Filter = "PDF Document (*.pdf)|*.pdf",
+                        AddExtension = true,
+                        OverwritePrompt = true
+                    };
+                    if (dlg.ShowDialog() != true) return;
+                    outputDir = Path.GetDirectoryName(dlg.FileName)
+                                ?? System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
+                }
+
+                var staffNames = (teachers != null && teachers.Count > 0)
+                                 ? string.Join(", ", teachers.Select(t => t.Name))
+                                 : "";
+
+                // Use the PrintService overload that can include teacher pages
+                var savedPath = _printService.SaveScheduleAsPdf(
+                    new[] { SelectedTab },
+                    teachers,
+                    outputDir,
+                    staffNames,
+                    appVersion: "1.0");
+
+                MessageBox.Show($"Saved to:\n{savedPath}", "Export", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show("Failed to export PDF:\n" + ex.Message, "Export", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

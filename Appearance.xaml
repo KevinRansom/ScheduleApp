@@ -200,7 +200,8 @@
     <!-- RoundedActionButton: based on IconButton, overrides corner radius and colors -->
     <Style x:Key="RoundedActionButton" TargetType="Button" BasedOn="{StaticResource IconButton}">
         <Style.Resources>
-            <CornerRadius x:Key="ButtonCornerRadius">20</CornerRadius>
+            <!-- Set Add/Remove buttons corner radius to 5px -->
+            <CornerRadius x:Key="ButtonCornerRadius">5</CornerRadius>
         </Style.Resources>
         <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource BrushUnscheduled}"/>

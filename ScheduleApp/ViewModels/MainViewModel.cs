@@ -184,6 +184,12 @@ namespace ScheduleApp.ViewModels
                     // NEW: include teacher pages in the preview document
                     PrintPreview.RefreshDocument(tabs, Setup.Teachers.ToList());
 
+                    // Ensure the PrintPreview VM has a selected tab so ExportPdfCommand.CanExecute() is true
+                    if (tabs != null && tabs.Length > 0)
+                    {
+                        PrintPreview.SelectedTab = tabs[0];
+                    }
+
                     var allAssignedTasks = assigned.Values.SelectMany(x => x).ToList();
                     Schedule.LoadTeacherSchedules(DateTime.Today, Setup.Teachers.ToList(), allAssignedTasks);
 
@@ -330,15 +336,51 @@ namespace ScheduleApp.ViewModels
                     SchoolName = Setup.SchoolName,
                     SchoolAddress = Setup.SchoolAddress,
                     SchoolPhone = Setup.SchoolPhone,
-                    SaveFolder = Setup.SaveFolder // <-- add
+                    SaveFolder = Setup.SaveFolder
                 };
 
                 var serializer = new XmlSerializer(typeof(SetupData));
-                using (var fs = File.Create(_defaultSetupPath))
+
+                // 1) Always save primary settings file to the default path
+                try
                 {
-                    serializer.Serialize(fs, data);
+                    var defaultDir = Path.GetDirectoryName(_defaultSetupPath);
+                    if (!string.IsNullOrWhiteSpace(defaultDir))
+                        Directory.CreateDirectory(defaultDir);
+
+                    using (var fs = File.Create(_defaultSetupPath))
+                    {
+                        serializer.Serialize(fs, data);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // If saving to the default location fails, report and abort so user knows core settings weren't persisted.
+                    MessageBox.Show("Failed to save setup to default location:\n" + ex.Message, "Save Setup", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
                 }
 
+                // 2) If a user-configured folder exists, write a dated copy there named TeamLineup_YYYY-MM-DD.settings
+                try
+                {
+                    if (!string.IsNullOrWhiteSpace(Setup.SaveFolder))
+                    {
+                        // Ensure folder exists
+                        Directory.CreateDirectory(Setup.SaveFolder);
+
+                        var datedName = $"TeamLineup_{DateTime.Today:yyyy-MM-dd}.settings";
+                        var copyPath = Path.Combine(Setup.SaveFolder, datedName);
+
+                        using (var fs = File.Create(copyPath))
+                        {
+                            serializer.Serialize(fs, data);
+                        }
+                    }
+                }
+                catch
+                {
+                    // Best-effort: swallow errors saving the second copy so primary save remains authoritative.
+                }
             }
             catch (Exception ex)
             {
@@ -370,6 +412,9 @@ namespace ScheduleApp.ViewModels
                     Setup.SchoolName = data.SchoolName;
                     Setup.SchoolAddress = data.SchoolAddress;
                     Setup.SchoolPhone = data.SchoolPhone;
+
+                    // restore the user-configured save/load folder (fixes missing initialization at startup)
+                    Setup.SaveFolder = data.SaveFolder;
                 }
             }
             catch (Exception ex)

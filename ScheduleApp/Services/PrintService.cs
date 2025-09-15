@@ -19,10 +19,9 @@ namespace ScheduleApp.Services
         // Existing method kept for compatibility (prints only support schedules)
         public string SaveScheduleAsPdf(SupportTabViewModel[] tabs, string outputDirectory, string staffNames, string appVersion)
         {
-            // ... unchanged existing implementation ...
-            // NOTE: existing body remains exactly as-is
-            // (left out for brevity in this snippet)
-            throw new NotImplementedException("Old overload kept for compatibility; new overload below is used by the app.");
+            // Forward to the new overload that accepts teachers.
+            // Passing null for teachers will generate the PDF with support pages only (no teacher pages).
+            return SaveScheduleAsPdf(tabs, null, outputDirectory, staffNames, appVersion);
         }
 
         // NEW: Also prints each teacher’s schedule after support schedules
