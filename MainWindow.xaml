@@ -120,6 +120,14 @@
           </Popup>
 
           <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <TextBlock Text="Saving…"
+                       Margin="0,0,8,0"
+                       VerticalAlignment="Center"
+                       Foreground="{StaticResource TitleBarForegroundBrush}"
+                       FontStyle="Italic"
+                       FontSize="12"
+                       Visibility="{Binding IsAutoSaving, Converter={StaticResource BoolToVis}}"
+                       IsHitTestVisible="False"/>
             <Button x:Name="MinimizeButton"
                     Style="{StaticResource TitleBarMinimizeButtonStyle}"
                     Click="Minimize_Click"

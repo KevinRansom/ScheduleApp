@@ -43,6 +43,19 @@ namespace ScheduleApp.ViewModels
         // Guard to prevent re-entrant GenerateSchedule calls
         private bool _isGenerating;
 
+        // Add the property inside the MainViewModel class (near other properties)
+        private bool _isAutoSaving;
+        public bool IsAutoSaving
+        {
+            get => _isAutoSaving;
+            set
+            {
+                if (_isAutoSaving == value) return;
+                _isAutoSaving = value;
+                Raise(); // BaseViewModel.NotifyPropertyChanged
+            }
+        }
+
         public MainViewModel()
         {
             // existing initialization...

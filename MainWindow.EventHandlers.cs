@@ -257,7 +257,8 @@ namespace ScheduleApp
                         if (it is INotifyPropertyChanged npc) npc.PropertyChanged -= Item_PropertyChanged;
                 }
 
-                CommitAndSaveSetup();
+                // schedule debounced save
+                ScheduleAutoSave();
             }
             catch
             {
@@ -270,7 +271,7 @@ namespace ScheduleApp
         {
             try
             {
-                CommitAndSaveSetup();
+                ScheduleAutoSave();
             }
             catch
             {
@@ -283,7 +284,7 @@ namespace ScheduleApp
         {
             try
             {
-                CommitAndSaveSetup();
+                ScheduleAutoSave();
             }
             catch
             {
@@ -291,26 +292,13 @@ namespace ScheduleApp
             }
         }
 
-        // debounce timestamp to avoid rapid re-entry
-        private DateTime _lastAutoSave = DateTime.MinValue;
-
-        // Ensure edits are committed, then save (deferred to avoid re-entrancy)
+        // Ensure edits are committed, then save (these are the single canonical handlers)
         private void SetupDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
             try
             {
-                // Defer commit+save until DataGrid has completed its own commit sequence.
-                Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    try
-                    {
-                        CommitAndSaveSetup();
-                    }
-                    catch
-                    {
-                        // ignore
-                    }
-                }), DispatcherPriority.ApplicationIdle);
+                // Defer to debounced save so we don't re-enter DataGrid handlers
+                ScheduleAutoSave();
             }
             catch
             {
@@ -322,18 +310,8 @@ namespace ScheduleApp
         {
             try
             {
-                // Defer commit+save until DataGrid has completed its own commit sequence.
-                Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    try
-                    {
-                        CommitAndSaveSetup();
-                    }
-                    catch
-                    {
-                        // ignore
-                    }
-                }), DispatcherPriority.ApplicationIdle);
+                // Defer to debounced save so we don't re-enter DataGrid handlers
+                ScheduleAutoSave();
             }
             catch
             {
@@ -341,36 +319,100 @@ namespace ScheduleApp
             }
         }
 
-        // Centralized commit + invoke SaveSetupCommand on the view model (ApplicationIdle)
-        // with a small debounce to avoid repeated saves / re-entry.
-        private void CommitAndSaveSetup()
+        // Debounce/autosave helper (add to the MainWindow partial class)
+
+        // Delay after last change before performing a save
+        private static readonly TimeSpan AutoSaveDelay = TimeSpan.FromMilliseconds(500);
+
+        // DispatcherTimer running on UI thread to debounce saves
+        private DispatcherTimer _autoSaveTimer;
+
+        // Guard to avoid re-entrant saves
+        private bool _isAutoSaving = false;
+
+        // Call this from your change handlers instead of saving immediately.
+        // Example call sites: collection CollectionChanged, item PropertyChanged, DataGrid.CellEditEnding, RowEditEnding, or Setup property change.
+        private void ScheduleAutoSave()
         {
             try
             {
-                if (!(DataContext is MainViewModel vm) || vm.SaveSetupCommand == null) return;
-
-                // simple debounce: skip if we saved very recently
-                var now = DateTime.UtcNow;
-                if ((now - _lastAutoSave).TotalMilliseconds < 300) return;
-                _lastAutoSave = now;
-
-                // Schedule save at ApplicationIdle so UI bindings have time to propagate
-                Dispatcher.BeginInvoke(new Action(() =>
+                // Lazily create the timer on the UI thread
+                if (_autoSaveTimer == null)
                 {
-                    try
+                    _autoSaveTimer = new DispatcherTimer(DispatcherPriority.Normal)
                     {
-                        if (vm.SaveSetupCommand.CanExecute(null))
-                            vm.SaveSetupCommand.Execute(null);
-                    }
-                    catch
+                        Interval = AutoSaveDelay
+                    };
+                    _autoSaveTimer.Tick += (s, e) =>
                     {
-                        // swallow save errors (non-fatal)
-                    }
-                }), DispatcherPriority.ApplicationIdle);
+                        try
+                        {
+                            _autoSaveTimer.Stop();
+                            DoAutoSave();
+                        }
+                        catch
+                        {
+                            // swallow to keep UI stable
+                        }
+                    };
+                }
+
+                // restart the timer (coalesces multiple calls into one)
+                _autoSaveTimer.Stop();
+                _autoSaveTimer.Start();
             }
             catch
             {
                 // ignore
+            }
+        }
+
+        // Actual save work; runs on UI thread. Uses a guard to avoid re-entrancy.
+        private void DoAutoSave()
+        {
+            try
+            {
+                if (_isAutoSaving) return;
+                _isAutoSaving = true;
+
+                try
+                {
+                    if (!(DataContext is MainViewModel vm)) return;
+
+                    // Indicate saving started on the VM so the UI can react
+                    try { vm.IsAutoSaving = true; } catch { /* ignore */ }
+
+                    // Prefer a silent save (no MessageBox)
+                    try
+                    {
+                        vm.SaveSetupSilent();
+                    }
+                    catch
+                    {
+                        // fallback to SaveSetupCommand (may show UI)
+                        try
+                        {
+                            if (vm.SaveSetupCommand != null && vm.SaveSetupCommand.CanExecute(null))
+                                vm.SaveSetupCommand.Execute(null);
+                        }
+                        catch
+                        {
+                            // swallow
+                        }
+                    }
+                }
+                finally
+                {
+                    // Ensure UI flag cleared even on error
+                    try { if (DataContext is MainViewModel vm2) vm2.IsAutoSaving = false; } catch { }
+                    _isAutoSaving = false;
+                }
+            }
+            catch
+            {
+                // ensure guard cleared
+                try { if (DataContext is MainViewModel vm3) vm3.IsAutoSaving = false; } catch { }
+                _isAutoSaving = false;
             }
         }
     }
