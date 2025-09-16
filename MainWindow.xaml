@@ -161,76 +161,78 @@
 
             <!-- 1) Schedule -->
             <TabItem Header="Schedule">
-              <Grid Margin="{StaticResource PageSectionMarginSmall}">
+              <Grid Margin="{StaticResource PageSectionMarginLarge}">
                 <Grid.RowDefinitions>
-                  <!-- ADDED: Title row -->
                   <RowDefinition Height="Auto"/>
                   <RowDefinition Height="Auto"/>
                   <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- Schedule title (now exactly matches Team Lineup/Preferences) -->
-                <TextBlock Grid.Row="0"
-                           Text="Schedule"
-                           FontFamily="{StaticResource BodyFontFamily}"
-                           FontSize="{StaticResource PageTitleFontSize}"
-                           FontWeight="Normal"
-                           Foreground="{StaticResource PrimaryTextBrush}"
-                           HorizontalAlignment="Left"
-                           Margin="{StaticResource TitleMarginBottomLarge}"/>
-
+                <!-- Title row with relocated Print / Export buttons -->
                 <Grid Grid.Row="1" Margin="{StaticResource ToolbarRowBottomMarginSmall}">
                   <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                   </Grid.ColumnDefinitions>
 
-                  <StackPanel Orientation="Horizontal" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right">
-                    <!-- Moved Print buttons into the Schedule toolbar -->
-                    <Button Content="Print All" Style="{StaticResource IconButton}"
-                            Command="{Binding PrintPreview.PrintAllCommand}"
-                            Margin="{StaticResource ToolbarButtonMarginLarge}"/>
-                    <Button Content="Export PDF" Style="{StaticResource IconButton}"
-                            Command="{Binding PrintPreview.ExportPdfCommand}"
-                            Margin="{StaticResource ToolbarButtonMarginSmall}"/>
+                  <!-- Title -->
+                  <TextBlock Grid.Column="0"
+                             Text="Schedule"
+                             FontFamily="{StaticResource BodyFontFamily}"
+                             FontSize="{StaticResource PageTitleFontSize}"
+                             FontWeight="Normal"
+                             Foreground="{StaticResource PrimaryTextBrush}"
+                             HorizontalAlignment="Left"
+                             Margin="{StaticResource TitleMarginBottomLarge}"/>
 
-                    <Border Background="{StaticResource BrushCoverage}" Style="{StaticResource PillStyle}">
-                      <TextBlock Text="Coverage" />
-                    </Border>
-                    <Border Background="{StaticResource BrushBreak}" Style="{StaticResource PillStyle}">
-                      <TextBlock Text="Break (10m + 5m buffer)" />
-                    </Border>
-                    <Border Background="{StaticResource BrushLunch}" Style="{StaticResource PillStyle}">
-                      <TextBlock Text="Lunch (30m)" />
-                    </Border>
-                    <Border Background="{StaticResource BrushIdle}" Style="{StaticResource PillStyle}">
-                      <TextBlock Text="Free" />
-                    </Border>
-                    <Border Background="{StaticResource BrushUnscheduled}" Style="{StaticResource PillStyle}">
-                      <TextBlock Text="Unscheduled" />
-                    </Border>
-                  </StackPanel>
+                  <!-- Filler (keeps right stack aligned to container width) -->
+                  <Border Grid.Column="1" Background="Transparent"/>
+
+                  <!-- Actions (moved out of inner tabs) -->
+                  <Grid Grid.Column="2"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Margin="0,0,0,0">
+                    <Grid.RowDefinitions>
+                      <RowDefinition />
+                      <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <Button Grid.Row="0"
+                            Content="Print All"
+                            Style="{StaticResource RoundedActionButton}"
+                            Margin="0,0,0,4"
+                            HorizontalAlignment="Stretch"
+                            Command="{Binding PrintPreview.PrintAllCommand}"/>
+
+                    <Button Grid.Row="1"
+                            Content="Export PDF"
+                            Style="{StaticResource RoundedActionButton}"
+                            HorizontalAlignment="Stretch"
+                            Command="{Binding PrintPreview.ExportPdfCommand}"/>
+                  </Grid>
                 </Grid>
 
-                <Border Grid.Row="2"
-                        Margin="20"
-                        Padding="6"
-                        Background="{StaticResource PrimaryBackgroundBrush}"
-                        CornerRadius="0,6,6,6"
-                        SnapsToDevicePixels="True"
-                        ClipToBounds="True">
+                <!-- Main inner content -->
+                <ContentControl Grid.Row="2"
+                                BorderThickness="0"
+                                Style="{StaticResource RoundedTableContainer}"
+                                Margin="{StaticResource NoMarginThickness}"
+                                VerticalContentAlignment="Stretch">
                   <TabControl x:Name="ScheduleViewInnerTabControl"
+                              Margin="{StaticResource NoMarginThickness}"
                               SelectionChanged="ScheduleViewInnerTabControl_SelectionChanged">
                     <TabItem Header="By Support">
-                      <!-- By Support layout -->
-                      <Grid Margin="20">
+                      <Grid Margin="{StaticResource NoMarginThickness}">
                         <Grid.ColumnDefinitions>
                           <ColumnDefinition Width="260"/>
                           <ColumnDefinition Width="16"/>
                           <ColumnDefinition Width="*"/>
+                          <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <Border Grid.Column="0" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginNothing}">
+                        <Border Grid.Column="0" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginThickness}">
                           <ListBox x:Name="SupportListBox"
                                    beh:AutoSelectFirstBehavior.EnableAutoSelect="True"
                                    ItemsSource="{Binding Schedule.SupportEntries}"
@@ -264,7 +266,7 @@
                           </ListBox>
                         </Border>
 
-                        <Border Grid.Column="2" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginNothing}">
+                        <Border Grid.Column="2" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginThickness}">
                           <DataGrid x:Name="SupportDataGrid"
                                     ItemsSource="{Binding Source={StaticResource SupportRowsView}}"
                                     AutoGenerateColumns="False"
@@ -279,7 +281,7 @@
                                     BorderThickness="{StaticResource NoBorderThickness}"
                                     Background="{StaticResource TransparentBrush}"
                                     SnapsToDevicePixels="True"
-                                    Margin="{StaticResource NoMarginNothing}"
+                                    Margin="{StaticResource NoMarginThickness}"
                                     Focusable="True"
                                     PreviewMouseLeftButtonDown="ScheduleArea_PreviewMouseLeftButtonDown">
                             <DataGrid.RowStyle>
@@ -306,19 +308,66 @@
                             </DataGrid.Columns>
                           </DataGrid>
                         </Border>
+
+                        <!-- Right side panel: key only (buttons moved up) -->
+                        <StackPanel Grid.Column="3"
+                                    Orientation="Vertical"
+                                    Margin="{StaticResource SidePanelLeftMargin}"
+                                    VerticalAlignment="Top">
+                          <StackPanel.Resources>
+                            <!-- Reusable bordered pill just for the key -->
+                            <Style x:Key="KeyPillStyle"
+                                   TargetType="Border"
+                                   BasedOn="{StaticResource PillStyle}">
+                              <Setter Property="BorderThickness" Value="1"/>
+                              <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
+                            </Style>
+                          </StackPanel.Resources>
+
+                          <!-- Centered Key label -->
+                          <TextBlock Text="Key"
+                                     Margin="0,0,0,4"
+                                     Foreground="{StaticResource SecondaryTextBrush}"
+                                     FontWeight="SemiBold"
+                                     HorizontalAlignment="Center"
+                                     TextAlignment="Center"/>
+
+                          <!-- New separator line -->
+                          <Border Height="1"
+                                  Margin="0,0,0,12"
+                                  Background="{StaticResource SchedGridLineBrush}"
+                                  HorizontalAlignment="Stretch"
+                                  SnapsToDevicePixels="True"/>
+
+                          <Border Background="{StaticResource BrushCoverage}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
+                            <TextBlock Text="Coverage" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+                          </Border>
+                          <Border Background="{StaticResource BrushBreak}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
+                            <TextBlock Text="Break (10m + 5m buffer)" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+                          </Border>
+                          <Border Background="{StaticResource BrushLunch}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
+                            <TextBlock Text="Lunch (30m)" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+                          </Border>
+                          <Border Background="{StaticResource BrushIdle}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
+                            <TextBlock Text="Free" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+                          </Border>
+                          <Border Background="{StaticResource BrushUnscheduled}" Style="{StaticResource KeyPillStyle}">
+                            <TextBlock Text="Unscheduled" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+                          </Border>
+                        </StackPanel>
                       </Grid>
                     </TabItem>
 
                     <TabItem Header="By Teacher">
-                      <!-- By Teacher layout -->
-                      <Grid Margin="20">
+                      <Grid Margin="{StaticResource NoMarginThickness}">
                         <Grid.ColumnDefinitions>
                           <ColumnDefinition Width="260"/>
                           <ColumnDefinition Width="16"/>
                           <ColumnDefinition Width="*"/>
+                          <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <Border Grid.Column="0" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginNothing}">
+                        <Border Grid.Column="0" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginThickness}">
                           <ListBox x:Name="TeacherListBox"
                                    beh:AutoSelectFirstBehavior.EnableAutoSelect="True"
                                    ItemsSource="{Binding Setup.Teachers}"
@@ -343,7 +392,7 @@
                           </ListBox>
                         </Border>
 
-                        <Border Grid.Column="2" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginNothing}">
+                        <Border Grid.Column="2" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginThickness}">
                           <DataGrid x:Name="TeacherDataGrid"
                                     ItemsSource="{Binding Source={StaticResource TeacherRowsView}}"
                                     AutoGenerateColumns="False"
@@ -358,7 +407,7 @@
                                     BorderThickness="{StaticResource NoBorderThickness}"
                                     Background="{StaticResource TransparentBrush}"
                                     SnapsToDevicePixels="True"
-                                    Margin="{StaticResource NoMarginNothing}"
+                                    Margin="{StaticResource NoMarginThickness}"
                                     Focusable="True"
                                     PreviewMouseLeftButtonDown="ScheduleArea_PreviewMouseLeftButtonDown">
                             <DataGrid.RowStyle>
@@ -382,11 +431,58 @@
                             </DataGrid.Columns>
                           </DataGrid>
                         </Border>
+
+                        <!-- Right side panel: key only -->
+                        <StackPanel Grid.Column="3"
+                                    Orientation="Vertical"
+                                    Margin="{StaticResource SidePanelLeftMargin}"
+                                    VerticalAlignment="Top">
+                          <StackPanel.Resources>
+                            <!-- Reuse same bordered pill style -->
+                            <Style x:Key="KeyPillStyle"
+                                   TargetType="Border"
+                                   BasedOn="{StaticResource PillStyle}">
+                              <Setter Property="BorderThickness" Value="1"/>
+                              <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
+                            </Style>
+                          </StackPanel.Resources>
+
+                          <!-- Centered Key label -->
+                          <TextBlock Text="Key"
+                                     Margin="0,0,0,4"
+                                     Foreground="{StaticResource SecondaryTextBrush}"
+                                     FontWeight="SemiBold"
+                                     HorizontalAlignment="Center"
+                                     TextAlignment="Center"/>
+
+                          <!-- New separator line -->
+                          <Border Height="1"
+                                  Margin="0,0,0,12"
+                                  Background="{StaticResource SchedGridLineBrush}"
+                                  HorizontalAlignment="Stretch"
+                                  SnapsToDevicePixels="True"/>
+
+                          <Border Background="{StaticResource BrushCoverage}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
+                            <TextBlock Text="Coverage" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+                          </Border>
+                          <Border Background="{StaticResource BrushBreak}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
+                            <TextBlock Text="Break (10m + 5m buffer)" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+                          </Border>
+                          <Border Background="{StaticResource BrushLunch}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
+                            <TextBlock Text="Lunch (30m)" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+                          </Border>
+                          <Border Background="{StaticResource BrushIdle}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
+                            <TextBlock Text="Free" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+                          </Border>
+                          <Border Background="{StaticResource BrushUnscheduled}" Style="{StaticResource KeyPillStyle}">
+                            <TextBlock Text="Unscheduled" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+                          </Border>
+                        </StackPanel>
                       </Grid>
                     </TabItem>
 
                     <TabItem Header="Print Preview">
-                      <Grid Margin="20">
+                      <Grid Margin="{StaticResource NoMarginThickness}">
                         <Grid.RowDefinitions>
                           <RowDefinition Height="Auto"/>
                           <RowDefinition Height="*"/>
@@ -409,7 +505,7 @@
                       </Grid>
                     </TabItem>
                   </TabControl>
-                </Border>
+                </ContentControl>
               </Grid>
             </TabItem>
 
@@ -803,11 +899,11 @@
                       </Grid.ColumnDefinitions>
 
                       <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/> <!-- School Name -->
-                        <RowDefinition Height="Auto"/> <!-- Address -->
-                        <RowDefinition Height="Auto"/> <!-- Telephone -->
-                        <RowDefinition Height="Auto"/> <!-- Separator (line) -->
-                        <RowDefinition Height="Auto"/> <!-- Schedule Save Folder -->
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                       </Grid.RowDefinitions>
 
                       <TextBlock Grid.Row="0" Grid.Column="0"
@@ -838,7 +934,6 @@
                       <TextBox   Grid.Row="2" Grid.Column="1"
                                  Text="{Binding Setup.SchoolPhone, UpdateSourceTrigger=PropertyChanged}"/>
 
-                      <!-- Separator line (same appearance as before) -->
                       <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
                               Height="1"
                               Background="{StaticResource SchedGridLineBrush}"
@@ -846,7 +941,6 @@
                               Margin="24,24,24,24"
                               HorizontalAlignment="Stretch"/>
 
-                      <!-- Row: Schedule Save Folder -->
                       <TextBlock Grid.Row="4" Grid.Column="0"
                                  Margin="{StaticResource FormLabelMarginLastRow}"
                                  VerticalAlignment="Center"
@@ -856,7 +950,7 @@
                         <Grid.ColumnDefinitions>
                           <ColumnDefinition Width="*"/>
                           <ColumnDefinition Width="Auto"/>
-                          <ColumnDefinition Width="Auto"/> <!-- Explore column -->
+                          <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
                         <TextBox Grid.Column="0"
@@ -901,104 +995,14 @@
           VerticalAlignment="Stretch"
           SnapsToDevicePixels="True">
 
-      <!-- Left / Right (8px wide) -->
-      <Thumb x:Name="ThumbLeft"
-             Background="Transparent"
-             Style="{StaticResource VisibleResizeThumbStyle}"
-             IsHitTestVisible="True"
-             Tag="Left"
-             Width="8"
-             HorizontalAlignment="Left"
-             VerticalAlignment="Stretch"
-             Cursor="SizeWE"
-             PreviewMouseDown="ResizeThumb_PreviewMouseDown"
-             DragDelta="ThumbLeft_DragDelta"/>
-
-      <Thumb x:Name="ThumbRight"
-             Background="Transparent"
-             Style="{StaticResource VisibleResizeThumbStyle}"
-             IsHitTestVisible="True"
-             Tag="Right"
-             Width="8"
-             HorizontalAlignment="Right"
-             VerticalAlignment="Stretch"
-             Cursor="SizeWE"
-             PreviewMouseDown="ResizeThumb_PreviewMouseDown"
-             DragDelta="ThumbRight_DragDelta"/>
-
-      <!-- Top / Bottom (6px high) -->
-      <Thumb x:Name="ThumbTop"
-             Background="Transparent"
-             Style="{StaticResource VisibleResizeThumbStyle}"
-             IsHitTestVisible="True"
-             Tag="Top"
-             Height="6"
-             HorizontalAlignment="Stretch"
-             VerticalAlignment="Top"
-             Cursor="SizeNS"
-             PreviewMouseDown="ResizeThumb_PreviewMouseDown"
-             DragDelta="ThumbTop_DragDelta"/>
-
-      <Thumb x:Name="ThumbBottom"
-             Background="Transparent"
-             Style="{StaticResource VisibleResizeThumbStyle}"
-             IsHitTestVisible="True"
-             Tag="Bottom"
-             Height="6"
-             HorizontalAlignment="Stretch"
-             VerticalAlignment="Bottom"
-             Cursor="SizeNS"
-             PreviewMouseDown="ResizeThumb_PreviewMouseDown"
-             DragDelta="ThumbBottom_DragDelta"/>
-
-      <!-- Corners (12x12) -->
-      <Thumb x:Name="ThumbTopLeft"
-             Background="Transparent"
-             Style="{StaticResource VisibleResizeThumbStyle}"
-             IsHitTestVisible="True"
-             Tag="TopLeft"
-             Width="12" Height="12"
-             HorizontalAlignment="Left"
-             VerticalAlignment="Top"
-             Cursor="SizeNWSE"
-             PreviewMouseDown="ResizeThumb_PreviewMouseDown"
-             DragDelta="ThumbTopLeft_DragDelta"/>
-
-      <Thumb x:Name="ThumbTopRight"
-             Background="Transparent"
-             Style="{StaticResource VisibleResizeThumbStyle}"
-             IsHitTestVisible="True"
-             Tag="TopRight"
-             Width="12" Height="12"
-             HorizontalAlignment="Right"
-             VerticalAlignment="Top"
-             Cursor="SizeNESW"
-             PreviewMouseDown="ResizeThumb_PreviewMouseDown"
-             DragDelta="ThumbTopRight_DragDelta"/>
-
-      <Thumb x:Name="ThumbBottomLeft"
-             Background="Transparent"
-             Style="{StaticResource VisibleResizeThumbStyle}"
-             IsHitTestVisible="True"
-             Tag="BottomLeft"
-             Width="12" Height="12"
-             HorizontalAlignment="Left"
-             VerticalAlignment="Bottom"
-             Cursor="SizeNESW"
-             PreviewMouseDown="ResizeThumb_PreviewMouseDown"
-             DragDelta="ThumbBottomLeft_DragDelta"/>
-
-      <Thumb x:Name="ThumbBottomRight"
-             Background="Transparent"
-             Style="{StaticResource VisibleResizeThumbStyle}"
-             IsHitTestVisible="True"
-             Tag="BottomRight"
-             Width="12" Height="12"
-             HorizontalAlignment="Right"
-             VerticalAlignment="Bottom"
-             Cursor="SizeNWSE"
-             PreviewMouseDown="ResizeThumb_PreviewMouseDown"
-             DragDelta="ThumbBottomRight_DragDelta"/>
+      <Thumb x:Name="ThumbLeft" Background="Transparent" Style="{StaticResource VisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="Left" Width="8" HorizontalAlignment="Left" VerticalAlignment="Stretch" Cursor="SizeWE" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbLeft_DragDelta"/>
+      <Thumb x:Name="ThumbRight" Background="Transparent" Style="{StaticResource VisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="Right" Width="8" HorizontalAlignment="Right" VerticalAlignment="Stretch" Cursor="SizeWE" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbRight_DragDelta"/>
+      <Thumb x:Name="ThumbTop" Background="Transparent" Style="{StaticResource VisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="Top" Height="6" HorizontalAlignment="Stretch" VerticalAlignment="Top" Cursor="SizeNS" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbTop_DragDelta"/>
+      <Thumb x:Name="ThumbBottom" Background="Transparent" Style="{StaticResource VisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="Bottom" Height="6" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Cursor="SizeNS" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbBottom_DragDelta"/>
+      <Thumb x:Name="ThumbTopLeft" Background="Transparent" Style="{StaticResource VisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="TopLeft" Width="12" Height="12" HorizontalAlignment="Left" VerticalAlignment="Top" Cursor="SizeNWSE" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbTopLeft_DragDelta"/>
+      <Thumb x:Name="ThumbTopRight" Background="Transparent" Style="{StaticResource VisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="TopRight" Width="12" Height="12" HorizontalAlignment="Right" VerticalAlignment="Top" Cursor="SizeNESW" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbTopRight_DragDelta"/>
+      <Thumb x:Name="ThumbBottomLeft" Background="Transparent" Style="{StaticResource VisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="BottomLeft" Width="12" Height="12" HorizontalAlignment="Left" VerticalAlignment="Bottom" Cursor="SizeNESW" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbBottomLeft_DragDelta"/>
+      <Thumb x:Name="ThumbBottomRight" Background="Transparent" Style="{StaticResource VisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="BottomRight" Width="12" Height="12" HorizontalAlignment="Right" VerticalAlignment="Bottom" Cursor="SizeNWSE" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbBottomRight_DragDelta"/>
     </Grid>
   </Grid>
 </Window>

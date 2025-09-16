@@ -392,6 +392,13 @@
       <Setter Property="Margin" Value="{StaticResource PillMargin}"/>
     </Style>
 
+    <!-- PillStyle.Outlined (new style) -->
+    <Style x:Key="PillStyle.Outlined" TargetType="Border" BasedOn="{StaticResource PillStyle}">
+      <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="SnapsToDevicePixels" Value="True"/>
+    </Style>
+
     <!-- RoundedTableBorder -->
     <Style x:Key="RoundedTableBorder" TargetType="Border">
       <Setter Property="CornerRadius" Value="{StaticResource GridCornerRadius}"/>
