@@ -775,7 +775,7 @@
                   <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- Header (unchanged) -->
+                <!-- Header (kept consistent with other tabs) -->
                 <TextBlock Grid.Row="0"
                            Text="Preferences"
                            FontFamily="{StaticResource BodyFontFamily}"
@@ -785,82 +785,104 @@
                            HorizontalAlignment="Left"
                            Margin="{StaticResource TitleMarginBottomLarge}"/>
 
-                <ContentControl Grid.Row="1" Margin="{StaticResource NoMarginThickness}">
-                  <!-- CHANGED: remove the left inset so labels align with the header text -->
-                  <Grid Margin="0">
-                    <Grid.ColumnDefinitions>
-                      <ColumnDefinition Width="Auto"/>
-                      <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                <!-- Match Team Lineup structure: rounded container + comfy inner padding -->
+                <Grid Grid.Row="1">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                  </Grid.ColumnDefinitions>
 
-                    <Grid.RowDefinitions>
-                      <RowDefinition Height="Auto"/>
-                      <RowDefinition Height="Auto"/>
-                      <RowDefinition Height="Auto"/>
-                      <RowDefinition Height="Auto"/>
-                      <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-
-                    <TextBlock Grid.Row="0" Grid.Column="0" Margin="{StaticResource FormLabelMargin}" VerticalAlignment="Center" Text="School Name"/>
-                    <TextBox   Grid.Row="0" Grid.Column="1" Margin="{StaticResource FormFieldMarginBottom}"
-                               Text="{Binding Setup.SchoolName, UpdateSourceTrigger=PropertyChanged}"/>
-
-                    <TextBlock Grid.Row="1" Grid.Column="0" Margin="{StaticResource FormLabelMargin}" VerticalAlignment="Top" Text="Address"/>
-                    <TextBox   Grid.Row="1" Grid.Column="1" Margin="{StaticResource FormFieldMarginBottom}"
-                               Text="{Binding Setup.SchoolAddress, UpdateSourceTrigger=PropertyChanged}"
-                               AcceptsReturn="True"
-                               TextWrapping="Wrap"
-                               VerticalScrollBarVisibility="Auto"
-                               MinLines="4"
-                               MaxLines="4"/>
-
-                    <TextBlock Grid.Row="2" Grid.Column="0" Margin="{StaticResource FormLabelMarginLastRow}" VerticalAlignment="Center" Text="Telephone"/>
-                    <TextBox   Grid.Row="2" Grid.Column="1"
-                               Text="{Binding Setup.SchoolPhone, UpdateSourceTrigger=PropertyChanged}"/>
-
-                    <!-- CHANGED: align separator with the same left column as labels/header -->
-                    <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
-                            Height="1"
-                            Background="{StaticResource SchedGridLineBrush}"
-                            SnapsToDevicePixels="True"
-                            Margin="0,24,0,24"
-                            HorizontalAlignment="Stretch"/>
-
-                    <TextBlock Grid.Row="4" Grid.Column="0"
-                               Margin="{StaticResource FormLabelMarginLastRow}"
-                               VerticalAlignment="Center"
-                               Text="Schedule Save Folder"/>
-
-                    <Grid Grid.Row="4" Grid.Column="1" Margin="{StaticResource FormFieldMarginBottom}">
+                  <ContentControl Grid.Column="0"
+                                  Style="{StaticResource RoundedTableContainer}"
+                                  Margin="{StaticResource NoMarginThickness}"
+                                  VerticalContentAlignment="Stretch">
+                    <!-- Inner form layout spacing mirrors Team Lineup section spacing -->
+                    <Grid Margin="{StaticResource PageSectionMarginLarge}">
                       <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
                       </Grid.ColumnDefinitions>
 
-                      <TextBox Grid.Column="0"
-                               Text="{Binding Setup.SaveFolder, UpdateSourceTrigger=PropertyChanged}"
-                               VerticalAlignment="Center"/>
+                      <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/> <!-- School Name -->
+                        <RowDefinition Height="Auto"/> <!-- Address -->
+                        <RowDefinition Height="Auto"/> <!-- Telephone -->
+                        <RowDefinition Height="Auto"/> <!-- Separator (line) -->
+                        <RowDefinition Height="Auto"/> <!-- Schedule Save Folder -->
+                      </Grid.RowDefinitions>
 
-                      <Button Grid.Column="1"
-                              Content="Browse…"
-                              Style="{StaticResource RoundedActionButtonSmallRadius}"
-                              Margin="8,0,8,0"
-                              MinWidth="68"
-                              HorizontalContentAlignment="Center"
-                              VerticalContentAlignment="Center"
-                              Command="{Binding Setup.BrowseSaveFolderCommand}"/>
+                      <TextBlock Grid.Row="0" Grid.Column="0"
+                                 Margin="{StaticResource FormLabelMargin}"
+                                 VerticalAlignment="Center"
+                                 Text="School Name"/>
+                      <TextBox   Grid.Row="0" Grid.Column="1"
+                                 Margin="{StaticResource FormFieldMarginBottom}"
+                                 Text="{Binding Setup.SchoolName, UpdateSourceTrigger=PropertyChanged}"/>
 
-                      <Button Grid.Column="2"
-                              Content="Explore"
-                              Style="{StaticResource RoundedActionButtonSmallRadius}"
-                              MinWidth="68"
-                              HorizontalContentAlignment="Center"
-                              VerticalContentAlignment="Center"
-                              Command="{Binding Setup.ExploreSaveFolderCommand}"/>
+                      <TextBlock Grid.Row="1" Grid.Column="0"
+                                 Margin="{StaticResource FormLabelMargin}"
+                                 VerticalAlignment="Top"
+                                 Text="Address"/>
+                      <TextBox   Grid.Row="1" Grid.Column="1"
+                                 Margin="{StaticResource FormFieldMarginBottom}"
+                                 Text="{Binding Setup.SchoolAddress, UpdateSourceTrigger=PropertyChanged}"
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto"
+                                 MinLines="4"
+                                 MaxLines="4"/>
+
+                      <TextBlock Grid.Row="2" Grid.Column="0"
+                                 Margin="{StaticResource FormLabelMarginLastRow}"
+                                 VerticalAlignment="Center"
+                                 Text="Telephone"/>
+                      <TextBox   Grid.Row="2" Grid.Column="1"
+                                 Text="{Binding Setup.SchoolPhone, UpdateSourceTrigger=PropertyChanged}"/>
+
+                      <!-- Separator line (same appearance as before) -->
+                      <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                              Height="1"
+                              Background="{StaticResource SchedGridLineBrush}"
+                              SnapsToDevicePixels="True"
+                              Margin="24,24,24,24"
+                              HorizontalAlignment="Stretch"/>
+
+                      <!-- Row: Schedule Save Folder -->
+                      <TextBlock Grid.Row="4" Grid.Column="0"
+                                 Margin="{StaticResource FormLabelMarginLastRow}"
+                                 VerticalAlignment="Center"
+                                 Text="Schedule Save Folder"/>
+
+                      <Grid Grid.Row="4" Grid.Column="1" Margin="{StaticResource FormFieldMarginBottom}">
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="*"/>
+                          <ColumnDefinition Width="Auto"/>
+                          <ColumnDefinition Width="Auto"/> <!-- Explore column -->
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox Grid.Column="0"
+                                 Text="{Binding Setup.SaveFolder, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"/>
+
+                        <Button Grid.Column="1"
+                                Content="Browse…"
+                                Style="{StaticResource RoundedActionButtonSmallRadius}"
+                                Margin="8,0,8,0"
+                                MinWidth="68"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Command="{Binding Setup.BrowseSaveFolderCommand}"/>
+
+                        <Button Grid.Column="2"
+                                Content="Explore"
+                                Style="{StaticResource RoundedActionButtonSmallRadius}"
+                                MinWidth="68"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Command="{Binding Setup.ExploreSaveFolderCommand}"/>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </ContentControl>
+                  </ContentControl>
+                </Grid>
               </Grid>
             </TabItem>
 
