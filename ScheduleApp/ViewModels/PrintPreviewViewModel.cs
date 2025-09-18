@@ -64,6 +64,7 @@ namespace ScheduleApp.ViewModels
                 var mainVm = Application.Current?.MainWindow?.DataContext as MainViewModel;
                 string outputDir = null;
                 System.Collections.Generic.IList<Teacher> teachers = null;
+                ScheduleApp.ViewModels.SupportTabViewModel[] tabsToExport = null;
 
                 if (mainVm?.Setup != null)
                 {
@@ -71,7 +72,7 @@ namespace ScheduleApp.ViewModels
                     {
                         try
                         {
-                            Directory.CreateDirectory(mainVm.Setup.SaveFolder);
+                            System.IO.Directory.CreateDirectory(mainVm.Setup.SaveFolder);
                             outputDir = mainVm.Setup.SaveFolder;
                         }
                         catch
@@ -105,9 +106,15 @@ namespace ScheduleApp.ViewModels
                                  ? string.Join(", ", teachers.Select(t => t.Name))
                                  : "";
 
+                // IMPORTANT: export should include all support tabs so teacher pages contain every assigned task.
+                if (mainVm?.Schedule?.SupportTabs != null && mainVm.Schedule.SupportTabs.Count > 0)
+                    tabsToExport = mainVm.Schedule.SupportTabs.ToArray();
+                else
+                    tabsToExport = new[] { SelectedTab };
+
                 // Use the PrintService overload that can include teacher pages
                 var savedPath = _printService.SaveScheduleAsPdf(
-                    new[] { SelectedTab },
+                    tabsToExport,
                     teachers,
                     outputDir,
                     staffNames,

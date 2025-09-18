@@ -74,14 +74,21 @@ namespace ScheduleApp
                 HamburgerToggle.IsChecked = false;
         }
 
-        // Navigate to Schedule and select the By Teacher inner tab
+        // New: button on Schedule page to show the Print Preview inner tab
+        private void SchedulePreview_Click(object sender, RoutedEventArgs e)
+        {
+            if (MainTabControl != null)
+                MainTabControl.SelectedIndex = 0; // ensure top-level Schedule selected
+
+            if (ScheduleViewInnerTabControl != null)
+                ScheduleViewInnerTabControl.SelectedIndex = 2; // Print Preview
+        }
+
+        // Renamed button now opens Team Lineup (top-level tab index 1)
         private void MenuTeachers_Click(object sender, RoutedEventArgs e)
         {
             if (MainTabControl != null)
-                MainTabControl.SelectedIndex = 0; // Schedule
-
-            if (ScheduleViewInnerTabControl != null)
-                ScheduleViewInnerTabControl.SelectedIndex = 1; // By Teacher
+                MainTabControl.SelectedIndex = 1; // Team Lineup
 
             if (HamburgerToggle != null)
                 HamburgerToggle.IsChecked = false;
@@ -191,6 +198,16 @@ namespace ScheduleApp
         // Prevent starting a drag when maximized.
         private void ResizeThumb_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
+            if (WindowState == WindowState.Maximized)
+            {
+                e.Handled = true;
+                return;
+            }
+        }
+
+        private void ResizeThumb_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            // Prevent starting a drag when maximized (same behavior as existing ResizeThumb_PreviewMouseDown)
             if (WindowState == WindowState.Maximized)
             {
                 e.Handled = true;

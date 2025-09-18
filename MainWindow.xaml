@@ -109,7 +109,7 @@
               <StackPanel Orientation="Vertical">
                 <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuSchedule_Click" Content="Schedule"/>
                 <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuPreview_Click" Content="Preview"/>
-                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuTeachers_Click" Content="Teachers"/>
+                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuTeachers_Click" Content="Team Lineup"/>
                 <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuPreferences_Click" Content="Preferences"/>
                 <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuAlgorithm_Click" Content="Algorithm"/>
                 <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuExit_Click" Content="Exit"/>
@@ -197,6 +197,7 @@
                     <Grid.RowDefinitions>
                       <RowDefinition />
                       <RowDefinition />
+                      <RowDefinition /> <!-- added row for Preview button -->
                     </Grid.RowDefinitions>
 
                     <Button Grid.Row="0"
@@ -206,7 +207,15 @@
                             HorizontalAlignment="Stretch"
                             Command="{Binding PrintPreview.PrintAllCommand}"/>
 
+                    <!-- New: show Preview inner tab -->
                     <Button Grid.Row="1"
+                            Content="Preview"
+                            Style="{StaticResource RoundedActionButton}"
+                            Margin="0,0,0,4"
+                            HorizontalAlignment="Stretch"
+                            Click="SchedulePreview_Click"/>
+
+                    <Button Grid.Row="2"
                             Content="Export PDF"
                             Style="{StaticResource RoundedActionButton}"
                             HorizontalAlignment="Stretch"
@@ -224,7 +233,7 @@
                               Margin="{StaticResource NoMarginThickness}"
                               SelectionChanged="ScheduleViewInnerTabControl_SelectionChanged">
                     <TabItem Header="By Support">
-                      <Grid Margin="{StaticResource NoMarginThickness}">
+                      <Grid Margin="16">
                         <Grid.ColumnDefinitions>
                           <ColumnDefinition Width="260"/>
                           <ColumnDefinition Width="16"/>
@@ -359,7 +368,7 @@
                     </TabItem>
 
                     <TabItem Header="By Teacher">
-                      <Grid Margin="{StaticResource NoMarginThickness}">
+                      <Grid Margin="16">
                         <Grid.ColumnDefinitions>
                           <ColumnDefinition Width="260"/>
                           <ColumnDefinition Width="16"/>
@@ -482,7 +491,7 @@
                     </TabItem>
 
                     <TabItem Header="Print Preview">
-                      <Grid Margin="{StaticResource NoMarginThickness}">
+                      <Grid Margin="16">
                         <Grid.RowDefinitions>
                           <RowDefinition Height="Auto"/>
                           <RowDefinition Height="*"/>

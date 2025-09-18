@@ -34,6 +34,9 @@
     <SolidColorBrush x:Key="PrimaryBackgroundBrush" Color="#FFFFFFFF"/>
     <SolidColorBrush x:Key="PrimaryBorderBrush" Color="#FFDDDDDD"/>
     <SolidColorBrush x:Key="AccentBrush" Color="#FF007ACC"/>
+    <!-- Accent variants for interactive feedback -->
+    <SolidColorBrush x:Key="AccentBrushHover" Color="#FF4FB0FF"/>   <!-- brighter/lighter on hover -->
+    <SolidColorBrush x:Key="AccentBrushPressed" Color="#FF005A9E"/> <!-- darker/deeper on press -->
     <SolidColorBrush x:Key="SortGlyphBrush" Color="#FF444444"/>
     <SolidColorBrush x:Key="TransparentBrush" Color="Transparent"/>
 
@@ -205,28 +208,46 @@
         </Style.Resources>
         <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource BrushUnscheduled}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <!-- Visual feedback: brighten on hover, darken on press -->
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource AccentBrushHover}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource AccentBrushHover}"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{StaticResource AccentBrushPressed}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource AccentBrushPressed}"/>
+                <!-- Slight inset effect by nudging content (optional): -->
+                <Setter Property="Padding" Value="12,7,12,5"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.6"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <!-- Add this new style near the other button styles (e.g. next to RoundedActionButton) -->
     <Style x:Key="RoundedActionButtonSmallRadius" TargetType="Button" BasedOn="{StaticResource RoundedActionButton}">
-  <Style.Resources>
-    <!-- Slight corner radius for these small action buttons -->
-    <CornerRadius x:Key="ButtonCornerRadius">4</CornerRadius>
-  </Style.Resources>
+      <Style.Resources>
+        <!-- Slight corner radius for these small action buttons -->
+        <CornerRadius x:Key="ButtonCornerRadius">4</CornerRadius>
+      </Style.Resources>
 
-  <!-- Ensure the content is centered and not clipped:
-       - zero vertical padding so ContentPresenter centers the text exactly
-       - a slightly taller Height so the font sits comfortably
-       - explicit alignment and sensible defaults -->
-  <Setter Property="Padding" Value="10,0"/>
-  <Setter Property="MinWidth" Value="72"/>
-  <Setter Property="Height" Value="24"/>
-  <Setter Property="FontSize" Value="{StaticResource BodyFontSize}"/>
-  <Setter Property="Foreground" Value="{StaticResource BrushUnscheduled}"/>
-  <Setter Property="HorizontalContentAlignment" Value="Center"/>
-  <Setter Property="VerticalContentAlignment" Value="Center"/>
-  <Setter Property="SnapsToDevicePixels" Value="True"/>
-</Style>
+      <!-- Ensure the content is centered and not clipped:
+           - zero vertical padding so ContentPresenter centers the text exactly
+           - a slightly taller Height so the font sits comfortably
+           - explicit alignment and sensible defaults -->
+      <Setter Property="Padding" Value="10,0"/>
+      <Setter Property="MinWidth" Value="72"/>
+      <Setter Property="Height" Value="24"/>
+      <Setter Property="FontSize" Value="{StaticResource BodyFontSize}"/>
+      <Setter Property="Foreground" Value="{StaticResource BrushUnscheduled}"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="SnapsToDevicePixels" Value="True"/>
+    </Style>
 
     <!-- MenuPopupButton - menu items inside the hamburger popup -->
     <Style x:Key="MenuPopupButton" TargetType="Button" BasedOn="{StaticResource IconButton}">
