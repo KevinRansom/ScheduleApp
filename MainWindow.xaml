@@ -54,6 +54,78 @@
         <scm:SortDescription PropertyName="SortKey" Direction="Ascending"/>
       </CollectionViewSource.SortDescriptions>
     </CollectionViewSource>
+
+    <!-- Key pill style (reusable) -->
+    <Style x:Key="KeyPillStyle"
+           TargetType="Border"
+           BasedOn="{StaticResource PillStyle}">
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
+    </Style>
+
+    <!-- Schedule side panel template (for buttons and key) -->
+    <ControlTemplate x:Key="ScheduleSidePanelTemplate" TargetType="ContentControl">
+      <StackPanel Orientation="Vertical" SnapsToDevicePixels="True">
+        <!-- Buttons (equal width via Grid) -->
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,0,0,0">
+          <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+          </Grid.RowDefinitions>
+
+          <Button Grid.Row="0"
+                  Content="Print All"
+                  Style="{StaticResource RoundedActionButton}"
+                  Margin="0,0,0,4"
+                  HorizontalAlignment="Stretch"
+                  Command="{Binding PrintPreview.PrintAllCommand}"/>
+
+          <Button Grid.Row="1"
+                  Content="Preview"
+                  Style="{StaticResource RoundedActionButton}"
+                  Margin="0,10,0,4"
+                  HorizontalAlignment="Stretch"
+                  Click="SchedulePreview_Click"/>
+
+          <Button Grid.Row="2"
+                  Content="Export PDF"
+                  Style="{StaticResource RoundedActionButton}"
+                  Margin="0,10,0,4"
+                  HorizontalAlignment="Stretch"
+                  Command="{Binding PrintPreview.ExportPdfCommand}"/>
+        </Grid>
+
+        <!-- Key -->
+        <TextBlock Text="Key"
+                   Margin="0,18,0,4"
+                   Foreground="{StaticResource SecondaryTextBrush}"
+                   FontWeight="SemiBold"
+                   HorizontalAlignment="Center"
+                   TextAlignment="Center"/>
+        <Border Height="1"
+                Margin="0,0,0,12"
+                Background="{StaticResource SchedGridLineBrush}"
+                HorizontalAlignment="Stretch"
+                SnapsToDevicePixels="True"/>
+
+        <Border Background="{StaticResource BrushCoverage}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
+          <TextBlock Text="Coverage" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+        </Border>
+        <Border Background="{StaticResource BrushBreak}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
+          <TextBlock Text="Break (10m + 5m buffer)" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+        </Border>
+        <Border Background="{StaticResource BrushLunch}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
+          <TextBlock Text="Lunch (30m)" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+        </Border>
+        <Border Background="{StaticResource BrushIdle}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
+          <TextBlock Text="Free" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+        </Border>
+        <Border Background="{StaticResource BrushUnscheduled}" Style="{StaticResource KeyPillStyle}">
+          <TextBlock Text="Unscheduled" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+        </Border>
+      </StackPanel>
+    </ControlTemplate>
   </Window.Resources>
 
   <Grid>
@@ -285,16 +357,6 @@
                                     Orientation="Vertical"
                                     Margin="{StaticResource SidePanelLeftMargin}"
                                     VerticalAlignment="Top">
-                          <StackPanel.Resources>
-                            <!-- Reusable bordered pill just for the key -->
-                            <Style x:Key="KeyPillStyle"
-                                   TargetType="Border"
-                                   BasedOn="{StaticResource PillStyle}">
-                              <Setter Property="BorderThickness" Value="1"/>
-                              <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
-                            </Style>
-                          </StackPanel.Resources>
-
                           <!-- Actions (moved out of inner tabs) -->
                           <Grid Grid.Column="0"
                                 HorizontalAlignment="Stretch"
@@ -442,16 +504,6 @@
                                     Orientation="Vertical"
                                     Margin="{StaticResource SidePanelLeftMargin}"
                                     VerticalAlignment="Top">
-                          <StackPanel.Resources>
-                            <!-- Reusable bordered pill just for the key -->
-                            <Style x:Key="KeyPillStyle"
-                                   TargetType="Border"
-                                   BasedOn="{StaticResource PillStyle}">
-                               <Setter Property="BorderThickness" Value="1"/>
-                               <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
-                            </Style>
-                          </StackPanel.Resources>
-
                           <!-- Actions (moved out of inner tabs) -->
                           <Grid Grid.Column="0"
                                 HorizontalAlignment="Stretch"
