@@ -171,11 +171,11 @@
                 <!-- Title row with relocated Print / Export buttons -->
                 <Grid Grid.Row="1" Margin="{StaticResource ToolbarRowBottomMarginSmall}">
                   <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
                   </Grid.ColumnDefinitions>
 
                   <!-- Title -->
-                  <TextBlock Grid.Column="0"
+                  <TextBlock Grid.Row="0"
                              Text="Schedule"
                              FontFamily="{StaticResource BodyFontFamily}"
                              FontSize="{StaticResource PageTitleFontSize}"
@@ -183,9 +183,6 @@
                              Foreground="{StaticResource PrimaryTextBrush}"
                              HorizontalAlignment="Left"
                              Margin="{StaticResource TitleMarginBottomLarge}"/>
-
-                  <!-- Filler (keeps right stack aligned to container width) -->
-                  <Border Grid.Column="1" Background="Transparent"/>
                 </Grid>
 
                 <!-- Main inner content -->
@@ -198,7 +195,7 @@
                               Margin="{StaticResource NoMarginThickness}"
                               SelectionChanged="ScheduleViewInnerTabControl_SelectionChanged">
                     <TabItem Header="By Support">
-                      <Grid Margin="16">
+                      <Grid Margin="{StaticResource NoMarginThickness}">
                         <Grid.ColumnDefinitions>
                           <ColumnDefinition Width="260"/>
                           <ColumnDefinition Width="16"/>
@@ -367,7 +364,7 @@
                     </TabItem>
 
                     <TabItem Header="By Teacher">
-                      <Grid Margin="16">
+                      <Grid Margin="{StaticResource NoMarginThickness}">
                         <Grid.ColumnDefinitions>
                           <ColumnDefinition Width="260"/>
                           <ColumnDefinition Width="16"/>
@@ -440,18 +437,18 @@
                           </DataGrid>
                         </Border>
 
-                        <!-- Right side panel: key only -->
+                        <!-- Right side panel: actions + key -->
                         <StackPanel Grid.Column="3"
                                     Orientation="Vertical"
                                     Margin="{StaticResource SidePanelLeftMargin}"
                                     VerticalAlignment="Top">
                           <StackPanel.Resources>
-                            <!-- Reuse same bordered pill style -->
+                            <!-- Reusable bordered pill just for the key -->
                             <Style x:Key="KeyPillStyle"
                                    TargetType="Border"
                                    BasedOn="{StaticResource PillStyle}">
-                              <Setter Property="BorderThickness" Value="1"/>
-                              <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
+                               <Setter Property="BorderThickness" Value="1"/>
+                               <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
                             </Style>
                           </StackPanel.Resources>
 
@@ -463,7 +460,7 @@
                             <Grid.RowDefinitions>
                               <RowDefinition />
                               <RowDefinition />
-                              <RowDefinition /> <!-- added row for Preview button -->
+                              <RowDefinition />
                             </Grid.RowDefinitions>
 
                             <Button Grid.Row="0"
@@ -491,7 +488,7 @@
 
                           <!-- Centered Key label -->
                           <TextBlock Text="Key"
-                                     Margin="0,16,0,4"
+                                     Margin="0,18,0,4"
                                      Foreground="{StaticResource SecondaryTextBrush}"
                                      FontWeight="SemiBold"
                                      HorizontalAlignment="Center"
@@ -507,15 +504,19 @@
                           <Border Background="{StaticResource BrushCoverage}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
                             <TextBlock Text="Coverage" TextAlignment="Center" HorizontalAlignment="Stretch"/>
                           </Border>
+
                           <Border Background="{StaticResource BrushBreak}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
                             <TextBlock Text="Break (10m + 5m buffer)" TextAlignment="Center" HorizontalAlignment="Stretch"/>
                           </Border>
+
                           <Border Background="{StaticResource BrushLunch}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
                             <TextBlock Text="Lunch (30m)" TextAlignment="Center" HorizontalAlignment="Stretch"/>
                           </Border>
+
                           <Border Background="{StaticResource BrushIdle}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
                             <TextBlock Text="Free" TextAlignment="Center" HorizontalAlignment="Stretch"/>
                           </Border>
+
                           <Border Background="{StaticResource BrushUnscheduled}" Style="{StaticResource KeyPillStyle}">
                             <TextBlock Text="Unscheduled" TextAlignment="Center" HorizontalAlignment="Stretch"/>
                           </Border>
@@ -523,29 +524,7 @@
                       </Grid>
                     </TabItem>
 
-                    <TabItem Header="Print Preview">
-                      <Grid Margin="16">
-                        <Grid.RowDefinitions>
-                          <RowDefinition Height="Auto"/>
-                          <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-
-                        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="{StaticResource ToolbarRowBottomMarginSmall}">
-                          <ComboBox Width="200"
-                                    ItemsSource="{Binding Schedule.SupportTabs}"
-                                    DisplayMemberPath="SupportName"
-                                    SelectedItem="{Binding PrintPreview.SelectedTab}" />
-                          <Button Content="Print Selected" Style="{StaticResource IconButton}" Command="{Binding PrintPreview.PrintSelectedCommand}" Margin="{StaticResource ToolbarButtonMarginSmall}"
-                                  IsEnabled="{Binding PrintPreview.SelectedTab, Converter={StaticResource NotNullToTrue}}"/>
-                        </StackPanel>
-
-                        <FlowDocumentScrollViewer x:Name="PrintPreviewViewer"
-                                                  Grid.Row="1"
-                                                  Document="{Binding PrintPreview.Document}"
-                                                  Focusable="True"
-                                                  PreviewMouseLeftButtonDown="ScheduleArea_PreviewMouseLeftButtonDown" />
-                      </Grid>
-                    </TabItem>
+                    <!-- NOTE: Inner "Print Preview" TabItem has been removed -->
                   </TabControl>
                 </ContentControl>
               </Grid>
@@ -905,7 +884,35 @@
               </Grid>
             </TabItem>
 
-            <!-- 3) Preferences -->
+            <!-- 3) Print Preview (now top-level) -->
+            <TabItem Header="Print Preview">
+              <Grid Margin="{StaticResource NoMarginThickness}">
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto"/>
+                  <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="{StaticResource ToolbarRowBottomMarginSmall}">
+                  <ComboBox Width="200"
+                            ItemsSource="{Binding Schedule.SupportTabs}"
+                            DisplayMemberPath="SupportName"
+                            SelectedItem="{Binding PrintPreview.SelectedTab}" />
+                  <Button Content="Print Selected"
+                          Style="{StaticResource IconButton}"
+                          Command="{Binding PrintPreview.PrintSelectedCommand}"
+                          Margin="{StaticResource ToolbarButtonMarginSmall}"
+                          IsEnabled="{Binding PrintPreview.SelectedTab, Converter={StaticResource NotNullToTrue}}"/>
+                </StackPanel>
+
+                <FlowDocumentScrollViewer x:Name="PrintPreviewViewer"
+                                          Grid.Row="1"
+                                          Document="{Binding PrintPreview.Document}"
+                                          Focusable="True"
+                                          PreviewMouseLeftButtonDown="ScheduleArea_PreviewMouseLeftButtonDown" />
+              </Grid>
+            </TabItem>
+
+            <!-- 4) Preferences -->
             <TabItem Header="Preferences">
               <Grid Margin="{StaticResource PageSectionMarginLarge}">
                 <Grid.RowDefinitions>
