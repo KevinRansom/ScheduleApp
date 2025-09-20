@@ -180,13 +180,13 @@
                     MinWidth="200">
               <StackPanel Orientation="Vertical">
                 <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuSchedule_Click" Content="Schedule"/>
-                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuPreview_Click" Content="Preview"/>
                 <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuTeachers_Click" Content="Team Lineup"/>
+                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuPreview_Click" Content="Print Preview"/>
                 <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuPreferences_Click" Content="Preferences"/>
                 <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuAlgorithm_Click" Content="Algorithm"/>
                 <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuExit_Click" Content="Exit"/>
-                <Separator Margin="{StaticResource PopupSeparatorMargin}"/>
-                <Button Style="{StaticResource MenuPopupButton}" Click="AboutMenu_Click" Content="About"/>
+                                <Separator Margin="{StaticResource PopupSeparatorMargin}"/>
+                                <Button Style="{StaticResource MenuPopupButton}" Click="AboutMenu_Click" Content="About"/>
               </StackPanel>
             </Border>
           </Popup>
@@ -556,19 +556,15 @@
                           <Border Background="{StaticResource BrushCoverage}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
                             <TextBlock Text="Coverage" TextAlignment="Center" HorizontalAlignment="Stretch"/>
                           </Border>
-
                           <Border Background="{StaticResource BrushBreak}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
                             <TextBlock Text="Break (10m + 5m buffer)" TextAlignment="Center" HorizontalAlignment="Stretch"/>
                           </Border>
-
                           <Border Background="{StaticResource BrushLunch}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
                             <TextBlock Text="Lunch (30m)" TextAlignment="Center" HorizontalAlignment="Stretch"/>
                           </Border>
-
                           <Border Background="{StaticResource BrushIdle}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
                             <TextBlock Text="Free" TextAlignment="Center" HorizontalAlignment="Stretch"/>
                           </Border>
-
                           <Border Background="{StaticResource BrushUnscheduled}" Style="{StaticResource KeyPillStyle}">
                             <TextBlock Text="Unscheduled" TextAlignment="Center" HorizontalAlignment="Stretch"/>
                           </Border>
