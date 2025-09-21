@@ -3,10 +3,11 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes; // <- added to resolve 'Path'
 using System.Linq; // for OfType
-using System.ComponentModel; // using for INotifyPropertyChanged
+using System.ComponentModel; // for INotifyPropertyChanged
 using System.Collections.Specialized; // for NotifyCollectionChangedEventArgs
+using System.Windows.Media.Imaging;
+using System.IO;
 
 namespace ScheduleApp
 {
@@ -37,6 +38,10 @@ namespace ScheduleApp
                 foreach (var it in vm.Setup.Preferences.OfType<INotifyPropertyChanged>())
                     it.PropertyChanged += Item_PropertyChanged;
             }
+
+            // Make the schedule title image's edge color transparent at runtime.
+            // This will replace the Image.Source with a processed WriteableBitmap.
+            MakeScheduleTitleImageEdgeTransparent();
         }
 
         // Ensure popup and toggle stay in sync: when popup closes (outside click or StaysOpen=false),
@@ -177,7 +182,8 @@ namespace ScheduleApp
             if (MaximizeButton == null) return;
 
             MaximizeButton.ApplyTemplate();
-            var icon = MaximizeButton.Template.FindName("PART_Icon", MaximizeButton) as Path;
+            // fully qualify Path control type to avoid ambiguity with System.IO.Path
+            var icon = MaximizeButton.Template.FindName("PART_Icon", MaximizeButton) as System.Windows.Shapes.Path;
             if (icon == null) return;
 
             var geomKey = WindowState == WindowState.Maximized ? "RestoreGeometry" : "MaximizeGeometry";
@@ -228,36 +234,26 @@ namespace ScheduleApp
         private void ThumbBottomRight_DragDelta(object sender, DragDeltaEventArgs e) => ResizeFrom("BottomRight", e.HorizontalChange, e.VerticalChange);
 
         // Shared helper that applies the resize. Deltas are in device-independent units (DIPs).
-        // If you need pixel-level math you can query DPI via VisualTreeHelper.GetDpi(this).
         private void ResizeFrom(string direction, double horizChange, double vertChange)
         {
             try
             {
                 if (WindowState == WindowState.Maximized) return;
 
-                // WPF DragDelta provides changes in device independent pixels (DIPs) already.
-                // If you need the system DPI scale for any pixel conversions:
-                // var dpi = VisualTreeHelper.GetDpi(this);
-                // double scaleX = dpi.DpiScaleX; double scaleY = dpi.DpiScaleY;
-
-                // Current window extents (use ActualWidth/Height for current rendered size)
                 double curWidth = Math.Max(0.0, this.ActualWidth);
                 double curHeight = Math.Max(0.0, this.ActualHeight);
 
-                // Proposed new values
                 double newLeft = this.Left;
                 double newTop = this.Top;
                 double newWidth = curWidth;
                 double newHeight = curHeight;
 
-                // Minimums
                 double minW = (this.MinWidth > 0.0) ? this.MinWidth : 100.0;
                 double minH = (this.MinHeight > 0.0) ? this.MinHeight : 100.0;
 
                 switch (direction)
                 {
                     case "Left":
-                        // moving mouse right (horizChange > 0) shrinks window; leftwards expands
                         newWidth = Math.Max(minW, curWidth - horizChange);
                         newLeft = this.Left + (curWidth - newWidth);
                         break;
@@ -304,7 +300,6 @@ namespace ScheduleApp
                         return;
                 }
 
-                // Apply values — set Left/Top only when size change occurred to avoid visual jitter.
                 if (newWidth >= minW)
                 {
                     this.Width = newWidth;
@@ -322,5 +317,132 @@ namespace ScheduleApp
                 // Keep UI stable if anything unexpected happens.
             }
         }
+
+        // Load from compiled WPF resources (Resource build action) and make edge color transparent.
+        private void MakeScheduleTitleImageEdgeTransparent()
+        {
+            try
+            {
+                // If none of the targets exist, nothing to do
+                if (ScheduleTitleImage == null && TitleBarIcon == null && TeamLineupTitleImage == null && PreferencesTitleImage == null)
+                    return;
+
+                // Resource key observed earlier is lowercase 'washingtonstate.png'
+                var packUri = new Uri("/ScheduleApp;component/washingtonstate.png", UriKind.Relative);
+                var resourceInfo = Application.GetResourceStream(packUri);
+                if (resourceInfo == null)
+                {
+                    // fallback: try pack://application:,,, form
+                    resourceInfo = Application.GetResourceStream(new Uri("pack://application:,,,/washingtonstate.png", UriKind.Absolute));
+                    if (resourceInfo == null) return;
+                }
+
+                using (var stream = resourceInfo.Stream)
+                {
+                    var bmp = new BitmapImage();
+                    bmp.BeginInit();
+                    bmp.CacheOption = BitmapCacheOption.OnLoad;
+                    bmp.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                    bmp.StreamSource = stream;
+                    bmp.EndInit();
+                    bmp.Freeze();
+
+                    if (bmp.PixelWidth == 0 || bmp.PixelHeight == 0) return;
+
+                    var conv = new FormatConvertedBitmap(bmp, PixelFormats.Bgra32, null, 0);
+                    int width = conv.PixelWidth;
+                    int height = conv.PixelHeight;
+                    var pf = PixelFormats.Bgra32;
+                    int stride = (width * pf.BitsPerPixel + 7) / 8;
+                    byte[] pixels = new byte[stride * height];
+                    conv.CopyPixels(pixels, stride, 0);
+
+                    // Sample border pixels (top, bottom, left, right) and pick the most frequent color.
+                    var counts = new System.Collections.Generic.Dictionary<int, int>();
+                    void CountPixel(int x, int y)
+                    {
+                        int i = (y * stride) + (x * 4);
+                        if (i < 0 || i + 2 >= pixels.Length) return;
+                        int b = pixels[i + 0];
+                        int g = pixels[i + 1];
+                        int r = pixels[i + 2];
+                        int key = (r << 16) | (g << 8) | b;
+                        if (counts.ContainsKey(key)) counts[key]++; else counts[key] = 1;
+                    }
+
+                    // top & bottom rows
+                    for (int x = 0; x < width; x++)
+                    {
+                        CountPixel(x, 0);
+                        CountPixel(x, Math.Max(0, height - 1));
+                    }
+
+                    // left & right columns (avoid double-sampling corners excessively)
+                    for (int y = 1; y < height - 1; y++)
+                    {
+                        CountPixel(0, y);
+                        CountPixel(Math.Max(0, width - 1), y);
+                    }
+
+                    if (counts.Count == 0) return;
+
+                    // choose most common border color
+                    int mostCommonKey = 0;
+                    int bestCount = 0;
+                    foreach (var kv in counts)
+                    {
+                        if (kv.Value > bestCount)
+                        {
+                            bestCount = kv.Value;
+                            mostCommonKey = kv.Key;
+                        }
+                    }
+
+                    byte edgeR = (byte)((mostCommonKey >> 16) & 0xFF);
+                    byte edgeG = (byte)((mostCommonKey >> 8) & 0xFF);
+                    byte edgeB = (byte)(mostCommonKey & 0xFF);
+
+                    // Tolerance to allow near-matching colors (adjust if needed)
+                    const int tol = 12;
+
+                    // Apply alpha=0 to pixels matching the sampled border color within tolerance
+                    for (int i = 0; i < pixels.Length; i += 4)
+                    {
+                        int db = Math.Abs(pixels[i + 0] - edgeB);
+                        int dg = Math.Abs(pixels[i + 1] - edgeG);
+                        int dr = Math.Abs(pixels[i + 2] - edgeR);
+
+                        if (db <= tol && dg <= tol && dr <= tol)
+                        {
+                            pixels[i + 3] = 0; // transparent
+                        }
+                    }
+
+                    var wb = new WriteableBitmap(width, height, conv.DpiX, conv.DpiY, pf, null);
+                    wb.WritePixels(new Int32Rect(0, 0, width, height), pixels, stride, 0);
+                    wb.Freeze();
+
+                    // Assign processed image to all places that exist
+                    if (ScheduleTitleImage != null)
+                        ScheduleTitleImage.Source = wb;
+
+                    if (TitleBarIcon != null)
+                        TitleBarIcon.Source = wb;
+
+                    if (TeamLineupTitleImage != null)
+                        TeamLineupTitleImage.Source = wb;
+
+                    if (PreferencesTitleImage != null)
+                        PreferencesTitleImage.Source = wb;
+                }
+            }
+            catch
+            {
+                // keep original images if anything goes wrong
+            }
+        }
+
+        // Existing wiring methods (Setup_PropertyChanged, SetupCollectionChanged, Item_PropertyChanged, etc.)
+        // ... (leave your existing methods unchanged) ...
     }
 }

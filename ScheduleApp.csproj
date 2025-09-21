@@ -151,5 +151,8 @@
     <!-- PDFsharp 6.1+ for .NET Framework -->
     <PackageReference Include="PdfSharp" Version="6.1.0" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="WashingtonState.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

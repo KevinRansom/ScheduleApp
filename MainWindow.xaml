@@ -54,78 +54,6 @@
         <scm:SortDescription PropertyName="SortKey" Direction="Ascending"/>
       </CollectionViewSource.SortDescriptions>
     </CollectionViewSource>
-
-    <!-- Key pill style (reusable) -->
-    <Style x:Key="KeyPillStyle"
-           TargetType="Border"
-           BasedOn="{StaticResource PillStyle}">
-      <Setter Property="BorderThickness" Value="1"/>
-      <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
-    </Style>
-
-    <!-- Schedule side panel template (for buttons and key) -->
-    <ControlTemplate x:Key="ScheduleSidePanelTemplate" TargetType="ContentControl">
-      <StackPanel Orientation="Vertical" SnapsToDevicePixels="True">
-        <!-- Buttons (equal width via Grid) -->
-        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,0,0,0">
-          <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-          </Grid.RowDefinitions>
-
-          <Button Grid.Row="0"
-                  Content="Print All"
-                  Style="{StaticResource RoundedActionButton}"
-                  Margin="0,0,0,4"
-                  HorizontalAlignment="Stretch"
-                  Command="{Binding PrintPreview.PrintAllCommand}"/>
-
-          <Button Grid.Row="1"
-                  Content="Preview"
-                  Style="{StaticResource RoundedActionButton}"
-                  Margin="0,10,0,4"
-                  HorizontalAlignment="Stretch"
-                  Click="SchedulePreview_Click"/>
-
-          <Button Grid.Row="2"
-                  Content="Export PDF"
-                  Style="{StaticResource RoundedActionButton}"
-                  Margin="0,10,0,4"
-                  HorizontalAlignment="Stretch"
-                  Command="{Binding PrintPreview.ExportPdfCommand}"/>
-        </Grid>
-
-        <!-- Key -->
-        <TextBlock Text="Key"
-                   Margin="0,18,0,4"
-                   Foreground="{StaticResource SecondaryTextBrush}"
-                   FontWeight="SemiBold"
-                   HorizontalAlignment="Center"
-                   TextAlignment="Center"/>
-        <Border Height="1"
-                Margin="0,0,0,12"
-                Background="{StaticResource SchedGridLineBrush}"
-                HorizontalAlignment="Stretch"
-                SnapsToDevicePixels="True"/>
-
-        <Border Background="{StaticResource BrushCoverage}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
-          <TextBlock Text="Coverage" TextAlignment="Center" HorizontalAlignment="Stretch"/>
-        </Border>
-        <Border Background="{StaticResource BrushBreak}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
-          <TextBlock Text="Break (10m + 5m buffer)" TextAlignment="Center" HorizontalAlignment="Stretch"/>
-        </Border>
-        <Border Background="{StaticResource BrushLunch}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
-          <TextBlock Text="Lunch (30m)" TextAlignment="Center" HorizontalAlignment="Stretch"/>
-        </Border>
-        <Border Background="{StaticResource BrushIdle}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
-          <TextBlock Text="Free" TextAlignment="Center" HorizontalAlignment="Stretch"/>
-        </Border>
-        <Border Background="{StaticResource BrushUnscheduled}" Style="{StaticResource KeyPillStyle}">
-          <TextBlock Text="Unscheduled" TextAlignment="Center" HorizontalAlignment="Stretch"/>
-        </Border>
-      </StackPanel>
-    </ControlTemplate>
   </Window.Resources>
 
   <Grid>
@@ -152,15 +80,32 @@
                         Grid.Column="0"
                         Style="{StaticResource HamburgerToggleButtonStyle}"/>
 
-          <TextBlock Grid.Column="1"
-                     Text="Coverage Schedule App"
-                     VerticalAlignment="Center"
-                     HorizontalAlignment="Left"
-                     Margin="8,0,0,0"
-                     Foreground="{StaticResource TitleBarForegroundBrush}"
-                     FontSize="16"
-                     FontWeight="SemiBold"
-                     IsHitTestVisible="False"/>
+          <!-- Title bar icon (named so code-behind can assign processed bitmap) -->
+          <Grid Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="8,0,0,0">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Image x:Name="TitleBarIcon"
+                   Grid.Column="0"
+                   Source="/ScheduleApp;component/washingtonstate.png"
+                   Height="36"
+                   Stretch="Uniform"
+                   VerticalAlignment="Center"
+                   SnapsToDevicePixels="True"/>
+
+            <!-- Two-space gap preserved before the text -->
+            <TextBlock Grid.Column="1"
+                       xml:space="preserve"
+                       Text="  Coverage Schedule App"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Left"
+                       Foreground="White"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       IsHitTestVisible="False"/>
+          </Grid>
 
           <Popup x:Name="HamburgerPopup"
                  PlacementTarget="{Binding ElementName=HamburgerToggle}"
@@ -180,13 +125,13 @@
                     MinWidth="200">
               <StackPanel Orientation="Vertical">
                 <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuSchedule_Click" Content="Schedule"/>
+                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuPreview_Click" Content="Preview"/>
                 <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuTeachers_Click" Content="Team Lineup"/>
-                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuPreview_Click" Content="Print Preview"/>
                 <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuPreferences_Click" Content="Preferences"/>
                 <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuAlgorithm_Click" Content="Algorithm"/>
                 <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuExit_Click" Content="Exit"/>
-                                <Separator Margin="{StaticResource PopupSeparatorMargin}"/>
-                                <Button Style="{StaticResource MenuPopupButton}" Click="AboutMenu_Click" Content="About"/>
+                <Separator Margin="{StaticResource PopupSeparatorMargin}"/>
+                <Button Style="{StaticResource MenuPopupButton}" Click="AboutMenu_Click" Content="About"/>
               </StackPanel>
             </Border>
           </Popup>
@@ -240,21 +185,54 @@
                   <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- Title row with relocated Print / Export buttons -->
+                <!-- Title row (actions moved into inner tabs) -->
                 <Grid Grid.Row="1" Margin="{StaticResource ToolbarRowBottomMarginSmall}">
                   <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
                   </Grid.ColumnDefinitions>
 
-                  <!-- Title -->
-                  <TextBlock Grid.Row="0"
-                             Text="Schedule"
-                             FontFamily="{StaticResource BodyFontFamily}"
-                             FontSize="{StaticResource PageTitleFontSize}"
-                             FontWeight="Normal"
-                             Foreground="{StaticResource PrimaryTextBrush}"
-                             HorizontalAlignment="Left"
-                             Margin="{StaticResource TitleMarginBottomLarge}"/>
+                  <Grid Grid.Column="0"
+                        VerticalAlignment="Center"
+                        Margin="{StaticResource TitleMarginBottomLarge}">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="Auto"/>
+                      <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Named ScheduleTitleImage so code-behind can set processed bitmap -->
+                    <Image x:Name="ScheduleTitleImage"
+                           Grid.Column="0"
+                           Source="/ScheduleApp;component/washingtonstate.png"
+                           Height="{StaticResource PageTitleFontSize}"
+                           Stretch="Uniform"
+                           VerticalAlignment="Center"
+                           SnapsToDevicePixels="True"
+                           RenderOptions.BitmapScalingMode="HighQuality">
+                      <Image.LayoutTransform>
+                        <ScaleTransform ScaleX="2" ScaleY="2"/>
+                      </Image.LayoutTransform>
+                      <Image.RenderTransform>
+                        <TranslateTransform Y="4"/>
+                      </Image.RenderTransform>
+                    </Image>
+
+                    <TextBlock Grid.Column="1"
+                               xml:space="preserve"
+                               Text="  Schedule"
+                               FontFamily="{StaticResource BodyFontFamily}"
+                               FontSize="{StaticResource PageTitleFontSize}"
+                               FontWeight="Normal"
+                               Foreground="{StaticResource PrimaryTextBrush}"
+                               VerticalAlignment="Center"/>
+                  </Grid>
+
+                  <!-- Filler (keeps layout consistent) -->
+                  <Border Grid.Column="1" Background="Transparent"/>
+
+                  <!-- Placeholder column kept empty so title baseline matches other pages -->
+                  <Border Grid.Column="2" Background="Transparent"/>
                 </Grid>
 
                 <!-- Main inner content -->
@@ -267,12 +245,13 @@
                               Margin="{StaticResource NoMarginThickness}"
                               SelectionChanged="ScheduleViewInnerTabControl_SelectionChanged">
                     <TabItem Header="By Support">
-                      <Grid Margin="{StaticResource NoMarginThickness}">
+                      <Grid Margin="16">
                         <Grid.ColumnDefinitions>
                           <ColumnDefinition Width="260"/>
                           <ColumnDefinition Width="16"/>
                           <ColumnDefinition Width="*"/>
-                          <ColumnDefinition Width="Auto"/>
+                          <ColumnDefinition Width="Auto"/> <!-- actions column -->
+                          <ColumnDefinition Width="Auto"/> <!-- key column -->
                         </Grid.ColumnDefinitions>
 
                         <Border Grid.Column="0" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginThickness}">
@@ -352,48 +331,48 @@
                           </DataGrid>
                         </Border>
 
-                        <!-- Right side panel: key only (buttons moved up) -->
+                        <!-- Actions column moved beside the inner tab control -->
                         <StackPanel Grid.Column="3"
+                                    Orientation="Vertical"
+                                    VerticalAlignment="Top"
+                                    Margin="12,0,12,0"
+                                    Width="120">
+                          <Button Content="Print All"
+                                  Style="{StaticResource RoundedActionButton}"
+                                  Margin="0,0,0,8"
+                                  HorizontalAlignment="Stretch"
+                                  Command="{Binding PrintPreview.PrintAllCommand}"/>
+
+                          <Button Content="Preview"
+                                  Style="{StaticResource RoundedActionButton}"
+                                  Margin="0,0,0,8"
+                                  HorizontalAlignment="Stretch"
+                                  Click="SchedulePreview_Click"/>
+
+                          <Button Content="Export PDF"
+                                  Style="{StaticResource RoundedActionButton}"
+                                  HorizontalAlignment="Stretch"
+                                  Command="{Binding PrintPreview.ExportPdfCommand}"/>
+                        </StackPanel>
+
+                        <!-- Right side panel: key only (buttons moved to Column 3) -->
+                        <StackPanel Grid.Column="4"
                                     Orientation="Vertical"
                                     Margin="{StaticResource SidePanelLeftMargin}"
                                     VerticalAlignment="Top">
-                          <!-- Actions (moved out of inner tabs) -->
-                          <Grid Grid.Column="0"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Top"
-                                Margin="0,0,0,0">
-                            <Grid.RowDefinitions>
-                              <RowDefinition />
-                              <RowDefinition />
-                              <RowDefinition /> <!-- added row for Preview button -->
-                            </Grid.RowDefinitions>
-
-                            <Button Grid.Row="0"
-                                    Content="Print All"
-                                    Style="{StaticResource RoundedActionButton}"
-                                    Margin="0,0,0,4"
-                                    HorizontalAlignment="Stretch"
-                                    Command="{Binding PrintPreview.PrintAllCommand}"/>
-
-                            <!-- New: show Preview inner tab -->
-                            <Button Grid.Row="1"
-                                    Content="Preview"
-                                    Style="{StaticResource RoundedActionButton}"
-                                    Margin="0,10,0,4"
-                                    HorizontalAlignment="Stretch"
-                                    Click="SchedulePreview_Click"/>
-
-                            <Button Grid.Row="2"
-                                    Content="Export PDF"
-                                    Style="{StaticResource RoundedActionButton}"
-                                    Margin="0,10,0,4"
-                                    HorizontalAlignment="Stretch"
-                                    Command="{Binding PrintPreview.ExportPdfCommand}"/>
-                          </Grid>
+                          <StackPanel.Resources>
+                            <!-- Reusable bordered pill just for the key -->
+                            <Style x:Key="KeyPillStyle"
+                                   TargetType="Border"
+                                   BasedOn="{StaticResource PillStyle}">
+                              <Setter Property="BorderThickness" Value="1"/>
+                              <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
+                            </Style>
+                          </StackPanel.Resources>
 
                           <!-- Centered Key label -->
                           <TextBlock Text="Key"
-                                     Margin="0,18,0,4"
+                                     Margin="0,0,0,4"
                                      Foreground="{StaticResource SecondaryTextBrush}"
                                      FontWeight="SemiBold"
                                      HorizontalAlignment="Center"
@@ -426,12 +405,13 @@
                     </TabItem>
 
                     <TabItem Header="By Teacher">
-                      <Grid Margin="{StaticResource NoMarginThickness}">
+                      <Grid Margin="16">
                         <Grid.ColumnDefinitions>
                           <ColumnDefinition Width="260"/>
                           <ColumnDefinition Width="16"/>
                           <ColumnDefinition Width="*"/>
-                          <ColumnDefinition Width="Auto"/>
+                          <ColumnDefinition Width="Auto"/> <!-- actions column -->
+                          <ColumnDefinition Width="Auto"/> <!-- key column -->
                         </Grid.ColumnDefinitions>
 
                         <Border Grid.Column="0" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginThickness}">
@@ -499,48 +479,48 @@
                           </DataGrid>
                         </Border>
 
-                        <!-- Right side panel: actions + key -->
+                        <!-- Actions column beside the teacher grid -->
                         <StackPanel Grid.Column="3"
+                                    Orientation="Vertical"
+                                    VerticalAlignment="Top"
+                                    Margin="12,0,12,0"
+                                    Width="120">
+                          <Button Content="Print All"
+                                  Style="{StaticResource RoundedActionButton}"
+                                  Margin="0,0,0,8"
+                                  HorizontalAlignment="Stretch"
+                                  Command="{Binding PrintPreview.PrintAllCommand}"/>
+
+                          <Button Content="Preview"
+                                  Style="{StaticResource RoundedActionButton}"
+                                  Margin="0,0,0,8"
+                                  HorizontalAlignment="Stretch"
+                                  Click="SchedulePreview_Click"/>
+
+                          <Button Content="Export PDF"
+                                  Style="{StaticResource RoundedActionButton}"
+                                  HorizontalAlignment="Stretch"
+                                  Command="{Binding PrintPreview.ExportPdfCommand}"/>
+                        </StackPanel>
+
+                        <!-- Right side panel: key only -->
+                        <StackPanel Grid.Column="4"
                                     Orientation="Vertical"
                                     Margin="{StaticResource SidePanelLeftMargin}"
                                     VerticalAlignment="Top">
-                          <!-- Actions (moved out of inner tabs) -->
-                          <Grid Grid.Column="0"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Top"
-                                Margin="0,0,0,0">
-                            <Grid.RowDefinitions>
-                              <RowDefinition />
-                              <RowDefinition />
-                              <RowDefinition />
-                            </Grid.RowDefinitions>
-
-                            <Button Grid.Row="0"
-                                    Content="Print All"
-                                    Style="{StaticResource RoundedActionButton}"
-                                    Margin="0,0,0,4"
-                                    HorizontalAlignment="Stretch"
-                                    Command="{Binding PrintPreview.PrintAllCommand}"/>
-
-                            <!-- New: show Preview inner tab -->
-                            <Button Grid.Row="1"
-                                    Content="Preview"
-                                    Style="{StaticResource RoundedActionButton}"
-                                    Margin="0,10,0,4"
-                                    HorizontalAlignment="Stretch"
-                                    Click="SchedulePreview_Click"/>
-
-                            <Button Grid.Row="2"
-                                    Content="Export PDF"
-                                    Style="{StaticResource RoundedActionButton}"
-                                    Margin="0,10,0,4"
-                                    HorizontalAlignment="Stretch"
-                                    Command="{Binding PrintPreview.ExportPdfCommand}"/>
-                          </Grid>
+                          <StackPanel.Resources>
+                            <!-- Reuse same bordered pill style -->
+                            <Style x:Key="KeyPillStyle"
+                                   TargetType="Border"
+                                   BasedOn="{StaticResource PillStyle}">
+                              <Setter Property="BorderThickness" Value="1"/>
+                              <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
+                            </Style>
+                          </StackPanel.Resources>
 
                           <!-- Centered Key label -->
                           <TextBlock Text="Key"
-                                     Margin="0,18,0,4"
+                                     Margin="0,0,0,4"
                                      Foreground="{StaticResource SecondaryTextBrush}"
                                      FontWeight="SemiBold"
                                      HorizontalAlignment="Center"
@@ -572,7 +552,29 @@
                       </Grid>
                     </TabItem>
 
-                    <!-- NOTE: Inner "Print Preview" TabItem has been removed -->
+                    <TabItem Header="Print Preview">
+                      <Grid Margin="16">
+                        <Grid.RowDefinitions>
+                          <RowDefinition Height="Auto"/>
+                          <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="{StaticResource ToolbarRowBottomMarginSmall}">
+                          <ComboBox Width="200"
+                                    ItemsSource="{Binding Schedule.SupportTabs}"
+                                    DisplayMemberPath="SupportName"
+                                    SelectedItem="{Binding PrintPreview.SelectedTab}" />
+                          <Button Content="Print Selected" Style="{StaticResource IconButton}" Command="{Binding PrintPreview.PrintSelectedCommand}" Margin="{StaticResource ToolbarButtonMarginSmall}"
+                                  IsEnabled="{Binding PrintPreview.SelectedTab, Converter={StaticResource NotNullToTrue}}"/>
+                        </StackPanel>
+
+                        <FlowDocumentScrollViewer x:Name="PrintPreviewViewer"
+                                                  Grid.Row="1"
+                                                  Document="{Binding PrintPreview.Document}"
+                                                  Focusable="True"
+                                                  PreviewMouseLeftButtonDown="ScheduleArea_PreviewMouseLeftButtonDown" />
+                      </Grid>
+                    </TabItem>
                   </TabControl>
                 </ContentControl>
               </Grid>
@@ -587,13 +589,40 @@
                 </Grid.RowDefinitions>
 
                 <!-- Team Lineup title (explicit baseline for the other two) -->
-                <TextBlock Text="Team Lineup"
-                           FontFamily="{StaticResource BodyFontFamily}"
-                           FontSize="{StaticResource PageTitleFontSize}"
-                           FontWeight="Normal"
-                           Foreground="{StaticResource PrimaryTextBrush}"
-                           HorizontalAlignment="Left"
-                           Margin="{StaticResource TitleMarginBottomLarge}"/>
+                <Grid Grid.Row="0"
+                      Margin="{StaticResource TitleMarginBottomLarge}"
+                      VerticalAlignment="Center">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                  </Grid.ColumnDefinitions>
+
+                  <!-- Named TeamLineupTitleImage so code-behind can assign processed bitmap -->
+                  <Image x:Name="TeamLineupTitleImage"
+                         Grid.Column="0"
+                         Source="/ScheduleApp;component/washingtonstate.png"
+                         Height="{StaticResource PageTitleFontSize}"
+                         Stretch="Uniform"
+                         VerticalAlignment="Center"
+                         SnapsToDevicePixels="True"
+                         RenderOptions.BitmapScalingMode="HighQuality">
+                    <Image.LayoutTransform>
+                      <ScaleTransform ScaleX="2" ScaleY="2"/>
+                    </Image.LayoutTransform>
+                    <Image.RenderTransform>
+                      <TranslateTransform Y="4"/>
+                    </Image.RenderTransform>
+                  </Image>
+
+                  <TextBlock Grid.Column="1"
+                             xml:space="preserve"
+                             Text="  Team Lineup"
+                             FontFamily="{StaticResource BodyFontFamily}"
+                             FontSize="{StaticResource PageTitleFontSize}"
+                             FontWeight="Normal"
+                             Foreground="{StaticResource PrimaryTextBrush}"
+                             VerticalAlignment="Center"/>
+                </Grid>
 
                 <Grid Grid.Row="1">
                   <Grid.ColumnDefinitions>
@@ -831,136 +860,12 @@
                         </StackPanel>
                       </Grid>
                     </TabItem>
-
-                    <TabItem Header="Support Matchups">
-                      <Grid Margin="{StaticResource PageSectionMarginLarge}">
-                        <Grid.ColumnDefinitions>
-                          <ColumnDefinition Width="*" />
-                          <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <ContentControl Grid.Column="0"
-                                        Style="{StaticResource RoundedTableContainer}"
-                                        Margin="{StaticResource NoMarginThickness}"
-                                        VerticalContentAlignment="Stretch">
-                          <DataGrid x:Name="PrefsGrid"
-                                    ItemsSource="{Binding Setup.Preferences}"
-                                    SelectedItem="{Binding Setup.SelectedPreference}"
-                                    AutoGenerateColumns="False"
-                                    CanUserAddRows="False"
-                                    CanUserSortColumns="True"
-                                    HeadersVisibility="Column"
-                                    SelectionMode="Extended"
-                                    SelectionUnit="FullRow"
-                                    GridLinesVisibility="Horizontal"
-                                    HorizontalGridLinesBrush="{StaticResource SchedGridLineBrush}"
-                                    SnapsToDevicePixels="True"
-                                    BorderThickness="{StaticResource NoBorderThickness}"
-                                    Background="{StaticResource TransparentBrush}"
-                                    ColumnHeaderStyle="{StaticResource RoundedDataGridColumnHeader}"
-                                    beh:DataGridRowReorderBehavior.EnableRowReorder="True"
-                                    ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                    VerticalAlignment="Stretch"
-                                    RowEditEnding="SetupDataGrid_RowEditEnding"
-                                    CellEditEnding="SetupDataGrid_CellEditEnding">
-                            <DataGrid.InputBindings>
-                              <KeyBinding Key="Up" Modifiers="Control"
-                                          Command="{Binding DataContext.Setup.MovePreferenceUpCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                              <KeyBinding Key="Down" Modifiers="Control"
-                                          Command="{Binding DataContext.Setup.MovePreferenceDownCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                            </DataGrid.InputBindings>
-
-                            <DataGrid.Resources>
-                              <Style TargetType="{x:Type DataGridColumnHeadersPresenter}">
-                                <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
-                                <Setter Property="SnapsToDevicePixels" Value="True"/>
-                                <Setter Property="ClipToBounds" Value="True"/>
-                              </Style>
-                            </DataGrid.Resources>
-
-                            <DataGrid.Columns>
-                              <DataGridTextColumn Header="Room Number"
-                                                  Binding="{Binding RoomNumber}"
-                                                  SortMemberPath="RoomNumber"
-                                                  Width="*"
-                                                  CellStyle="{StaticResource DefaultCellStyle}"
-                                                  ElementStyle="{StaticResource DefaultTextElementStyle}"
-                                                  EditingElementStyle="{StaticResource DefaultEditingElementStyle}"/>
-                              <DataGridTemplateColumn Header="Preferred Support Staff"
-                                                      SortMemberPath="PreferredSupportName"
-                                                      Width="*"
-                                                      CellStyle="{StaticResource LastColumnCellStyle}">
-                                <DataGridTemplateColumn.CellTemplate>
-                                  <DataTemplate>
-                                    <TextBlock Text="{Binding PreferredSupportName}" Margin="{StaticResource CellElementMargin}"/>
-                                  </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                                <DataGridTemplateColumn.CellEditingTemplate>
-                                  <DataTemplate>
-                                    <ComboBox ItemsSource="{Binding DataContext.Setup.Supports, RelativeSource={RelativeSource AncestorType=Window}}"
-                                              DisplayMemberPath="Name"
-                                              SelectedValuePath="Name"
-                                              SelectedValue="{Binding PreferredSupportName}"
-                                              Margin="{StaticResource CellElementMargin}"
-                                              Style="{StaticResource DefaultEditingComboBoxStyle}"/>
-                                  </DataTemplate>
-                                </DataGridTemplateColumn.CellEditingTemplate>
-                              </DataGridTemplateColumn>
-                            </DataGrid.Columns>
-                          </DataGrid>
-                        </ContentControl>
-
-                        <StackPanel Grid.Column="1"
-                                    Orientation="Vertical"
-                                    Margin="{StaticResource SidePanelLeftMargin}"
-                                    VerticalAlignment="Top">
-                          <Button Content="Add"
-                                  Style="{StaticResource RoundedActionButton}"
-                                  Margin="{StaticResource ActionButtonStackMargin}"
-                                  Command="{Binding Setup.AddPreferenceCommand}"/>
-                          <Button Content="Remove"
-                                  Style="{StaticResource RoundedActionButton}"
-                                  Margin="{StaticResource ActionButtonStackMarginNone}"
-                                  Command="{Binding Setup.RemovePreferenceCommand}"
-                                  CommandParameter="{Binding SelectedItems, ElementName=PrefsGrid}"/>
-                        </StackPanel>
-                      </Grid>
-                    </TabItem>
                   </TabControl>
                 </Grid>
               </Grid>
             </TabItem>
 
-            <!-- 3) Print Preview (now top-level) -->
-            <TabItem Header="Print Preview">
-              <Grid Margin="{StaticResource NoMarginThickness}">
-                <Grid.RowDefinitions>
-                  <RowDefinition Height="Auto"/>
-                  <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="{StaticResource ToolbarRowBottomMarginSmall}">
-                  <ComboBox Width="200"
-                            ItemsSource="{Binding Schedule.SupportTabs}"
-                            DisplayMemberPath="SupportName"
-                            SelectedItem="{Binding PrintPreview.SelectedTab}" />
-                  <Button Content="Print Selected"
-                          Style="{StaticResource IconButton}"
-                          Command="{Binding PrintPreview.PrintSelectedCommand}"
-                          Margin="{StaticResource ToolbarButtonMarginSmall}"
-                          IsEnabled="{Binding PrintPreview.SelectedTab, Converter={StaticResource NotNullToTrue}}"/>
-                </StackPanel>
-
-                <FlowDocumentScrollViewer x:Name="PrintPreviewViewer"
-                                          Grid.Row="1"
-                                          Document="{Binding PrintPreview.Document}"
-                                          Focusable="True"
-                                          PreviewMouseLeftButtonDown="ScheduleArea_PreviewMouseLeftButtonDown" />
-              </Grid>
-            </TabItem>
-
-            <!-- 4) Preferences -->
+            <!-- 3) Preferences -->
             <TabItem Header="Preferences">
               <Grid Margin="{StaticResource PageSectionMarginLarge}">
                 <Grid.RowDefinitions>
@@ -969,14 +874,41 @@
                 </Grid.RowDefinitions>
 
                 <!-- Header (kept consistent with other tabs) -->
-                <TextBlock Grid.Row="0"
-                           Text="Preferences"
-                           FontFamily="{StaticResource BodyFontFamily}"
-                           FontSize="{StaticResource PageTitleFontSize}"
-                           FontWeight="Normal"
-                           Foreground="{StaticResource PrimaryTextBrush}"
-                           HorizontalAlignment="Left"
-                           Margin="{StaticResource TitleMarginBottomLarge}"/>
+                <!-- Preferences title: replace the single TextBlock with this to match Schedule/Team Lineup -->
+                <Grid Grid.Row="0"
+                      Margin="{StaticResource TitleMarginBottomLarge}"
+                      VerticalAlignment="Center">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                  </Grid.ColumnDefinitions>
+
+                  <!-- Named PreferencesTitleImage so code-behind can assign processed bitmap -->
+                  <Image x:Name="PreferencesTitleImage"
+                         Grid.Column="0"
+                         Source="/ScheduleApp;component/washingtonstate.png"
+                         Height="{StaticResource PageTitleFontSize}"
+                         Stretch="Uniform"
+                         VerticalAlignment="Center"
+                         SnapsToDevicePixels="True"
+                         RenderOptions.BitmapScalingMode="HighQuality">
+                    <Image.LayoutTransform>
+                      <ScaleTransform ScaleX="2" ScaleY="2"/>
+                    </Image.LayoutTransform>
+                    <Image.RenderTransform>
+                      <TranslateTransform Y="4"/>
+                    </Image.RenderTransform>
+                  </Image>
+
+                  <TextBlock Grid.Column="1"
+                             xml:space="preserve"
+                             Text="  Preferences"
+                             FontFamily="{StaticResource BodyFontFamily}"
+                             FontSize="{StaticResource PageTitleFontSize}"
+                             FontWeight="Normal"
+                             Foreground="{StaticResource PrimaryTextBrush}"
+                             VerticalAlignment="Center"/>
+                </Grid>
 
                 <!-- Match Team Lineup structure: rounded container + comfy inner padding -->
                 <Grid Grid.Row="1">
