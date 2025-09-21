@@ -54,6 +54,53 @@
                 <scm:SortDescription PropertyName="SortKey" Direction="Ascending"/>
             </CollectionViewSource.SortDescriptions>
         </CollectionViewSource>
+
+        <!--
+          Style that hides the tab headers while preserving TabControl behavior:
+          - Keeps a zero-height, non-hit-testable TabPanel in the visual tree so the items host exists
+            (helps maintain selection plumbing and accessibility providers).
+          - Presents only the SelectedContent (SelectedContentHost).
+          - Keeps the TabControl Focusable and keyboard/tab navigation intact for the content.
+          -> For centralized theming, move this style into Appearance.xaml and reuse it.
+        -->
+        <Style x:Key="HiddenTabHeadersTabControl" TargetType="TabControl">
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Focusable" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabControl">
+                        <Grid SnapsToDevicePixels="True">
+                            <!-- Keep the TabPanel in the tree so TabItems are still generated
+                                 and selection mechanics remain intact. Make it non-interactive and
+                                 zero height so it does not change layout or render. -->
+                            <TabPanel x:Name="HeaderPanel"
+                                      IsItemsHost="True"
+                                      Margin="0"
+                                      Height="0"
+                                      Opacity="0"
+                                      IsHitTestVisible="False"
+                                      KeyboardNavigation.TabIndex="0"/>
+
+                            <!-- Content presenter shows the active tab's content -->
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    SnapsToDevicePixels="True"
+                                    CornerRadius="0">
+                                <ContentPresenter x:Name="PART_SelectedContentHost"
+                                                  ContentSource="SelectedContent"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                  Focusable="False"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <!-- keep local keyboard navigation behavior; content remains focusable -->
+            <Setter Property="KeyboardNavigation.TabNavigation" Value="Local"/>
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -173,6 +220,8 @@
               Padding="{StaticResource WindowContentPadding}">
                 <Grid>
                     <TabControl x:Name="MainTabControl"
+                      Style="{StaticResource HiddenTabHeadersTabControl}"
+                      AutomationProperties.Name="Main Content Tabs"
                       SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}"
                       SelectionChanged="MainTabControl_SelectionChanged">
 
