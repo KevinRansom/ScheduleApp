@@ -866,4 +866,40 @@
       <Setter Property="HorizontalContentAlignment" Value="Left"/>
       <Setter Property="SnapsToDevicePixels" Value="True"/>
     </Style>
+
+    <!-- alias to recover from typo'd references elsewhere -->
+    <Thickness x:Key="NoMarginThreshold">0</Thickness>
+
+    <!-- Add this near other control styles (e.g. after HamburgerToggleButtonStyle) -->
+    <Style x:Key="HeaderImageButtonStyle" TargetType="Button" BasedOn="{StaticResource IconButton}">
+  <Setter Property="Padding" Value="2"/>
+  <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
+  <Setter Property="BorderThickness" Value="0"/>
+  <Setter Property="Cursor" Value="Hand"/>
+  <Setter Property="Focusable" Value="False"/>
+  <Setter Property="Template">
+    <Setter.Value>
+      <ControlTemplate TargetType="Button">
+        <Border x:Name="Bd"
+                Background="{TemplateBinding Background}"
+                CornerRadius="4"
+                SnapsToDevicePixels="True">
+          <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True"/>
+        </Border>
+
+        <ControlTemplate.Triggers>
+          <Trigger Property="IsMouseOver" Value="True">
+            <Setter TargetName="Bd" Property="Background" Value="{StaticResource MenuItemHoverBackgroundBrush}"/>
+          </Trigger>
+          <Trigger Property="IsPressed" Value="True">
+            <Setter TargetName="Bd" Property="Background" Value="{StaticResource HamburgerHighlightBackgroundBrush}"/>
+          </Trigger>
+          <Trigger Property="IsEnabled" Value="False">
+            <Setter Property="Opacity" Value="0.6"/>
+          </Trigger>
+        </ControlTemplate.Triggers>
+      </ControlTemplate>
+    </Setter.Value>
+  </Setter>
+</Style>
   </ResourceDictionary>

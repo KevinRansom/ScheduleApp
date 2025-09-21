@@ -66,6 +66,18 @@ namespace ScheduleApp
                 HamburgerToggle.IsChecked = false;
         }
 
+        // Back button (arrow) handler: always go to Schedule (top-level)
+        private void TitleBack_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (MainTabControl != null)
+            {
+                MainTabControl.SelectedIndex = 0; // Schedule
+                // Keep behavior consistent with MenuSchedule: select inner "By Support"
+                if (ScheduleViewInnerTabControl != null)
+                    ScheduleViewInnerTabControl.SelectedIndex = 0;
+            }
+        }
+
         // Navigate to the Preview top-level tab (moved out of Schedule) and close popup.
         private void MenuPreview_Click(object sender, RoutedEventArgs e)
         {
