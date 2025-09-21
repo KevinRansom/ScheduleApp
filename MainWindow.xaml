@@ -186,7 +186,8 @@
                                 </Grid.RowDefinitions>
 
                                 <!-- Title row (actions moved into inner tabs) -->
-                                <Grid Grid.Row="1" Margin="{StaticResource ToolbarRowBottomMarginSmall}">
+                                <!-- NOTE: removed the parent ToolbarRowBottomMarginSmall so the title-to-inner-tab gap matches Team Lineup -->
+                                <Grid Grid.Row="0" Margin="{StaticResource NoMarginThickness}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
@@ -194,38 +195,38 @@
                                     </Grid.ColumnDefinitions>
 
                                     <Grid Grid.Column="0"
-                        VerticalAlignment="Center"
-                        Margin="{StaticResource TitleMarginBottomLarge}">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
+      VerticalAlignment="Center"
+      Margin="{StaticResource TitleMarginBottomLarge}">
+                                      <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                      </Grid.ColumnDefinitions>
 
-                                        <!-- Named ScheduleTitleImage so code-behind can set processed bitmap -->
+                                      <!-- Named ScheduleTitleImage so code-behind can set processed bitmap -->
                                         <Image x:Name="ScheduleTitleImage"
-                           Grid.Column="0"
-                           Source="/ScheduleApp;component/washingtonstate.png"
-                           Height="{StaticResource PageTitleFontSize}"
-                           Stretch="Uniform"
-                           VerticalAlignment="Center"
-                           SnapsToDevicePixels="True"
-                           RenderOptions.BitmapScalingMode="HighQuality">
+                                            Grid.Column="0"
+                                            Source="/ScheduleApp;component/washingtonstate.png"
+                                            Height="{StaticResource PageTitleFontSize}"
+                                            Stretch="Uniform"
+                                            Margin="0"
+                                            VerticalAlignment="Center"
+                                            SnapsToDevicePixels="True"
+                                            RenderOptions.BitmapScalingMode="HighQuality">
                                             <Image.LayoutTransform>
-                                                <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                                <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
                                             </Image.LayoutTransform>
                                             <Image.RenderTransform>
                                                 <TranslateTransform Y="4"/>
                                             </Image.RenderTransform>
                                         </Image>
-
                                         <TextBlock Grid.Column="1"
-                               xml:space="preserve"
-                               Text="  Schedule"
-                               FontFamily="{StaticResource BodyFontFamily}"
-                               FontSize="{StaticResource PageTitleFontSize}"
-                               FontWeight="Normal"
-                               Foreground="{StaticResource PrimaryTextBrush}"
-                               VerticalAlignment="Center"/>
+                                                 xml:space="preserve"
+                                                 Text="  Schedule"
+                                                 FontFamily="{StaticResource BodyFontFamily}"
+                                                 FontSize="{StaticResource PageTitleFontSize}"
+                                                 FontWeight="Normal"
+                                                 Foreground="{StaticResource PrimaryTextBrush}"
+                                                 VerticalAlignment="Center"/>
                                     </Grid>
 
                                     <!-- Filler (keeps layout consistent) -->
@@ -236,14 +237,14 @@
                                 </Grid>
 
                                 <!-- Main inner content -->
-                                <ContentControl Grid.Row="2"
+                                <ContentControl Grid.Row="1"
                                 BorderThickness="0"
                                 Style="{StaticResource RoundedTableContainer}"
                                 Margin="{StaticResource NoMarginThickness}"
                                 VerticalContentAlignment="Stretch">
                                     <TabControl x:Name="ScheduleViewInnerTabControl"
-                              Margin="{StaticResource NoMarginThickness}"
-                              SelectionChanged="ScheduleViewInnerTabControl_SelectionChanged">
+                                                Margin="{StaticResource NoMarginThickness}"
+                                                SelectionChanged="ScheduleViewInnerTabControl_SelectionChanged">
                                         <TabItem Header="By Support">
                                             <Grid Margin="16">
                                                 <Grid.ColumnDefinitions>
@@ -570,8 +571,8 @@
 
                                 <!-- Team Lineup title (explicit baseline for the other two) -->
                                 <Grid Grid.Row="0"
-                      Margin="{StaticResource TitleMarginBottomLarge}"
-                      VerticalAlignment="Center">
+                                      Margin="{StaticResource TitleMarginBottomLarge}"
+                                      VerticalAlignment="Center">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
@@ -579,29 +580,28 @@
 
                                     <!-- Named TeamLineupTitleImage so code-behind can assign processed bitmap -->
                                     <Image x:Name="TeamLineupTitleImage"
-                         Grid.Column="0"
-                         Source="/ScheduleApp;component/washingtonstate.png"
-                         Height="{StaticResource PageTitleFontSize}"
-                         Stretch="Uniform"
-                         VerticalAlignment="Center"
-                         SnapsToDevicePixels="True"
-                         RenderOptions.BitmapScalingMode="HighQuality">
+                                        Grid.Column="0"
+                                        Source="/ScheduleApp;component/arrow.png"
+                                        Height="{StaticResource PageTitleFontSize}"
+                                        Stretch="Uniform"
+                                        VerticalAlignment="Center"
+                                        SnapsToDevicePixels="True"
+                                        RenderOptions.BitmapScalingMode="HighQuality">
                                         <Image.LayoutTransform>
-                                            <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                            <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
                                         </Image.LayoutTransform>
                                         <Image.RenderTransform>
-                                            <TranslateTransform Y="4"/>
+                                            <TranslateTransform Y="2"/>
                                         </Image.RenderTransform>
                                     </Image>
-
                                     <TextBlock Grid.Column="1"
-                             xml:space="preserve"
-                             Text="  Team Lineup"
-                             FontFamily="{StaticResource BodyFontFamily}"
-                             FontSize="{StaticResource PageTitleFontSize}"
-                             FontWeight="Normal"
-                             Foreground="{StaticResource PrimaryTextBrush}"
-                             VerticalAlignment="Center"/>
+                                               xml:space="preserve"
+                                               Text="  Team Lineup"
+                                               FontFamily="{StaticResource BodyFontFamily}"
+                                               FontSize="{StaticResource PageTitleFontSize}"
+                                               FontWeight="Normal"
+                                               Foreground="{StaticResource PrimaryTextBrush}"
+                                               VerticalAlignment="Center"/>
                                 </Grid>
 
                                 <Grid Grid.Row="1">
@@ -845,8 +845,8 @@
                             </Grid>
                         </TabItem>
 
-                        <!-- 3) Print Preview (moved from Schedule inner tabs; placed between Team Lineup and Preferences) -->
-                        <TabItem Header="Print Preview">
+                        <!-- 3) Preview (was "Print Preview") -->
+                        <TabItem Header="Preview">
                             <Grid Margin="{StaticResource PageSectionMarginLarge}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -861,25 +861,26 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
 
+                                    <!-- Print Preview page title image (arrow.png) -->
                                     <Image x:Name="PrintPreviewTitleImage"
-                         Grid.Column="0"
-                         Source="/ScheduleApp;component/washingtonstate.png"
-                         Height="{StaticResource PageTitleFontSize}"
-                         Stretch="Uniform"
-                         VerticalAlignment="Center"
-                         SnapsToDevicePixels="True"
-                         RenderOptions.BitmapScalingMode="HighQuality">
+                                         Grid.Column="0"
+                                         Source="/ScheduleApp;component/arrow.png"
+                                         Height="{StaticResource PageTitleFontSize}"
+                                         Stretch="Uniform"
+                                         VerticalAlignment="Center"
+                                         SnapsToDevicePixels="True"
+                                         RenderOptions.BitmapScalingMode="HighQuality">
                                         <Image.LayoutTransform>
-                                            <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                            <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
                                         </Image.LayoutTransform>
                                         <Image.RenderTransform>
-                                            <TranslateTransform Y="4"/>
+                                            <TranslateTransform Y="2"/>
                                         </Image.RenderTransform>
                                     </Image>
 
                                     <TextBlock Grid.Column="1"
                              xml:space="preserve"
-                             Text="  Print Preview"
+                             Text="  Preview"
                              FontFamily="{StaticResource BodyFontFamily}"
                              FontSize="{StaticResource PageTitleFontSize}"
                              FontWeight="Normal"
@@ -943,17 +944,17 @@
                                     <!-- Named PreferencesTitleImage so code-behind can assign processed bitmap -->
                                     <Image x:Name="PreferencesTitleImage"
                          Grid.Column="0"
-                         Source="/ScheduleApp;component/washingtonstate.png"
+                         Source="/ScheduleApp;component/arrow.png"
                          Height="{StaticResource PageTitleFontSize}"
                          Stretch="Uniform"
                          VerticalAlignment="Center"
                          SnapsToDevicePixels="True"
                          RenderOptions.BitmapScalingMode="HighQuality">
                                         <Image.LayoutTransform>
-                                            <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                            <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
                                         </Image.LayoutTransform>
                                         <Image.RenderTransform>
-                                            <TranslateTransform Y="4"/>
+                                            <TranslateTransform Y="2"/>
                                         </Image.RenderTransform>
                                     </Image>
 
