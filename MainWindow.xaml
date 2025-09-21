@@ -586,31 +586,28 @@
                                     </Grid.ColumnDefinitions>
 
                                     <!-- Named TeamLineupTitleImage so code-behind can assign processed bitmap -->
-                                    <Border Grid.Column="0"
-                                        BorderBrush="Black"
-                                        BorderThickness="0"
-                                        CornerRadius="4"
-                                        VerticalAlignment="Center"
-                                        SnapsToDevicePixels="True">
-                                        <Image x:Name="TeamLineupTitleImage"
-                                           Grid.Column="0"
-                                           Source="/ScheduleApp;component/arrow.png"
-                                           Height="{StaticResource PageTitleFontSize}"
-                                           Stretch="Uniform"
-                                           VerticalAlignment="Center"
-                                           SnapsToDevicePixels="True"
-                                           RenderOptions.BitmapScalingMode="HighQuality"
-                                           Cursor="Hand"
-                                           ToolTip="Back to Schedule"
-                                           MouseLeftButtonUp="TitleBack_Click">
-                                            <Image.LayoutTransform>
-                                              <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
-                                            </Image.LayoutTransform>
-                                            <Image.RenderTransform>
-                                              <TranslateTransform Y="2"/>
-                                            </Image.RenderTransform>
-                                        </Image>
-                                    </Border>
+                                    <Button Grid.Column="0"
+        Style="{StaticResource HeaderImageButtonStyle}"
+        Click="TitleBack_Click"
+        ToolTip="Back to Schedule"
+        HorizontalAlignment="Left"
+        VerticalAlignment="Center"
+        Focusable="False">
+  <Image x:Name="TeamLineupTitleImage"
+         Source="/ScheduleApp;component/arrow.png"
+         Height="{StaticResource PageTitleFontSize}"
+         Stretch="Uniform"
+         VerticalAlignment="Center"
+         SnapsToDevicePixels="True"
+         RenderOptions.BitmapScalingMode="HighQuality">
+    <Image.LayoutTransform>
+      <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+    </Image.LayoutTransform>
+    <Image.RenderTransform>
+      <TranslateTransform Y="2"/>
+    </Image.RenderTransform>
+  </Image>
+</Button>
 
                                     <TextBlock Grid.Column="1"
                                                xml:space="preserve"
@@ -880,31 +877,29 @@
                                     </Grid.ColumnDefinitions>
 
                                     <!-- Print Preview page title image (arrow.png) -->
-                                    <Border Grid.Column="0"
-                                            BorderBrush="Black"
-                                            BorderThickness="0"
-                                            CornerRadius="4"
-                                            VerticalAlignment="Center"
-                                            SnapsToDevicePixels="True">
-                                        <Image x:Name="PrintPreviewTitleImage"
-                                         Grid.Column="0"
-                                         Source="/ScheduleApp;component/arrow.png"
-                                         Height="{StaticResource PageTitleFontSize}"
-                                         Stretch="Uniform"
-                                         VerticalAlignment="Center"
-                                         SnapsToDevicePixels="True"
-                                         RenderOptions.BitmapScalingMode="HighQuality"
-                                         Cursor="Hand"
-                                         ToolTip="Back to Schedule"
-                                         MouseLeftButtonUp="TitleBack_Click">
-                                            <Image.LayoutTransform>
-                                                <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
-                                            </Image.LayoutTransform>
-                                            <Image.RenderTransform>
-                                                <TranslateTransform Y="2"/>
-                                            </Image.RenderTransform>
-                                        </Image>
-                                    </Border>
+                                    <Button Grid.Column="0"
+        Style="{StaticResource HeaderImageButtonStyle}"
+        Click="TitleBack_Click"
+        ToolTip="Back to Schedule"
+        HorizontalAlignment="Left"
+        VerticalAlignment="Center"
+        Focusable="False">
+  <Image x:Name="PrintPreviewTitleImage"
+         Source="/ScheduleApp;component/arrow.png"
+         Height="{StaticResource PageTitleFontSize}"
+         Stretch="Uniform"
+         VerticalAlignment="Center"
+         SnapsToDevicePixels="True"
+         RenderOptions.BitmapScalingMode="HighQuality">
+    <Image.LayoutTransform>
+      <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+    </Image.LayoutTransform>
+    <Image.RenderTransform>
+      <TranslateTransform Y="2"/>
+    </Image.RenderTransform>
+  </Image>
+</Button>
+
                                     <TextBlock Grid.Column="1"
                              xml:space="preserve"
                              Text="  Preview"
@@ -968,31 +963,29 @@
                                     </Grid.ColumnDefinitions>
 
                                     <!-- Named PreferencesTitleImage so code-behind can assign processed bitmap -->
-                                    <Border Grid.Column="0"
-                                            BorderBrush="Black"
-                                            BorderThickness="0"
-                                            CornerRadius="4"
-                                            VerticalAlignment="Center"
-                                            SnapsToDevicePixels="True">
-                                        <Image x:Name="PreferencesTitleImage"
-                                           Grid.Column="0"
-                                           Source="/ScheduleApp;component/arrow.png"
-                                           Height="{StaticResource PageTitleFontSize}"
-                                           Stretch="Uniform"
-                                           VerticalAlignment="Center"
-                                           SnapsToDevicePixels="True"
-                                           RenderOptions.BitmapScalingMode="HighQuality"
-                                           Cursor="Hand"
-                                           ToolTip="Back to Schedule"
-                                           MouseLeftButtonUp="TitleBack_Click">
-                                            <Image.LayoutTransform>
-                                              <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
-                                            </Image.LayoutTransform>
-                                            <Image.RenderTransform>
-                                              <TranslateTransform Y="2"/>
-                                            </Image.RenderTransform>
-                                        </Image>
-                                    </Border>
+                                    <Button Grid.Column="0"
+        Style="{StaticResource HeaderImageButtonStyle}"
+        Click="TitleBack_Click"
+        ToolTip="Back to Schedule"
+        HorizontalAlignment="Left"
+        VerticalAlignment="Center"
+        Focusable="False">
+  <Image x:Name="PreferencesTitleImage"
+         Source="/ScheduleApp;component/arrow.png"
+         Height="{StaticResource PageTitleFontSize}"
+         Stretch="Uniform"
+         VerticalAlignment="Center"
+         SnapsToDevicePixels="True"
+         RenderOptions.BitmapScalingMode="HighQuality">
+    <Image.LayoutTransform>
+      <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+    </Image.LayoutTransform>
+    <Image.RenderTransform>
+      <TranslateTransform Y="2"/>
+    </Image.RenderTransform>
+  </Image>
+</Button>
+
                                     <TextBlock Grid.Column="1"
                              xml:space="preserve"
                              Text="  Preferences"

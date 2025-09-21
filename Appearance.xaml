@@ -871,7 +871,25 @@
     <Thickness x:Key="NoMarginThreshold">0</Thickness>
 
     <!-- Add this near other control styles (e.g. after HamburgerToggleButtonStyle) -->
-    <Style x:Key="HeaderImageButtonStyle" TargetType="Button" BasedOn="{StaticResource IconButton}">
+    <Style x:Key="HeaderImageButtonBorderStyle" TargetType="Border">
+  <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
+  <Setter Property="CornerRadius" Value="4"/>
+  <Setter Property="Padding" Value="2"/>
+  <Setter Property="Cursor" Value="Hand"/>
+  <Setter Property="SnapsToDevicePixels" Value="True"/>
+  <Style.Triggers>
+    <!-- Use same hover background used elsewhere -->
+    <Trigger Property="IsMouseOver" Value="True">
+      <Setter Property="Background" Value="{StaticResource MenuItemHoverBackgroundBrush}"/>
+    </Trigger>
+    <Trigger Property="IsEnabled" Value="False">
+      <Setter Property="Opacity" Value="0.6"/>
+    </Trigger>
+  </Style.Triggers>
+</Style>
+
+<!-- Header image button: used for the arrow back icons -->
+<Style x:Key="HeaderImageButtonStyle" TargetType="Button" BasedOn="{StaticResource IconButton}">
   <Setter Property="Padding" Value="2"/>
   <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
   <Setter Property="BorderThickness" Value="0"/>

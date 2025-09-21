@@ -78,6 +78,17 @@ namespace ScheduleApp
             }
         }
 
+        // add this overload (Click uses RoutedEventArgs) next to the existing TitleBack_Mouse handler
+        private void TitleBack_Click(object sender, RoutedEventArgs e)
+        {
+            if (MainTabControl != null)
+            {
+                MainTabControl.SelectedIndex = 0; // Schedule
+                if (ScheduleViewInnerTabControl != null)
+                    ScheduleViewInnerTabControl.SelectedIndex = 0; // By Support
+            }
+        }
+
         // Navigate to the Preview top-level tab (moved out of Schedule) and close popup.
         private void MenuPreview_Click(object sender, RoutedEventArgs e)
         {
