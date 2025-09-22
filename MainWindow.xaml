@@ -155,25 +155,25 @@
                     </Grid>
 
                     <Popup x:Name="HamburgerPopup"
-                 PlacementTarget="{Binding ElementName=HamburgerToggle}"
-                 Placement="Bottom"
-                 AllowsTransparency="True"
-                 StaysOpen="False"
-                 IsOpen="{Binding IsChecked, ElementName=HamburgerToggle, Mode=TwoWay}"
-                 Closed="HamburgerPopup_Closed">
+                           PlacementTarget="{Binding ElementName=HamburgerToggle}"
+                           Placement="Bottom"
+                           AllowsTransparency="True"
+                           StaysOpen="False"
+                           IsOpen="{Binding IsChecked, ElementName=HamburgerToggle, Mode=TwoWay}"
+                           Closed="HamburgerPopup_Closed">
                         <Border CornerRadius="{StaticResource PopupCornerRadius}"
-                    Background="{StaticResource MenuBackgroundBrush}"
-                    BorderBrush="{StaticResource MenuBorderBrush}"
-                    BorderThickness="{StaticResource GridOuterBorderThickness}"
-                    Padding="{StaticResource PopupPadding}"
-                    SnapsToDevicePixels="True"
-                    Margin="{StaticResource PopupMargin}"
-                    Effect="{StaticResource PopupShadowEffect}"
-                    MinWidth="200">
+                                Background="{StaticResource MenuBackgroundBrush}"
+                                BorderBrush="{StaticResource MenuBorderBrush}"
+                                BorderThickness="{StaticResource GridOuterBorderThickness}"
+                                Padding="{StaticResource PopupPadding}"
+                                SnapsToDevicePixels="True"
+                                Margin="{StaticResource PopupMargin}"
+                                Effect="{StaticResource PopupShadowEffect}"
+                                MinWidth="200">
                             <StackPanel Orientation="Vertical">
                                 <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuSchedule_Click" Content="Schedule"/>
-                                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuPreview_Click" Content="Preview"/>
                                 <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuTeachers_Click" Content="Team Lineup"/>
+                                <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuPreview_Click" Content="Preview"/>
                                 <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuPreferences_Click" Content="Preferences"/>
                                 <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuAlgorithm_Click" Content="Algorithm"/>
                                 <Button Style="{StaticResource MenuPopupButton}" Margin="{StaticResource PopupMenuItemMargin}" Click="MenuExit_Click" Content="Exit"/>

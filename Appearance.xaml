@@ -293,8 +293,9 @@
 
     <!-- HamburgerToggleButtonStyle -->
     <Style x:Key="HamburgerToggleButtonStyle" TargetType="ToggleButton">
-      <Setter Property="Width" Value="36"/>
-      <Setter Property="Height" Value="36"/>
+      <!-- Match TitleBarWindowButton size & feel -->
+      <Setter Property="Width" Value="40"/>
+      <Setter Property="Height" Value="40"/>
       <Setter Property="VerticalAlignment" Value="Center"/>
       <Setter Property="HorizontalAlignment" Value="Left"/>
       <Setter Property="Margin" Value="{StaticResource HamburgerMargin}"/>
@@ -306,7 +307,11 @@
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="ToggleButton">
-            <Border x:Name="RootBorder" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+            <!-- Use a rounded border like the title bar buttons -->
+            <Border x:Name="RootBorder"
+                    Background="{TemplateBinding Background}"
+                    CornerRadius="6"
+                    SnapsToDevicePixels="True">
               <Grid Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center" SnapsToDevicePixels="True">
                 <!-- hamburger stripes use TitleBarForegroundBrush for contrast on the navy title bar -->
                 <Rectangle x:Name="StripeTop" Height="2" Fill="{StaticResource TitleBarForegroundBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Top" Margin="{StaticResource HamburgerStripeTopMargin}"/>
@@ -316,6 +321,7 @@
             </Border>
 
             <ControlTemplate.Triggers>
+              <!-- Keep checked visual (open state) as before -->
               <Trigger Property="IsChecked" Value="True">
                 <Setter TargetName="RootBorder" Property="Background" Value="{StaticResource HamburgerHighlightBackgroundBrush}"/>
                 <Setter TargetName="StripeTop" Property="Fill" Value="{StaticResource HamburgerHighlightLineBrush}"/>
@@ -323,8 +329,13 @@
                 <Setter TargetName="StripeBottom" Property="Fill" Value="{StaticResource HamburgerHighlightLineBrush}"/>
               </Trigger>
 
+              <!-- Make hover/press use the same translucent white overlays and rounded shape as title-bar buttons -->
               <Trigger Property="IsMouseOver" Value="True">
-                <Setter TargetName="RootBorder" Property="Background" Value="{StaticResource MenuItemHoverBackgroundBrush}"/>
+                <Setter TargetName="RootBorder" Property="Background" Value="#20FFFFFF"/>
+              </Trigger>
+
+              <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="RootBorder" Property="Background" Value="#33FFFFFF"/>
               </Trigger>
             </ControlTemplate.Triggers>
           </ControlTemplate>
