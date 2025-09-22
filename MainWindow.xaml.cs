@@ -129,14 +129,6 @@ namespace ScheduleApp
                 HamburgerToggle.IsChecked = false;
         }
 
-        // Algorithm placeholder: close popup and leave developer to wire actual behavior.
-        private void MenuAlgorithm_Click(object sender, RoutedEventArgs e)
-        {
-            if (HamburgerToggle != null)
-                HamburgerToggle.IsChecked = false;
-            // TODO: wire actual algorithm dialog or action
-        }
-
         // New: Exit application
         private void MenuExit_Click(object sender, RoutedEventArgs e)
         {
@@ -201,7 +193,6 @@ namespace ScheduleApp
             if (MaximizeButton == null) return;
 
             MaximizeButton.ApplyTemplate();
-            // fully qualify Path control type to avoid ambiguity with System.IO.Path
             var icon = MaximizeButton.Template.FindName("PART_Icon", MaximizeButton) as System.Windows.Shapes.Path;
             if (icon == null) return;
 
@@ -232,7 +223,6 @@ namespace ScheduleApp
 
         private void ResizeThumb_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            // Prevent starting a drag when maximized (same behavior as existing ResizeThumb_PreviewMouseDown)
             if (WindowState == WindowState.Maximized)
             {
                 e.Handled = true;

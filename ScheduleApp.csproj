@@ -66,10 +66,14 @@
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.EventHandlers.cs" />
+    <Compile Include="MainWindow.TeamLineup.cs" />
+    <Compile Include="MainWindow.TeamLineupFromSupport.cs" />
+    <Compile Include="MainWindow.TeamLineupFromTeacher.cs" />
     <Compile Include="ScheduleApp\Behaviors\AutoSelectFirstBehavior.cs" />
     <Compile Include="ScheduleApp\Behaviors\DataGridRowReorderBehavior.cs" />
     <Compile Include="ScheduleApp\Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="ScheduleApp\Converters\NotNullConverters.cs" />
+    <Compile Include="ScheduleApp\Converters\SupportTaskToBrushConverter.cs" />
     <Compile Include="ScheduleApp\Converters\SupportTeacherDisplayConverter.cs" />
     <Compile Include="ScheduleApp\Converters\TaskKindToBrushConverter.cs" />
     <Compile Include="ScheduleApp\Converters\TeacherRowToBrushConverter.cs" />
