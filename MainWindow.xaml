@@ -86,7 +86,7 @@
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
                                     SnapsToDevicePixels="True"
-                                    CornerRadius="0">
+                                    CornerRadius="8">
                                 <ContentPresenter x:Name="PART_SelectedContentHost"
                                                   ContentSource="SelectedContent"
                                                   Margin="{TemplateBinding Padding}"
@@ -216,13 +216,13 @@
             </Border>
 
             <Border DockPanel.Dock="Top"
-              CornerRadius="{StaticResource AppPaneCornerRadius}"
-              Background="{StaticResource PrimaryBackgroundBrush}"
-              BorderBrush="{StaticResource PrimaryBorderBrush}"
-              BorderThickness="{StaticResource GridOuterBorderThickness}"
-              SnapsToDevicePixels="True"
-              Margin="{StaticResource AppPaneOuterMargin}"
-              Padding="{StaticResource WindowContentPadding}">
+                    CornerRadius="{StaticResource AppPaneCornerRadius}"
+                    Background="{StaticResource PrimaryBackgroundBrush}"
+                    BorderBrush="{StaticResource PrimaryBorderBrush}"
+                    BorderThickness="{StaticResource GridOuterBorderThickness}"
+                    SnapsToDevicePixels="True"
+                    Margin="{StaticResource AppPaneOuterMargin}"
+                    Padding="{StaticResource WindowContentPadding}">
                 <Grid>
                     <TabControl x:Name="MainTabControl"
                       Style="{StaticResource HiddenTabHeadersTabControl}"
@@ -1172,14 +1172,14 @@
           VerticalAlignment="Stretch"
           SnapsToDevicePixels="True">
 
-            <Thumb x:Name="ThumbLeft" Background="Transparent" Style="{StaticResource VisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="Left" Width="8" HorizontalAlignment="Left" VerticalAlignment="Stretch" Cursor="SizeWE" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbLeft_DragDelta"/>
-            <Thumb x:Name="ThumbRight" Background="Transparent" Style="{StaticResource VisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="Right" Width="8" HorizontalAlignment="Right" VerticalAlignment="Stretch" Cursor="SizeWE" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbRight_DragDelta"/>
-            <Thumb x:Name="ThumbTop" Background="Transparent" Style="{StaticResource VisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="Top" Height="6" HorizontalAlignment="Stretch" VerticalAlignment="Top" Cursor="SizeNS" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbTop_DragDelta"/>
-            <Thumb x:Name="ThumbBottom" Background="Transparent" Style="{StaticResource VisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="Bottom" Height="6" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Cursor="SizeNS" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbBottom_DragDelta"/>
-            <Thumb x:Name="ThumbTopLeft" Background="Transparent" Style="{StaticResource VisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="TopLeft" Width="12" Height="12" HorizontalAlignment="Left" VerticalAlignment="Top" Cursor="SizeNWSE" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbTopLeft_DragDelta"/>
-            <Thumb x:Name="ThumbTopRight" Background="Transparent" Style="{StaticResource VisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="TopRight" Width="12" Height="12" HorizontalAlignment="Right" VerticalAlignment="Top" Cursor="SizeNESW" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbTopRight_DragDelta"/>
-            <Thumb x:Name="ThumbBottomLeft" Background="Transparent" Style="{StaticResource VisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="BottomLeft" Width="12" Height="12" HorizontalAlignment="Left" VerticalAlignment="Bottom" Cursor="SizeNESW" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbBottomLeft_DragDelta"/>
-            <Thumb x:Name="ThumbBottomRight" Background="Transparent" Style="{StaticResource VisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="BottomRight" Width="12" Height="12" HorizontalAlignment="Right" VerticalAlignment="Bottom" Cursor="SizeNWSE" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbBottomRight_DragDelta"/>
+            <Thumb x:Name="ThumbLeft" Background="Transparent" Style="{StaticResource InvisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="Left" Width="8" HorizontalAlignment="Left" VerticalAlignment="Stretch" Cursor="SizeWE" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbLeft_DragDelta"/>
+            <Thumb x:Name="ThumbRight" Background="Transparent" Style="{StaticResource InvisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="Right" Width="8" HorizontalAlignment="Right" VerticalAlignment="Stretch" Cursor="SizeWE" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbRight_DragDelta"/>
+            <Thumb x:Name="ThumbTop" Background="Transparent" Style="{StaticResource InvisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="Top" Height="6" HorizontalAlignment="Stretch" VerticalAlignment="Top" Cursor="SizeNS" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbTop_DragDelta"/>
+            <Thumb x:Name="ThumbBottom" Background="Transparent" Style="{StaticResource InvisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="Bottom" Height="6" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Cursor="SizeNS" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbBottom_DragDelta"/>
+            <Thumb x:Name="ThumbTopLeft" Background="Transparent" Style="{StaticResource InvisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="TopLeft" Width="12" Height="12" HorizontalAlignment="Left" VerticalAlignment="Top" Cursor="SizeNWSE" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbTopLeft_DragDelta"/>
+            <Thumb x:Name="ThumbTopRight" Background="Transparent" Style="{StaticResource InvisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="TopRight" Width="12" Height="12" HorizontalAlignment="Right" VerticalAlignment="Top" Cursor="SizeNESW" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbTopRight_DragDelta"/>
+            <Thumb x:Name="ThumbBottomLeft" Background="Transparent" Style="{StaticResource InvisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="BottomLeft" Width="12" Height="12" HorizontalAlignment="Left" VerticalAlignment="Bottom" Cursor="SizeNESW" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbBottomLeft_DragDelta"/>
+            <Thumb x:Name="ThumbBottomRight" Background="Transparent" Style="{StaticResource InvisibleResizeThumbStyle}" IsHitTestVisible="True" Tag="BottomRight" Width="12" Height="12" HorizontalAlignment="Right" VerticalAlignment="Bottom" Cursor="SizeNWSE" PreviewMouseDown="ResizeThumb_PreviewMouseDown" DragDelta="ThumbBottomRight_DragDelta"/>
         </Grid>
     </Grid>
 </Window>

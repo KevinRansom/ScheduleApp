@@ -475,6 +475,22 @@
       </Setter>
     </Style>
 
+    <Style x:Key="InvisibleResizeThumbStyle" TargetType="Thumb">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Border Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- SchedHeaderTemplate -->
     <ControlTemplate x:Key="SchedHeaderTemplate" TargetType="DataGridColumnHeader">
       <Grid SnapsToDevicePixels="True" Background="{TemplateBinding Background}">
