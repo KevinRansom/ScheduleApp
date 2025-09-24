@@ -58,34 +58,30 @@ namespace ScheduleApp
             if (MainTabControl != null)
                 MainTabControl.SelectedIndex = 0; // Schedule
 
-            // Also select the top-level Schedule inner tab "By Support"
-            if (ScheduleViewInnerTabControl != null)
-                ScheduleViewInnerTabControl.SelectedIndex = 0; // By Support
+            // select inner "By Support"
+            ScheduleViewInnerTabContentControl?.SelectInnerTab(0);
 
             if (HamburgerToggle != null)
                 HamburgerToggle.IsChecked = false;
         }
 
-        // Back button (arrow) handler: always go to Schedule (top-level)
+        // Back button (mouse)
         private void TitleBack_Click(object sender, MouseButtonEventArgs e)
         {
             if (MainTabControl != null)
             {
                 MainTabControl.SelectedIndex = 0; // Schedule
-                // Keep behavior consistent with MenuSchedule: select inner "By Support"
-                if (ScheduleViewInnerTabControl != null)
-                    ScheduleViewInnerTabControl.SelectedIndex = 0;
+                ScheduleViewInnerTabContentControl?.SelectInnerTab(0);
             }
         }
 
-        // add this overload (Click uses RoutedEventArgs) next to the existing TitleBack_Mouse handler
+        // Back button (click)
         private void TitleBack_Click(object sender, RoutedEventArgs e)
         {
             if (MainTabControl != null)
             {
                 MainTabControl.SelectedIndex = 0; // Schedule
-                if (ScheduleViewInnerTabControl != null)
-                    ScheduleViewInnerTabControl.SelectedIndex = 0; // By Support
+                ScheduleViewInnerTabContentControl?.SelectInnerTab(0);
             }
         }
 
