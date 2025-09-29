@@ -11,8 +11,7 @@
         <!-- (Intentionally left empty. Teacher-specific resources moved to ScheduleViewInnerTabControlByTeacher.xaml) -->
     </UserControl.Resources>
 
-    <ContentControl Margin="{StaticResource NoMarginThickness}"
-                    VerticalContentAlignment="Stretch">
+    <ContentControl Margin="{StaticResource NoMarginThickness}">
         <TabControl Style="{StaticResource RoundedTabControl}"
                     x:Name="ScheduleViewInnerTabControl"
                     Margin="{StaticResource NoMarginThickness}"
