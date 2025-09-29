@@ -1,0 +1,174 @@
+<UserControl x:Class="ScheduleApp.ScheduleViewInnerTabControlByTeacher"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:beh="clr-namespace:ScheduleApp.Behaviors"
+             xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+             mc:Ignorable="d"
+             d:DesignHeight="400"
+             d:DesignWidth="800">
+    <UserControl.Resources>
+        <!-- Moved from parent control: view over selected teacher rows -->
+        <CollectionViewSource x:Key="TeacherRowsView" Source="{Binding Schedule.SelectedTeacherRows}">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="SortKey" Direction="Ascending"/>
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+    </UserControl.Resources>
+
+    <Grid Margin="16">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="260"/>
+            <ColumnDefinition Width="16"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginThickness}">
+            <ListBox x:Name="TeacherListBox"
+                     beh:AutoSelectFirstBehavior.EnableAutoSelect="True"
+                     ItemsSource="{Binding Setup.Teachers}"
+                     SelectionMode="Extended"
+                     SelectedItem="{Binding Schedule.SelectedTeacher, Mode=TwoWay}"
+                     SelectionChanged="TeacherListBox_SelectionChanged"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     Background="{StaticResource TransparentBrush}"
+                     BorderThickness="0"
+                     IsSynchronizedWithCurrentItem="False"
+                     ItemContainerStyle="{StaticResource RoundedListBoxItemStyle}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="{StaticResource CellElementMargin}">
+                            <TextBlock Text="{Binding Name}"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center"
+                                       Margin="8,0,0,0"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
+
+        <Border Grid.Column="2" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginThickness}">
+            <DataGrid x:Name="TeacherDataGrid"
+                      ItemsSource="{Binding Source={StaticResource TeacherRowsView}}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      IsReadOnly="True"
+                      HeadersVisibility="Column"
+                      GridLinesVisibility="Horizontal"
+                      HorizontalGridLinesBrush="{StaticResource SchedGridLineBrush}"
+                      ColumnHeaderStyle="{StaticResource RoundedDataGridColumnHeader}"
+                      CellStyle="{StaticResource DefaultCellStyle}"
+                      BorderThickness="{StaticResource NoBorderThickness}"
+                      Background="{StaticResource TransparentBrush}"
+                      SnapsToDevicePixels="True"
+                      Margin="{StaticResource NoMarginThickness}"
+                      Focusable="True"
+                      PreviewMouseLeftButtonDown="ScheduleArea_PreviewMouseLeftButtonDown">
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Background" Value="{Binding Converter={StaticResource TeacherRowToBrushConverter}}"/>
+                        <Setter Property="SnapsToDevicePixels" Value="True"/>
+                    </Style>
+                </DataGrid.RowStyle>
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Start Time"
+                                        Binding="{Binding Start}"
+                                        Width="*"
+                                        CellStyle="{StaticResource DefaultCellStyle}"/>
+                    <DataGridTextColumn Header="Name"
+                                        Binding="{Binding TeacherName}"
+                                        Width="2*"
+                                        CellStyle="{StaticResource DefaultCellStyle}"/>
+                    <DataGridTextColumn Header="Support Staff"
+                                        Binding="{Binding SupportStaff}"
+                                        Width="2*"
+                                        CellStyle="{StaticResource DefaultCellStyle}"/>
+                    <DataGridTextColumn Header="Activity"
+                                        Binding="{Binding Activity}"
+                                        Width="*"
+                                        CellStyle="{StaticResource DefaultCellStyle}"/>
+                    <DataGridTextColumn Header="Duration"
+                                        Binding="{Binding Duration}"
+                                        Width="*"
+                                        CellStyle="{StaticResource LastColumnCellStyle}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <StackPanel Grid.Column="3"
+                    Orientation="Vertical"
+                    VerticalAlignment="Top"
+                    Margin="12,0,12,0"
+                    Width="120">
+            <Button Content="Team Lineup"
+                    Style="{StaticResource RoundedActionButton}"
+                    Margin="0,0,0,8"
+                    HorizontalAlignment="Stretch"
+                    Click="TeamLineupFromTeacher_Click"/>
+
+            <Button Content="Print All"
+                    Style="{StaticResource RoundedActionButton}"
+                    Margin="0,0,0,8"
+                    HorizontalAlignment="Stretch"
+                    Command="{Binding PrintPreview.PrintAllCommand}"/>
+
+            <Button Content="Preview"
+                    Style="{StaticResource RoundedActionButton}"
+                    Margin="0,0,0,8"
+                    HorizontalAlignment="Stretch"
+                    Click="SchedulePreview_Click"/>
+
+            <Button Content="Export PDF"
+                    Style="{StaticResource RoundedActionButton}"
+                    HorizontalAlignment="Stretch"
+                    Command="{Binding PrintPreview.ExportPdfCommand}"/>
+
+            <StackPanel Orientation="Vertical"
+                        VerticalAlignment="Top">
+                <StackPanel.Resources>
+                    <Style x:Key="KeyPillStyle"
+                           TargetType="Border"
+                           BasedOn="{StaticResource PillStyle}">
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
+                    </Style>
+                </StackPanel.Resources>
+
+                <TextBlock Text="Key"
+                           Margin="0,16,0,4"
+                           Foreground="{StaticResource SecondaryTextBrush}"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Center"
+                           TextAlignment="Center"/>
+
+                <Border Height="1"
+                        Margin="0,0,0,12"
+                        Background="{StaticResource SchedGridLineBrush}"
+                        HorizontalAlignment="Stretch"
+                        SnapsToDevicePixels="True"/>
+
+                <Border Background="{StaticResource BrushCoverage}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
+                    <TextBlock Text="Coverage" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+                </Border>
+                <Border Background="{StaticResource BrushBreak}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
+                    <TextBlock Text="Break (10m + 5m buffer)" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+                </Border>
+                <Border Background="{StaticResource BrushLunch}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
+                    <TextBlock Text="Lunch (30m)" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+                </Border>
+                <Border Background="{StaticResource BrushIdle}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
+                    <TextBlock Text="Free" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+                </Border>
+                <Border Background="{StaticResource BrushUnscheduled}" Style="{StaticResource KeyPillStyle}">
+                    <TextBlock Text="Unscheduled" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+                </Border>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

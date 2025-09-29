@@ -24,14 +24,10 @@ namespace ScheduleApp
             try
             {
                 if (!(sender is TabControl tc) || !tc.IsLoaded) return;
-
-                // Only handle events raised by the TabControl itself (ignore bubbled child events)
                 if (!ReferenceEquals(e.OriginalSource, tc)) return;
-
-                // Only regenerate when the Schedule View tab (top-level index 0) is selected
                 if (tc.SelectedIndex != 0) return;
 
-                // 1) Try to update binding on any focused editor (ComboBox/TextBox inside DataGrid)
+                // Update focused editor binding
                 try
                 {
                     var focused = Keyboard.FocusedElement as DependencyObject;
@@ -44,38 +40,28 @@ namespace ScheduleApp
                         be?.UpdateSource();
                     }
                 }
-                catch
-                {
-                    // ignore binding update failures
-                }
+                catch { }
 
-                // 2) Commit any pending DataGrid edits (cell + row) on Setup grids.
+                // Commit pending edits on Setup grids
                 try
                 {
                     TeachersGrid?.CommitEdit(DataGridEditingUnit.Cell, true);
                     TeachersGrid?.CommitEdit(DataGridEditingUnit.Row, true);
-
                     SupportsGrid?.CommitEdit(DataGridEditingUnit.Cell, true);
                     SupportsGrid?.CommitEdit(DataGridEditingUnit.Row, true);
                 }
-                catch
-                {
-                    // ignore commit errors
-                }
+                catch { }
 
-                // 3) Move logical focus off editors (helps end edit mode)
+                // Move logical focus off editors
                 try
                 {
                     var scope = FocusManager.GetFocusScope(this);
                     FocusManager.SetFocusedElement(scope, MainTabControl);
                     Keyboard.ClearFocus();
                 }
-                catch
-                {
-                    // ignore
-                }
+                catch { }
 
-                // 4) Run GenerateSchedule at ApplicationIdle so UI/binding ops complete first
+                // Generate schedule and refresh selection via the user control
                 if (DataContext is MainViewModel vm && vm.GenerateScheduleCommand != null && vm.GenerateScheduleCommand.CanExecute(null))
                 {
                     Dispatcher.BeginInvoke(new Action(() =>
@@ -85,21 +71,7 @@ namespace ScheduleApp
                             if (vm.GenerateScheduleCommand.CanExecute(null))
                                 vm.GenerateScheduleCommand.Execute(null);
 
-                            // Refresh displayed support/teacher rows for current selections (best-effort)
-                            try
-                            {
-                                var selectedSupports = SupportListBox?.SelectedItems?.OfType<Support>().ToList();
-                                if (selectedSupports != null && selectedSupports.Count > 0)
-                                    vm.Schedule.ShowSupports(selectedSupports);
-
-                                var selectedTeachers = TeacherListBox?.SelectedItems?.OfType<Teacher>().ToList();
-                                if (selectedTeachers != null && selectedTeachers.Count > 0)
-                                    vm.Schedule.ShowTeachers(selectedTeachers);
-                            }
-                            catch
-                            {
-                                // ignore refresh failures
-                            }
+                            ScheduleViewInnerTabContentControl?.RefreshSelectionOnViewModel();
                         }
                         catch (Exception ex)
                         {
@@ -108,10 +80,7 @@ namespace ScheduleApp
                     }), DispatcherPriority.ApplicationIdle);
                 }
             }
-            catch
-            {
-                // swallow top-level to keep UI stable
-            }
+            catch { /* keep UI stable */ }
         }
 
         // Inner Schedule view TabControl selection changed (wired in XAML: ScheduleViewInnerTabControl)

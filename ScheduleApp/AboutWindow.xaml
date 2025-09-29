@@ -1,0 +1,115 @@
+﻿<Window x:Class="ScheduleApp.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ScheduleApp About"
+        Width="900"
+        MinWidth="760"
+        Height="520"
+        ResizeMode="CanResize"
+        SnapsToDevicePixels="True"
+        UseLayoutRounding="True">
+    <Border Padding="{StaticResource WindowContentPadding}"
+          Background="{DynamicResource MenuBackgroundBrush}"
+          BorderBrush="{DynamicResource MenuBorderBrush}"
+          BorderThickness="{StaticResource GridOuterBorderThickness}"
+          CornerRadius="{StaticResource WindowCornerRadius}"
+          Margin="{StaticResource WindowMargin}">
+        <FlowDocumentScrollViewer VerticalScrollBarVisibility="Auto">
+            <FlowDocument FontFamily="{StaticResource BodyFontFamily}"
+                    FontSize="{StaticResource BodyFontSize}"
+                    PageWidth="{StaticResource PageContentWidth}">
+
+                <BlockUIContainer>
+                    <Grid SnapsToDevicePixels="True" Margin="0" VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Image Grid.Column="0"
+                   Source="/ScheduleApp;component/washingtonstate.png"
+                   Height="78"
+                   Stretch="Uniform"
+                   VerticalAlignment="Center"
+                   SnapsToDevicePixels="True"
+                   RenderOptions.BitmapScalingMode="HighQuality"/>
+
+                        <TextBlock Grid.Column="2"
+                       xml:space="preserve"
+                       Text="  ScheduleApp"
+                       FontFamily="{StaticResource BodyFontFamily}"
+                       FontSize="{StaticResource PageTitleFontSize}"
+                       FontWeight="Normal"
+                       VerticalAlignment="Center"
+                       Margin="0,0,0,0"/>
+                    </Grid>
+                </BlockUIContainer>
+
+                <Paragraph>
+                    ScheduleApp is a daily scheduling companion for classroom staff.
+          It builds compliant schedules for Teachers and Support roles based on
+          Washington State work time and break regulations.
+                </Paragraph>
+
+                <Paragraph FontWeight="{StaticResource AboutTitleFontWeight}"
+                   FontFamily="{StaticResource BodyFontFamily}"
+                   FontSize="23">What It Does</Paragraph>
+                <List>
+                    <ListItem>
+                        <Paragraph>Generates daily classroom schedules</Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>Ensures compliance with required breaks and work hour limits</Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>Produces daily reports for regulatory review and audit</Paragraph>
+                    </ListItem>
+                </List>
+
+                <Paragraph FontWeight="{StaticResource AboutTitleFontWeight}"
+                   FontFamily="{StaticResource BodyFontFamily}"
+                   FontSize="23">How to Use</Paragraph>
+                <List>
+                    <ListItem>
+                        <Paragraph>Enter Staff Availability</Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>Set Daily Parameters (periods, breaks, coverage)</Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>Generate Schedule</Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>Review Daily Compliance Report</Paragraph>
+                    </ListItem>
+                </List>
+
+                <Paragraph FontWeight="{StaticResource AboutTitleFontWeight}"
+                   FontFamily="{StaticResource BodyFontFamily}"
+                   FontSize="23">Compliance Coverage</Paragraph>
+                <List>
+                    <ListItem>
+                        <Paragraph>Rest breaks and meal periods</Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>Maximum consecutive work hours</Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>Role-specific coverage rules</Paragraph>
+                    </ListItem>
+                </List>
+
+                <Paragraph>
+                    Reports are formatted for easy review by administrators and regulators.
+                </Paragraph>
+
+                <Paragraph Margin="{StaticResource ParagraphMarginSmall}">Source code: https://github.com/KevinRansom/scheduleapp</Paragraph>
+                <Paragraph Margin="{StaticResource ParagraphMarginLarge}">Contact: codecutter@hotmail.com</Paragraph>
+
+                <Paragraph Margin="{StaticResource ParagraphMarginSmall}">Built in Washington State.</Paragraph>
+                <Paragraph Margin="{StaticResource ParagraphMarginLarge}">© 2025 Kevin Ransom. All rights reserved. ScheduleApp is open source under the MIT License.</Paragraph>
+            </FlowDocument>
+        </FlowDocumentScrollViewer>
+    </Border>
+</Window>

@@ -58,34 +58,30 @@ namespace ScheduleApp
             if (MainTabControl != null)
                 MainTabControl.SelectedIndex = 0; // Schedule
 
-            // Also select the top-level Schedule inner tab "By Support"
-            if (ScheduleViewInnerTabControl != null)
-                ScheduleViewInnerTabControl.SelectedIndex = 0; // By Support
+            // select inner "By Support"
+            ScheduleViewInnerTabContentControl?.SelectInnerTab(0);
 
             if (HamburgerToggle != null)
                 HamburgerToggle.IsChecked = false;
         }
 
-        // Back button (arrow) handler: always go to Schedule (top-level)
+        // Back button (mouse)
         private void TitleBack_Click(object sender, MouseButtonEventArgs e)
         {
             if (MainTabControl != null)
             {
                 MainTabControl.SelectedIndex = 0; // Schedule
-                // Keep behavior consistent with MenuSchedule: select inner "By Support"
-                if (ScheduleViewInnerTabControl != null)
-                    ScheduleViewInnerTabControl.SelectedIndex = 0;
+                ScheduleViewInnerTabContentControl?.SelectInnerTab(0);
             }
         }
 
-        // add this overload (Click uses RoutedEventArgs) next to the existing TitleBack_Mouse handler
+        // Back button (click)
         private void TitleBack_Click(object sender, RoutedEventArgs e)
         {
             if (MainTabControl != null)
             {
                 MainTabControl.SelectedIndex = 0; // Schedule
-                if (ScheduleViewInnerTabControl != null)
-                    ScheduleViewInnerTabControl.SelectedIndex = 0; // By Support
+                ScheduleViewInnerTabContentControl?.SelectInnerTab(0);
             }
         }
 
@@ -127,14 +123,6 @@ namespace ScheduleApp
             // close hamburger
             if (HamburgerToggle != null)
                 HamburgerToggle.IsChecked = false;
-        }
-
-        // Algorithm placeholder: close popup and leave developer to wire actual behavior.
-        private void MenuAlgorithm_Click(object sender, RoutedEventArgs e)
-        {
-            if (HamburgerToggle != null)
-                HamburgerToggle.IsChecked = false;
-            // TODO: wire actual algorithm dialog or action
         }
 
         // New: Exit application
@@ -201,7 +189,6 @@ namespace ScheduleApp
             if (MaximizeButton == null) return;
 
             MaximizeButton.ApplyTemplate();
-            // fully qualify Path control type to avoid ambiguity with System.IO.Path
             var icon = MaximizeButton.Template.FindName("PART_Icon", MaximizeButton) as System.Windows.Shapes.Path;
             if (icon == null) return;
 
@@ -232,7 +219,6 @@ namespace ScheduleApp
 
         private void ResizeThumb_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            // Prevent starting a drag when maximized (same behavior as existing ResizeThumb_PreviewMouseDown)
             if (WindowState == WindowState.Maximized)
             {
                 e.Handled = true;

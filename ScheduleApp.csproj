@@ -56,20 +56,24 @@
     <Reference Include="ReachFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
+    <ApplicationDefinition Include="ScheduleApp\App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\HeaderCornerConverters.cs" />
     <Compile Include="Converters\RoundedClipConverter.cs" />
-    <Compile Include="AboutWindow.xaml.cs">
+    <Compile Include="ScheduleApp\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainWindow.EventHandlers.cs" />
+    <Compile Include="ScheduleApp\MainWindow.EventHandlers.cs" />
+    <Compile Include="ScheduleApp\MainWindow.TeamLineup.cs" />
+    <Compile Include="ScheduleApp\MainWindow.TeamLineupFromSupport.cs" />
+    <Compile Include="ScheduleApp\MainWindow.TeamLineupFromTeacher.cs" />
     <Compile Include="ScheduleApp\Behaviors\AutoSelectFirstBehavior.cs" />
     <Compile Include="ScheduleApp\Behaviors\DataGridRowReorderBehavior.cs" />
     <Compile Include="ScheduleApp\Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="ScheduleApp\Converters\NotNullConverters.cs" />
+    <Compile Include="ScheduleApp\Converters\SupportTaskToBrushConverter.cs" />
     <Compile Include="ScheduleApp\Converters\SupportTeacherDisplayConverter.cs" />
     <Compile Include="ScheduleApp\Converters\TaskKindToBrushConverter.cs" />
     <Compile Include="ScheduleApp\Converters\TeacherRowToBrushConverter.cs" />
@@ -85,6 +89,12 @@
     <Compile Include="ScheduleApp\Models\SupportStaffEntry.cs" />
     <Compile Include="ScheduleApp\Models\Teacher.cs" />
     <Compile Include="ScheduleApp\Models\TeacherScheduleRow.cs" />
+    <Compile Include="ScheduleApp\ScheduleViewInnerTabControlBySupport.xaml.cs">
+      <DependentUpon>ScheduleViewInnerTabControlBySupport.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ScheduleApp\ScheduleViewInnerTabControlByTeacher.xaml.cs">
+      <DependentUpon>ScheduleViewInnerTabControlByTeacher.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ScheduleApp\Services\PrintService.cs" />
     <Compile Include="ScheduleApp\Services\SchedulerService.cs" />
     <Compile Include="ScheduleApp\ViewModels\BaseViewModel.cs" />
@@ -93,28 +103,40 @@
     <Compile Include="ScheduleApp\ViewModels\ScheduleViewModel.cs" />
     <Compile Include="ScheduleApp\ViewModels\SetupViewModel.cs" />
     <Compile Include="ScheduleApp\ViewModels\SupportTabViewModel.cs" />
-    <Page Include="AboutWindow.xaml">
+    <Compile Include="ScheduleApp\ScheduleViewInnerTabContentControl.xaml.cs">
+      <DependentUpon>ScheduleViewInnerTabContentControl.xaml</DependentUpon>
+    </Compile>
+    <Page Include="ScheduleApp\AboutWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Appearance.xaml">
+    <Page Include="ScheduleApp\Appearance.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="ScheduleApp\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="App.xaml.cs">
+    <Compile Include="ScheduleApp\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="ScheduleApp\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="ResizeThumbStyles.xaml">
+    <Page Include="ScheduleApp\ResizeThumbStyles.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ScheduleApp\Assets\icons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ScheduleApp\ScheduleViewInnerTabContentControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ScheduleApp\ScheduleViewInnerTabControlBySupport.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ScheduleApp\ScheduleViewInnerTabControlByTeacher.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
@@ -156,6 +178,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ScheduleApp\Views\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
