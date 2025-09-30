@@ -97,6 +97,15 @@
     </Compile>
     <Compile Include="ScheduleApp\Services\PrintService.cs" />
     <Compile Include="ScheduleApp\Services\SchedulerService.cs" />
+    <Compile Include="ScheduleApp\TeamLineupInnerControlClassroomsAndTeachers.xaml.cs">
+      <DependentUpon>TeamLineupInnerControlClassroomsAndTeachers.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ScheduleApp\TeamLineupInnerControlSupportStaff.xaml.cs">
+      <DependentUpon>TeamLineupInnerControlSupportStaff.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ScheduleApp\TeamLineupInnerTab.xaml.cs">
+      <DependentUpon>TeamLineupInnerTab.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ScheduleApp\ViewModels\BaseViewModel.cs" />
     <Compile Include="ScheduleApp\ViewModels\MainViewModel.cs" />
     <Compile Include="ScheduleApp\ViewModels\PrintPreviewViewModel.cs" />
@@ -137,6 +146,15 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ScheduleApp\ScheduleViewInnerTabControlByTeacher.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ScheduleApp\TeamLineupInnerControlClassroomsAndTeachers.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ScheduleApp\TeamLineupInnerControlSupportStaff.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ScheduleApp\TeamLineupInnerTab.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

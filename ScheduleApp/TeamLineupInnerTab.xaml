@@ -1,0 +1,23 @@
+<UserControl x:Class="ScheduleApp.TeamLineupInnerTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:beh="clr-namespace:ScheduleApp.Behaviors"
+             xmlns:local="clr-namespace:ScheduleApp"
+             SnapsToDevicePixels="True">
+    <Grid>
+        <TabControl x:Name="InnerTabControl" Margin="{StaticResource RightColumnGapLarge}">
+            <TabItem x:Name="TeamLineupInnerControlClassroomsAndTeachers" Header="Classrooms and Teachers">
+                <local:TeamLineupInnerControlClassroomsAndTeachers x:Name="ClassroomsAndTeachersControl"
+                    SetupDataGridRowEditEnding="OnChildSetupDataGrid_RowEditEnding"
+                    SetupDataGridCellEditEnding="OnChildSetupDataGrid_CellEditEnding"/>
+            </TabItem>
+
+            <TabItem x:Name="TeamLineupInnerControlSupportStaff" Header="Support Staff">
+                <!-- Replaced inline Grid with separate UserControl to keep event forwarding and behavior identical -->
+                <local:TeamLineupInnerControlSupportStaff x:Name="SupportStaffControl"
+                                                          SetupDataGridRowEditEnding="OnChildSetupDataGrid_RowEditEnding"
+                                                          SetupDataGridCellEditEnding="OnChildSetupDataGrid_CellEditEnding"/>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

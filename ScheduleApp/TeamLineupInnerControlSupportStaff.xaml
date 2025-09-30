@@ -1,0 +1,114 @@
+<UserControl x:Class="ScheduleApp.TeamLineupInnerControlSupportStaff"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:beh="clr-namespace:ScheduleApp.Behaviors"
+             xmlns:local="clr-namespace:ScheduleApp"
+             SnapsToDevicePixels="True">
+    <Grid Margin="{StaticResource PageSectionMarginLarge}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <ContentControl Grid.Column="0"
+                        Style="{StaticResource RoundedTableContainer}"
+                        Margin="{StaticResource NoMarginThickness}"
+                        VerticalContentAlignment="Stretch">
+            <DataGrid x:Name="SupportsGrid"
+                      ItemsSource="{Binding Setup.Supports}"
+                      SelectedItem="{Binding Setup.SelectedSupport}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserSortColumns="True"
+                      HeadersVisibility="Column"
+                      SelectionMode="Extended"
+                      SelectionUnit="FullRow"
+                      GridLinesVisibility="Horizontal"
+                      HorizontalGridLinesBrush="{StaticResource SchedGridLineBrush}"
+                      SnapsToDevicePixels="True"
+                      BorderThickness="{StaticResource NoBorderThickness}"
+                      Background="{StaticResource TransparentBrush}"
+                      ColumnHeaderStyle="{StaticResource RoundedDataGridColumnHeader}"
+                      beh:DataGridRowReorderBehavior.EnableRowReorder="True"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      VerticalAlignment="Stretch"
+                      RowEditEnding="OnSetupDataGrid_RowEditEnding"
+                      CellEditEnding="OnSetupDataGrid_CellEditEnding">
+                <DataGrid.InputBindings>
+                    <KeyBinding Key="Up"
+                                Modifiers="Control"
+                                Command="{Binding DataContext.Setup.MoveSupportUpCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                    <KeyBinding Key="Down"
+                                Modifiers="Control"
+                                Command="{Binding DataContext.Setup.MoveSupportDownCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                </DataGrid.InputBindings>
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Support Staff"
+                                        Binding="{Binding Name}"
+                                        SortMemberPath="Name"
+                                        Width="*"
+                                        CellStyle="{StaticResource DefaultCellStyle}" />
+                    <DataGridTemplateColumn Header="Start Time"
+                                            SortMemberPath="Start"
+                                            Width="*"
+                                            CellStyle="{StaticResource DefaultCellStyle}">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Start, Converter={StaticResource TimeSpanToStringConverter}}"
+                                           Style="{StaticResource DefaultTextElementStyle}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <ComboBox ItemsSource="{Binding DataContext.QuarterHours, RelativeSource={RelativeSource AncestorType=Window}}"
+                                          SelectedItem="{Binding Start, Mode=TwoWay}"
+                                          ItemTemplate="{StaticResource TimeItemTemplate}"
+                                          MinWidth="120"
+                                          Padding="{StaticResource CellEditorPadding}"
+                                          Style="{StaticResource DefaultEditingComboBoxStyle}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="End Time"
+                                            SortMemberPath="End"
+                                            Width="*"
+                                            CellStyle="{StaticResource LastColumnCellStyle}">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding End, Converter={StaticResource TimeSpanToStringConverter}}"
+                                           Style="{StaticResource DefaultTextElementStyle}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <ComboBox ItemsSource="{Binding DataContext.QuarterHours, RelativeSource={RelativeSource AncestorType=Window}}"
+                                          SelectedItem="{Binding End, Mode=TwoWay}"
+                                          ItemTemplate="{StaticResource TimeItemTemplate}"
+                                          MinWidth="120"
+                                          Padding="{StaticResource CellEditorPadding}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </ContentControl>
+
+        <StackPanel Grid.Column="1"
+                    Orientation="Vertical"
+                    Margin="{StaticResource SidePanelLeftMargin}"
+                    VerticalAlignment="Top">
+            <Button Content="Add"
+                    Style="{StaticResource RoundedActionButton}"
+                    Margin="{StaticResource ActionButtonStackMargin}"
+                    Command="{Binding Setup.AddSupportCommand}"/>
+            <Button Content="Remove"
+                    Style="{StaticResource RoundedActionButton}"
+                    Margin="{StaticResource ActionButtonStackMarginNone}"
+                    Command="{Binding Setup.RemoveSupportCommand}"
+                    CommandParameter="{Binding SelectedItems, ElementName=SupportsGrid}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
