@@ -12,8 +12,8 @@
     </UserControl.Resources>
 
     <ContentControl Margin="{StaticResource NoMarginThickness}">
-        <TabControl Style="{StaticResource RoundedTabControl}"
-                    x:Name="ScheduleViewInnerTabControl"
+        <TabControl x:Name="ScheduleViewInnerTabControl"
+                    Style="{StaticResource RoundedTabControl}"
                     Margin="{StaticResource NoMarginThickness}"
                     SelectionChanged="ScheduleViewInnerTabControl_SelectionChanged">
             <TabItem x:Name="ScheduleViewInnerTabControlBySupport"

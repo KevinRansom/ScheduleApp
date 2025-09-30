@@ -5,7 +5,9 @@
              xmlns:local="clr-namespace:ScheduleApp"
              SnapsToDevicePixels="True">
     <Grid>
-        <TabControl x:Name="InnerTabControl" Margin="{StaticResource RightColumnGapLarge}">
+        <TabControl x:Name="InnerTabControl" 
+                    Style="{StaticResource RoundedTabControl}"
+                    Margin="{StaticResource RightColumnGapLarge}">
             <TabItem x:Name="TeamLineupInnerControlClassroomsAndTeachers" Header="Classrooms and Teachers">
                 <local:TeamLineupInnerControlClassroomsAndTeachers x:Name="ClassroomsAndTeachersControl"
                     SetupDataGridRowEditEnding="OnChildSetupDataGrid_RowEditEnding"
