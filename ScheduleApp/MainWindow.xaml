@@ -359,7 +359,7 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <TabControl x:Name="SetupInnerTab" Grid.Column="0" Margin="{StaticResource RightColumnGapLarge}">
+                                    <TabControl x:Name="TeamLineupInnerTab" Grid.Column="0" Margin="{StaticResource RightColumnGapLarge}">
                                         <TabItem Header="Classrooms and Teachers">
                                             <Grid Margin="{StaticResource PageSectionMarginLarge}">
                                                 <Grid.ColumnDefinitions>

@@ -13,8 +13,8 @@ namespace ScheduleApp
                     MainTabControl.SelectedIndex = 1;
 
                 // Select "Support Staff" inner tab (index 1)
-                if (SetupInnerTab != null)
-                    SetupInnerTab.SelectedIndex = 1;
+                if (TeamLineupInnerTab != null)
+                    TeamLineupInnerTab.SelectedIndex = 1;
             }
             catch
             {

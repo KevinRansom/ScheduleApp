@@ -13,8 +13,8 @@ namespace ScheduleApp
                     MainTabControl.SelectedIndex = 1;
 
                 // Select "Classrooms and Teachers" inner tab (index 0)
-                if (SetupInnerTab != null)
-                    SetupInnerTab.SelectedIndex = 0;
+                if (TeamLineupInnerTab != null)
+                    TeamLineupInnerTab.SelectedIndex = 0;
             }
             catch
             {

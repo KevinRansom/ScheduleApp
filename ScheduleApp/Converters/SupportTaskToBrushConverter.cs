@@ -17,45 +17,44 @@ namespace ScheduleApp.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == DependencyProperty.UnsetValue) return IdleBrush ?? Brushes.Transparent;
+            // Defensive checks
+            if (value == null || value == DependencyProperty.UnsetValue)
+                return Brushes.Transparent;
 
-            // Prefer full CoverageTask (Binding=".")
+            // If the binding yields a CoverageTask, prefer its properties (and detect "Unscheduled")
             if (value is CoverageTask task)
             {
-                // detect unscheduled display keys like "Unscheduled" or "Unscheduled Breaks"
                 if (!string.IsNullOrWhiteSpace(task.SupportName) &&
-                    task.SupportName.IndexOf("unscheduled", StringComparison.OrdinalIgnoreCase) >= 0)
+                    string.Equals(task.SupportName, "Unscheduled", StringComparison.OrdinalIgnoreCase))
                 {
-                    return UnscheduledBrush ?? Brushes.LightGray;
+                    return UnscheduledBrush ?? Brushes.Transparent;
                 }
 
-                switch (task.Kind)
-                {
-                    case CoverageTaskKind.Coverage: return CoverageBrush ?? Brushes.LightGreen;
-                    case CoverageTaskKind.Break:    return BreakBrush ?? Brushes.LightGoldenrodYellow;
-                    case CoverageTaskKind.Lunch:    return LunchBrush ?? Brushes.LightSalmon;
-                    case CoverageTaskKind.Idle:     return IdleBrush ?? Brushes.Transparent;
-                    default:                        return Brushes.Transparent;
-                }
+                return MapKindToBrush(task.Kind);
             }
 
-            // Back-compat: if enum was passed
+            // If the binding yields a CoverageTaskKind directly
             if (value is CoverageTaskKind kind)
             {
-                switch (kind)
-                {
-                    case CoverageTaskKind.Coverage: return CoverageBrush ?? Brushes.LightGreen;
-                    case CoverageTaskKind.Break:    return BreakBrush ?? Brushes.LightGoldenrodYellow;
-                    case CoverageTaskKind.Lunch:    return LunchBrush ?? Brushes.LightSalmon;
-                    case CoverageTaskKind.Idle:     return IdleBrush ?? Brushes.Transparent;
-                    default:                        return Brushes.Transparent;
-                }
+                return MapKindToBrush(kind);
             }
 
+            // Fallback: transparent brush
             return Brushes.Transparent;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => throw new NotSupportedException();
+        private Brush MapKindToBrush(CoverageTaskKind kind)
+        {
+            switch (kind)
+            {
+                case CoverageTaskKind.Coverage: return CoverageBrush ?? Brushes.Transparent;
+                case CoverageTaskKind.Break:    return BreakBrush ?? Brushes.Transparent;
+                case CoverageTaskKind.Lunch:    return LunchBrush ?? Brushes.Transparent;
+                case CoverageTaskKind.Idle:     return IdleBrush ?? Brushes.Transparent;
+                default:                        return Brushes.Transparent;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
     }
 }

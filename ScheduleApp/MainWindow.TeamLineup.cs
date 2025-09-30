@@ -12,8 +12,8 @@ namespace ScheduleApp
                 if (MainTabControl != null)
                     MainTabControl.SelectedIndex = 1;
 
-                if (SetupInnerTab != null)
-                    SetupInnerTab.SelectedIndex = 0;
+                if (TeamLineupInnerTab != null)
+                    TeamLineupInnerTab.SelectedIndex = 0;
             }
             catch
             {
