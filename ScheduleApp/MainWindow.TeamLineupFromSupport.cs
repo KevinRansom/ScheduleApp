@@ -8,13 +8,12 @@ namespace ScheduleApp
         {
             try
             {
-                // Switch to Team Lineup top-level tab (index 1)
                 if (MainTabControl != null)
                     MainTabControl.SelectedIndex = 1;
 
-                // Select "Support Staff" inner tab (index 1)
-                if (TeamLineupInnerTab != null)
-                    TeamLineupInnerTab.SelectedIndex = 1;
+                // Support Staff tab (index 1)
+                if (TeamLineupInnerTabControl != null)
+                    TeamLineupInnerTabControl.SelectedIndex = 1;
             }
             catch
             {

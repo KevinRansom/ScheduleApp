@@ -45,10 +45,13 @@ namespace ScheduleApp
                 // Commit pending edits on Setup grids
                 try
                 {
-                    TeachersGrid?.CommitEdit(DataGridEditingUnit.Cell, true);
-                    TeachersGrid?.CommitEdit(DataGridEditingUnit.Row, true);
-                    SupportsGrid?.CommitEdit(DataGridEditingUnit.Cell, true);
-                    SupportsGrid?.CommitEdit(DataGridEditingUnit.Row, true);
+                    var teachersGrid = FindChildByName<DataGrid>(this, "TeachersGrid");
+                    var supportsGrid = FindChildByName<DataGrid>(this, "SupportsGrid");
+
+                    teachersGrid?.CommitEdit(DataGridEditingUnit.Cell, true);
+                    teachersGrid?.CommitEdit(DataGridEditingUnit.Row, true);
+                    supportsGrid?.CommitEdit(DataGridEditingUnit.Cell, true);
+                    supportsGrid?.CommitEdit(DataGridEditingUnit.Row, true);
                 }
                 catch { }
 
@@ -94,11 +97,14 @@ namespace ScheduleApp
                 // Commit any pending edits in Setup grids so changes are pushed to view model
                 try
                 {
-                    TeachersGrid?.CommitEdit(DataGridEditingUnit.Cell, true);
-                    TeachersGrid?.CommitEdit(DataGridEditingUnit.Row, true);
+                    var teachersGrid = FindChildByName<DataGrid>(this, "TeachersGrid");
+                    var supportsGrid = FindChildByName<DataGrid>(this, "SupportsGrid");
 
-                    SupportsGrid?.CommitEdit(DataGridEditingUnit.Cell, true);
-                    SupportsGrid?.CommitEdit(DataGridEditingUnit.Row, true);
+                    teachersGrid?.CommitEdit(DataGridEditingUnit.Cell, true);
+                    teachersGrid?.CommitEdit(DataGridEditingUnit.Row, true);
+
+                    supportsGrid?.CommitEdit(DataGridEditingUnit.Cell, true);
+                    supportsGrid?.CommitEdit(DataGridEditingUnit.Row, true);
                 }
                 catch
                 {
@@ -177,6 +183,28 @@ namespace ScheduleApp
                 if (d is T t) return t;
                 d = System.Windows.Media.VisualTreeHelper.GetParent(d); // fully-qualified
             }
+            return null;
+        }
+
+        // Helper to find a named child in the visual tree (searches depth-first)
+        private static T FindChildByName<T>(DependencyObject parent, string name) where T : DependencyObject
+        {
+            if (parent == null) return null;
+
+            int count = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < count; i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+
+                if (child is FrameworkElement fe)
+                {
+                    if (fe.Name == name && child is T typed) return typed;
+                }
+
+                var result = FindChildByName<T>(child, name);
+                if (result != null) return result;
+            }
+
             return null;
         }
 

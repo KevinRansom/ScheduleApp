@@ -4,7 +4,7 @@
              xmlns:beh="clr-namespace:ScheduleApp.Behaviors"
              xmlns:local="clr-namespace:ScheduleApp"
              SnapsToDevicePixels="True">
-    <Grid>
+    <ContentControl Margin="{StaticResource NoMarginThickness}">
         <TabControl x:Name="InnerTabControl" 
                     Style="{StaticResource RoundedTabControl}"
                     Margin="{StaticResource RightColumnGapLarge}">
@@ -21,5 +21,5 @@
                                                           SetupDataGridCellEditEnding="OnChildSetupDataGrid_CellEditEnding"/>
             </TabItem>
         </TabControl>
-    </Grid>
+    </ContentControl>
 </UserControl>

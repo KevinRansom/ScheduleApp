@@ -75,7 +75,8 @@
                                                 CellStyle="{StaticResource DefaultCellStyle}">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Start, Converter={DynamicResource TimeSpanToStringConverter}}"
+                                    <!-- FIX: DynamicResource -> StaticResource -->
+                                    <TextBlock Text="{Binding Start, Converter={StaticResource TimeSpanToStringConverter}}"
                                                Style="{StaticResource DefaultTextElementStyle}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -97,7 +98,8 @@
                                                 CellStyle="{StaticResource LastColumnCellStyle}">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding End, Converter={DynamicResource TimeSpanToStringConverter}}"
+                                    <!-- FIX: DynamicResource -> StaticResource -->
+                                    <TextBlock Text="{Binding End, Converter={StaticResource TimeSpanToStringConverter}}"
                                                Style="{StaticResource DefaultTextElementStyle}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

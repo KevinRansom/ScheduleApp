@@ -8,12 +8,12 @@ namespace ScheduleApp
         {
             try
             {
-                // Switch to Team Lineup top-level tab (index 1) and select Classrooms and Teachers inner tab (index 0)
                 if (MainTabControl != null)
                     MainTabControl.SelectedIndex = 1;
 
-                if (TeamLineupInnerTab != null)
-                    TeamLineupInnerTab.SelectedIndex = 0;
+                // Select "Classrooms and Teachers" inner tab (index 0)
+                if (TeamLineupInnerTabControl != null)
+                    TeamLineupInnerTabControl.SelectedIndex = 0;
             }
             catch
             {
