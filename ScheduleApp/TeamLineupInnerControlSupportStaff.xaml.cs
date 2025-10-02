@@ -1,11 +1,13 @@
 using System;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace ScheduleApp
 {
-    public partial class TeamLineupInnerControlSupportStaff : UserControl
+    public partial class TeamLineupInnerControlSupportStaff : ContentControl
     {
-        // Events parent expects to subscribe to (same pattern used by other inner controls)
+        // Expose events so parent XAML can attach handlers:
+        // <local:TeamLineupInnerControlSupportStaff SetupDataGridRowEditEnding="..." />
         public event EventHandler<DataGridRowEditEndingEventArgs> SetupDataGridRowEditEnding;
         public event EventHandler<DataGridCellEditEndingEventArgs> SetupDataGridCellEditEnding;
 
@@ -14,15 +16,22 @@ namespace ScheduleApp
             InitializeComponent();
         }
 
-        // Forward DataGrid events to the public events so the parent (TeamLineupInnerTab) receives them
+        // Private handlers wired to the internal DataGrid in XAML.
+        // They forward the calls to the public events above so the parent control can subscribe.
         private void OnSetupDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
-            SetupDataGridRowEditEnding?.Invoke(sender, e);
+            // Forward to any external subscriber (parent)
+            SetupDataGridRowEditEnding?.Invoke(this, e);
+
+            // Intentionally left blank for internal behavior — VM handles logic in current design.
         }
 
         private void OnSetupDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            SetupDataGridCellEditEnding?.Invoke(sender, e);
+            // Forward to any external subscriber (parent)
+            SetupDataGridCellEditEnding?.Invoke(this, e);
+
+            // Intentionally left blank for internal behavior — VM handles logic in current design.
         }
     }
 }
