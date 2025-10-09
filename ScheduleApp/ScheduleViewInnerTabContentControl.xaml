@@ -11,18 +11,15 @@
         <!-- (Intentionally left empty. Teacher-specific resources moved to ScheduleViewInnerTabControlByTeacher.xaml) -->
     </UserControl.Resources>
 
-    <ContentControl Margin="{StaticResource NoMarginThickness}">
+    <ContentControl>
         <TabControl x:Name="ScheduleViewInnerTabControl"
                     Style="{StaticResource RoundedTabControl}"
-                    Margin="{StaticResource NoMarginThickness}"
                     SelectionChanged="ScheduleViewInnerTabControl_SelectionChanged">
-            <TabItem x:Name="ScheduleViewInnerTabControlBySupport"
-                     Header="By Support">
+            <TabItem x:Name="ScheduleViewInnerTabControlBySupport" Header="By Support">
                 <local:ScheduleViewInnerTabControlBySupport x:Name="SupportTabContent"/>
             </TabItem>
 
-            <TabItem x:Name="ScheduleViewInnerTabControlByTeacher"
-                     Header="By Teacher">
+            <TabItem x:Name="ScheduleViewInnerTabControlByTeacher" Header="By Teacher">
                 <local:ScheduleViewInnerTabControlByTeacher x:Name="TeacherTabContent"/>
             </TabItem>
         </TabControl>

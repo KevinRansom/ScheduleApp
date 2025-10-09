@@ -17,7 +17,7 @@
         </CollectionViewSource>
     </UserControl.Resources>
 
-    <Grid Margin="16">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="260"/>
             <ColumnDefinition Width="16"/>
@@ -26,7 +26,9 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="0" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginThickness}">
+        <Border Grid.Column="0"
+                Style="{StaticResource RoundedTableBorder}"
+                Margin="{StaticResource NoMarginThickness}">
             <ListBox x:Name="TeacherListBox"
                      beh:AutoSelectFirstBehavior.EnableAutoSelect="True"
                      ItemsSource="{Binding Setup.Teachers}"
@@ -51,7 +53,8 @@
             </ListBox>
         </Border>
 
-        <Border Grid.Column="2" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginThickness}">
+        <Border Grid.Column="2"
+                Style="{StaticResource RoundedTableBorder}">
             <DataGrid x:Name="TeacherDataGrid"
                       ItemsSource="{Binding Source={StaticResource TeacherRowsView}}"
                       AutoGenerateColumns="False"

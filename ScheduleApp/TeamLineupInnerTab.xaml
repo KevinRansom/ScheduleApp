@@ -4,14 +4,12 @@
              xmlns:beh="clr-namespace:ScheduleApp.Behaviors"
              xmlns:local="clr-namespace:ScheduleApp"
              SnapsToDevicePixels="True">
-    <ContentControl Margin="{StaticResource NoMarginThickness}">
-        <TabControl x:Name="InnerTabControl" 
-                    Style="{StaticResource RoundedTabControl}"
-                    Margin="{StaticResource RightColumnGapLarge}">
+    <ContentControl>
+        <TabControl x:Name="InnerTabControl"  Style="{StaticResource RoundedTabControl}">
             <TabItem x:Name="TeamLineupInnerControlClassroomsAndTeachers" Header="Classrooms and Teachers">
                 <local:TeamLineupInnerControlClassroomsAndTeachers x:Name="ClassroomsAndTeachersControl"
-                    SetupDataGridRowEditEnding="OnChildSetupDataGrid_RowEditEnding"
-                    SetupDataGridCellEditEnding="OnChildSetupDataGrid_CellEditEnding"/>
+                                                                   SetupDataGridRowEditEnding="OnChildSetupDataGrid_RowEditEnding"
+                                                                   SetupDataGridCellEditEnding="OnChildSetupDataGrid_CellEditEnding"/>
             </TabItem>
 
             <TabItem x:Name="TeamLineupInnerControlSupportStaff" Header="Support Staff">

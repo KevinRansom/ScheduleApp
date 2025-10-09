@@ -27,7 +27,7 @@
                                           UnscheduledBrush="{StaticResource BrushUnscheduled}"/>
     </UserControl.Resources>
 
-    <Grid Margin="16">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="260"/>
             <ColumnDefinition Width="16"/>

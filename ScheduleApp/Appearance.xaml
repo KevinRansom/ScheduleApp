@@ -3,386 +3,410 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib"
                     xmlns:conv="clr-namespace:ScheduleApp.Converters">
 
-  <!-- Converters required by templates/styles -->
-  <conv:HeaderCornerRadiusConverter x:Key="HeaderCornerRadiusConverter"/>
-  <conv:HeaderBorderThicknessConverter x:Key="HeaderBorderThicknessConverter"/>
-  <conv:RoundedClipConverter x:Key="RoundedClipConverter"/>
+    <!-- Converters required by templates/styles -->
+    <conv:HeaderCornerRadiusConverter x:Key="HeaderCornerRadiusConverter"/>
+    <conv:HeaderBorderThicknessConverter x:Key="HeaderBorderThicknessConverter"/>
+    <conv:RoundedClipConverter x:Key="RoundedClipConverter"/>
 
-  <!-- Brushes -->
-  <SolidColorBrush x:Key="BrushCoverage" Color="#FFD8F1D8"/>
-  <SolidColorBrush x:Key="BrushBreak" Color="#FFFFE0B2"/>
-  <SolidColorBrush x:Key="BrushLunch" Color="#FFFFF59D"/>
-  <SolidColorBrush x:Key="BrushIdle" Color="#FFECEFF1"/>
-  <SolidColorBrush x:Key="BrushUnscheduled" Color="#FFFFFFFF"/>
-  <SolidColorBrush x:Key="SchedGridLineBrush" Color="#FFBFBFBF"/>
-  <SolidColorBrush x:Key="GridHeaderSolid" Color="#FFE0E0E0"/>
-  <LinearGradientBrush x:Key="GridHeaderGradient" StartPoint="0,0" EndPoint="0,1">
-    <GradientStop Color="#FFF5F5F5" Offset="0"/>
-    <GradientStop Color="#FFE0E0E0" Offset="1"/>
-  </LinearGradientBrush>
-  <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#FFF5F5F5"/>
-  <SolidColorBrush x:Key="MenuBorderBrush" Color="#FFCCCCCC"/>
+    <!-- SchedGridCellText (moved up so StaticResource resolves before TimeItemTemplate) -->
+    <Style x:Key="SchedGridCellText" TargetType="TextBlock">
+        <Setter Property="TextAlignment" Value="Left"/>
+        <Setter Property="Padding" Value="{StaticResource CellTextPadding}"/>
+        <Setter Property="FontFamily" Value="{StaticResource MonospaceFontFamily}"/>
+        <Setter Property="FontSize" Value="{StaticResource BodyFontSize}"/>
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+    </Style>
 
-  <!-- Secondary text brush used by list items and subtle labels -->
-  <SolidColorBrush x:Key="SecondaryTextBrush" Color="#FF666666"/>
+    <conv:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter" Format="HH:mm"/>
+    <DataTemplate x:Key="TimeItemTemplate">
+        <TextBlock Style="{StaticResource SchedGridCellText}"
+                   Text="{Binding Converter={StaticResource TimeSpanToStringConverter}}"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   SnapsToDevicePixels="True"/>
+    </DataTemplate>
 
-  <!-- Title bar themed brushes (theme name: title bar) -->
-  <SolidColorBrush x:Key="TitleBarBackgroundBrush" Color="#FF000080"/> <!-- navy -->
-  <SolidColorBrush x:Key="TitleBarBorderBrush" Color="#FF000033"/>
-  <SolidColorBrush x:Key="TitleBarForegroundBrush" Color="#FFFFFFFF"/> <!-- white for hamburger lines / icons -->
+    <!-- Brushes -->
+    <SolidColorBrush x:Key="BrushCoverage" Color="#FFD8F1D8"/>
+    <SolidColorBrush x:Key="BrushBreak" Color="#FFFFE0B2"/>
+    <SolidColorBrush x:Key="BrushLunch" Color="#FFFFF59D"/>
+    <SolidColorBrush x:Key="BrushIdle" Color="#FFECEFF1"/>
+    <SolidColorBrush x:Key="BrushUnscheduled" Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="SchedGridLineBrush" Color="#FFBFBFBF"/>
+    <SolidColorBrush x:Key="GridHeaderSolid" Color="#FFE0E0E0"/>
+    <LinearGradientBrush x:Key="GridHeaderGradient" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#FFF5F5F5" Offset="0"/>
+        <GradientStop Color="#FFE0E0E0" Offset="1"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#FFF5F5F5"/>
+    <SolidColorBrush x:Key="MenuBorderBrush" Color="#FFCCCCCC"/>
 
-  <SolidColorBrush x:Key="PrimaryBackgroundBrush" Color="#FFFFFFFF"/>
-  <SolidColorBrush x:Key="PrimaryBorderBrush" Color="#FFDDDDDD"/>
-  <SolidColorBrush x:Key="AccentBrush" Color="#FF007ACC"/>
-  <!-- Accent variants for interactive feedback -->
-  <SolidColorBrush x:Key="AccentBrushHover" Color="#FF4FB0FF"/>   <!-- brighter/lighter on hover -->
-  <SolidColorBrush x:Key="AccentBrushPressed" Color="#FF005A9E"/> <!-- darker/deeper on press -->
-  <SolidColorBrush x:Key="SortGlyphBrush" Color="#FF444444"/>
-  <SolidColorBrush x:Key="TransparentBrush" Color="Transparent"/>
+    <!-- Secondary text brush used by list items and subtle labels -->
+    <SolidColorBrush x:Key="SecondaryTextBrush" Color="#FF666666"/>
 
-  <!-- Menu hover/pressed brushes (moved here so StaticResource resolves) -->
-  <SolidColorBrush x:Key="MenuItemHoverBackgroundBrush"   Color="#FFF0F0F0"/>
-  <SolidColorBrush x:Key="MenuItemPressedBackgroundBrush" Color="#FFE6E6E6"/>
+    <!-- Title bar themed brushes (theme name: title bar) -->
+    <SolidColorBrush x:Key="TitleBarBackgroundBrush" Color="#FF000080"/>
+    <!-- navy -->
+    <SolidColorBrush x:Key="TitleBarBorderBrush" Color="#FF000033"/>
+    <SolidColorBrush x:Key="TitleBarForegroundBrush" Color="#FFFFFFFF"/>
+    <!-- white for hamburger lines / icons -->
 
-  <!-- Hamburger highlight brushes -->
-  <SolidColorBrush x:Key="HamburgerHighlightBackgroundBrush" Color="#1A007ACC"/>
-  <SolidColorBrush x:Key="HamburgerHighlightLineBrush" Color="#FF007ACC"/>
+    <SolidColorBrush x:Key="PrimaryBackgroundBrush" Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="PrimaryBorderBrush" Color="#FFDDDDDD"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="#FF007ACC"/>
+    <!-- Accent variants for interactive feedback -->
+    <SolidColorBrush x:Key="AccentBrushHover" Color="#FF4FB0FF"/>
+    <!-- brighter/lighter on hover -->
+    <SolidColorBrush x:Key="AccentBrushPressed" Color="#FF005A9E"/>
+    <!-- darker/deeper on press -->
+    <SolidColorBrush x:Key="SortGlyphBrush" Color="#FF444444"/>
+    <SolidColorBrush x:Key="TransparentBrush" Color="Transparent"/>
 
-  <!-- Layout metrics -->
-  <CornerRadius x:Key="GridCornerRadius">4</CornerRadius>
-  <Thickness x:Key="GridOuterBorderThickness">1</Thickness>
-  <sys:Double x:Key="GridOuterBorderStroke">1</sys:Double>
-  <CornerRadius x:Key="ButtonCornerRadius">4</CornerRadius>
-  <Thickness x:Key="ButtonPadding">12,6</Thickness>
-  <Thickness x:Key="ButtonMargin">0</Thickness>
-  <Thickness x:Key="ButtonBorderThickness">1</Thickness>
+    <!-- Menu hover/pressed brushes (moved here so StaticResource resolves) -->
+    <SolidColorBrush x:Key="MenuItemHoverBackgroundBrush"   Color="#FFF0F0F0"/>
+    <SolidColorBrush x:Key="MenuItemPressedBackgroundBrush" Color="#FFE6E6E6"/>
 
-  <!-- New keys from audit / centralization -->
-  <CornerRadius x:Key="TopBarCornerRadius">12,12,0,0</CornerRadius>
-  <Thickness x:Key="TopBarPadding">6</Thickness>
-  <Thickness x:Key="TopBarMargin">8</Thickness>
+    <!-- Hamburger highlight brushes -->
+    <SolidColorBrush x:Key="HamburgerHighlightBackgroundBrush" Color="#1A007ACC"/>
+    <SolidColorBrush x:Key="HamburgerHighlightLineBrush" Color="#FF007ACC"/>
 
-  <CornerRadius x:Key="PopupCornerRadius">8</CornerRadius>
-  <Thickness x:Key="PopupPadding">8</Thickness>
-  <Thickness x:Key="PopupMargin">0,6,0,0</Thickness>
-  <Thickness x:Key="PopupMenuItemMargin">0,0,0,6</Thickness>
-  <Thickness x:Key="PopupSeparatorMargin">0,6,0,6</Thickness>
+    <!-- Layout metrics -->
+    <CornerRadius x:Key="GridCornerRadius">4</CornerRadius>
+    <Thickness x:Key="GridOuterBorderThickness">1</Thickness>
+    <sys:Double x:Key="GridOuterBorderStroke">1</sys:Double>
+    <CornerRadius x:Key="ButtonCornerRadius">4</CornerRadius>
+    <Thickness x:Key="ButtonPadding">12,6</Thickness>
+    <Thickness x:Key="ButtonMargin">0</Thickness>
+    <Thickness x:Key="ButtonBorderThickness">1</Thickness>
 
-  <Thickness x:Key="HamburgerMargin">2,0,8,0</Thickness>
-  <Thickness x:Key="HamburgerStripeTopMargin">0,2,0,0</Thickness>
-  <Thickness x:Key="HamburgerStripeBottomMargin">0,0,0,2</Thickness>
+    <!-- New keys from audit / centralization -->
+    <CornerRadius x:Key="TopBarCornerRadius">12,12,0,0</CornerRadius>
+    <Thickness x:Key="TopBarPadding">6</Thickness>
+    <Thickness x:Key="TopBarMargin">8</Thickness>
 
-  <!-- Typography -->
-  <sys:Double x:Key="PageTitleFontSize">26</sys:Double>
-  <sys:Double x:Key="BodyFontSize">13</sys:Double>
-  <FontFamily x:Key="BodyFontFamily">Segoe UI</FontFamily>
-  <FontFamily x:Key="MonospaceFontFamily">Consolas</FontFamily>
-  <sys:Double x:Key="PageContentWidth">820</sys:Double>
+    <CornerRadius x:Key="PopupCornerRadius">8</CornerRadius>
+    <Thickness x:Key="PopupPadding">8</Thickness>
+    <Thickness x:Key="PopupMargin">0,6,0,0</Thickness>
+    <Thickness x:Key="PopupMenuItemMargin">0,0,0,6</Thickness>
+    <Thickness x:Key="PopupSeparatorMargin">0,6,0,6</Thickness>
 
-  <CornerRadius x:Key="WindowCornerRadius">8</CornerRadius>
-  <Thickness x:Key="WindowContentPadding">12</Thickness>
-  <Thickness x:Key="WindowMargin">8</Thickness>
+    <Thickness x:Key="HamburgerMargin">2,0,8,0</Thickness>
+    <Thickness x:Key="HamburgerStripeTopMargin">0,2,0,0</Thickness>
+    <Thickness x:Key="HamburgerStripeBottomMargin">0,0,0,2</Thickness>
 
-  <sys:Double x:Key="AboutTitleFontSize">16</sys:Double>
-  <FontWeight x:Key="AboutTitleFontWeight">Bold</FontWeight>
+    <!-- Typography -->
+    <sys:Double x:Key="PageTitleFontSize">26</sys:Double>
+    <sys:Double x:Key="BodyFontSize">13</sys:Double>
+    <FontFamily x:Key="BodyFontFamily">Segoe UI</FontFamily>
+    <FontFamily x:Key="MonospaceFontFamily">Consolas</FontFamily>
+    <sys:Double x:Key="PageContentWidth">820</sys:Double>
 
-  <Thickness x:Key="ParagraphMarginSmall">0,12,0,6</Thickness>
-  <Thickness x:Key="ParagraphMarginLarge">0,0,0,12</Thickness>
-  <Thickness x:Key="OrderedListMarginSmall">0,0,0,8</Thickness>
+    <CornerRadius x:Key="WindowCornerRadius">8</CornerRadius>
+    <Thickness x:Key="WindowContentPadding">12</Thickness>
+    <Thickness x:Key="WindowMargin">8</Thickness>
 
-  <Thickness x:Key="CellEditorPadding">8,0,0,0</Thickness>
-  <Thickness x:Key="CellElementMargin">7,0,0,0</Thickness>
+    <sys:Double x:Key="AboutTitleFontSize">16</sys:Double>
+    <FontWeight x:Key="AboutTitleFontWeight">Bold</FontWeight>
 
-  <!-- Button stack spacing (right-pane action buttons) -->
-  <Thickness x:Key="ActionButtonStackMargin">0,0,0,12</Thickness>
-  <Thickness x:Key="ActionButtonStackMarginNone">0</Thickness>
+    <Thickness x:Key="ParagraphMarginSmall">0,12,0,6</Thickness>
+    <Thickness x:Key="ParagraphMarginLarge">0,0,0,12</Thickness>
+    <Thickness x:Key="OrderedListMarginSmall">0,0,0,8</Thickness>
 
-  <!-- Toolbar button spacing (print preview) -->
-  <Thickness x:Key="ToolbarButtonMarginLarge">8,0,0,0</Thickness>
-  <Thickness x:Key="ToolbarButtonMarginSmall">4,0,0,0</Thickness>
+    <Thickness x:Key="CellEditorPadding">8,0,0,0</Thickness>
+    <Thickness x:Key="CellElementMargin">7,0,0,0</Thickness>
 
-  <!-- Page and form layout (centralized spacings) -->
-  <Thickness x:Key="PageSectionMarginLarge">16</Thickness>
-  <Thickness x:Key="PageSectionMarginSmall">8</Thickness>
-  <Thickness x:Key="TitleMarginBottomLarge">0,0,0,12</Thickness>
-  <Thickness x:Key="RightColumnGapLarge">0,0,20,0</Thickness>
-  <Thickness x:Key="SidePanelLeftMargin">12,0,0,0</Thickness>
-  <Thickness x:Key="GroupBoxBottomMarginLarge">0,0,0,24</Thickness>
-  <Thickness x:Key="FormInnerMargin">12</Thickness>
-  <Thickness x:Key="FormLabelMargin">0,0,12,8</Thickness>
-  <Thickness x:Key="FormLabelMarginLastRow">0,0,12,0</Thickness>
-  <Thickness x:Key="FormFieldMarginBottom">0,0,0,8</Thickness>
-  <Thickness x:Key="PrimaryActionMarginBottomLarge">0,0,0,16</Thickness>
-  <Thickness x:Key="ToolbarRowBottomMarginSmall">0,0,0,6</Thickness>
-  <Thickness x:Key="InlineRightMarginSmall">0,0,8,0</Thickness>
-  <Thickness x:Key="HeaderBarPadding">6</Thickness>
-  <Thickness x:Key="HeaderBarMargin">2,0,2,6</Thickness>
-  <Thickness x:Key="TaskItemMargin">2</Thickness>
-  <Thickness x:Key="TaskItemPadding">6</Thickness>
+    <!-- Button stack spacing (right-pane action buttons) -->
+    <Thickness x:Key="ActionButtonStackMargin">0,0,0,12</Thickness>
+    <Thickness x:Key="ActionButtonStackMarginNone">0</Thickness>
 
-  <!-- DataGrid header/cell shared metrics -->
-  <Thickness x:Key="DataGridColumnHeaderPadding">8,2,8,2</Thickness>
-  <Thickness x:Key="GridHeaderPadding">4,2</Thickness>
-  <Thickness x:Key="GridCellPadding">4,2</Thickness>
-  <Thickness x:Key="CellTextPadding">8,0,8,0</Thickness>
-  <Thickness x:Key="HeaderBorderThicknessDefault">0,0,1,1</Thickness>
-  <Thickness x:Key="CellBorderThicknessDefault">0,0,1,1</Thickness>
-  <Thickness x:Key="GridCellRightBorderThickness">0,0,1,0</Thickness>
-  <Thickness x:Key="NoBorderThickness">0</Thickness>
-  <Thickness x:Key="NoPaddingThickness">0</Thickness>
-  <Thickness x:Key="NoMarginThickness">0</Thickness>
-  <Thickness x:Key="NoMarginNothing">0</Thickness>
-  <Thickness x:Key="GridBottomBorderThickness">0,0,0,1</Thickness>
+    <!-- Toolbar button spacing (print preview) -->
+    <Thickness x:Key="ToolbarButtonMarginLarge">8,0,0,0</Thickness>
+    <Thickness x:Key="ToolbarButtonMarginSmall">4,0,0,0</Thickness>
 
-  <!-- Pill metrics -->
-  <CornerRadius x:Key="PillCornerRadius">4</CornerRadius>
-  <Thickness x:Key="PillPadding">6,2</Thickness>
-  <Thickness x:Key="PillMargin">2</Thickness>
+    <!-- Page and form layout (centralized spacings) -->
+    <Thickness x:Key="PageSectionMarginLarge">16</Thickness>
+    <Thickness x:Key="PageSectionMarginSmall">8</Thickness>
+    <Thickness x:Key="TitleMarginBottomLarge">0,0,0,12</Thickness>
+    <Thickness x:Key="RightColumnGapLarge">0,0,20,0</Thickness>
+    <Thickness x:Key="SidePanelLeftMargin">12,0,0,0</Thickness>
+    <Thickness x:Key="GroupBoxBottomMarginLarge">0,0,0,24</Thickness>
+    <Thickness x:Key="FormInnerMargin">12</Thickness>
+    <Thickness x:Key="FormLabelMargin">0,0,12,8</Thickness>
+    <Thickness x:Key="FormLabelMarginLastRow">0,0,12,0</Thickness>
+    <Thickness x:Key="FormFieldMarginBottom">0,0,0,8</Thickness>
+    <Thickness x:Key="PrimaryActionMarginBottomLarge">0,0,0,16</Thickness>
+    <Thickness x:Key="ToolbarRowBottomMarginSmall">0,0,0,6</Thickness>
+    <Thickness x:Key="InlineRightMarginSmall">0,0,8,0</Thickness>
+    <Thickness x:Key="HeaderBarPadding">6</Thickness>
+    <Thickness x:Key="HeaderBarMargin">2,0,2,6</Thickness>
+    <Thickness x:Key="TaskItemMargin">2</Thickness>
+    <Thickness x:Key="TaskItemPadding">6</Thickness>
 
-  <!-- Effects -->
-  <DropShadowEffect x:Key="PopupShadowEffect"
+    <!-- DataGrid header/cell shared metrics -->
+    <Thickness x:Key="DataGridColumnHeaderPadding">8,2,8,2</Thickness>
+    <Thickness x:Key="GridHeaderPadding">4,2</Thickness>
+    <Thickness x:Key="GridCellPadding">4,2</Thickness>
+    <Thickness x:Key="CellTextPadding">8,0,8,0</Thickness>
+    <Thickness x:Key="HeaderBorderThicknessDefault">0,0,1,1</Thickness>
+    <Thickness x:Key="CellBorderThicknessDefault">0,0,1,1</Thickness>
+    <Thickness x:Key="GridCellRightBorderThickness">0,0,1,0</Thickness>
+    <Thickness x:Key="NoBorderThickness">0</Thickness>
+    <Thickness x:Key="NoPaddingThickness">0</Thickness>
+    <Thickness x:Key="NoMarginThickness">0</Thickness>
+    <Thickness x:Key="NoMarginNothing">0</Thickness>
+    <Thickness x:Key="GridBottomBorderThickness">0,0,0,1</Thickness>
+
+    <!-- Pill metrics -->
+    <CornerRadius x:Key="PillCornerRadius">4</CornerRadius>
+    <Thickness x:Key="PillPadding">6,2</Thickness>
+    <Thickness x:Key="PillMargin">2</Thickness>
+
+    <!-- Effects -->
+    <DropShadowEffect x:Key="PopupShadowEffect"
                     Color="#AA000000"
                     BlurRadius="8"
                     ShadowDepth="2"
                     Opacity="0.5"/>
 
-  <!-- Text styles -->
-  <Style x:Key="MonospaceText" TargetType="TextBlock">
-      <Setter Property="FontFamily" Value="{StaticResource MonospaceFontFamily}"/>
-      <Setter Property="SnapsToDevicePixels" Value="True"/>
-      <Setter Property="VerticalAlignment" Value="Center"/>
-  </Style>
+    <!-- Text styles -->
+    <Style x:Key="MonospaceText" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource MonospaceFontFamily}"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
 
-  <!-- Grip icon brush: black at ~40% opacity -->
-  <SolidColorBrush x:Key="GripIconBrush" Color="#66000000"/>
+    <!-- Grip icon brush: black at ~40% opacity -->
+    <SolidColorBrush x:Key="GripIconBrush" Color="#66000000"/>
 
-  <!-- Drag grip style (subtle, small, vertically centered) -->
-  <Style x:Key="DragGripStyle" TargetType="TextBlock">
-      <Setter Property="FontFamily" Value="{StaticResource BodyFontFamily}"/>
-      <Setter Property="FontSize" Value="13"/> <!-- smaller than body -->
-      <Setter Property="Foreground" Value="{StaticResource GripIconBrush}"/>
-      <Setter Property="HorizontalAlignment" Value="Center"/>
-      <Setter Property="VerticalAlignment" Value="Center"/>
-      <Setter Property="Cursor" Value="SizeAll"/>
-      <Setter Property="Padding" Value="0,3,0,3"/>
-      <Setter Property="SnapsToDevicePixels" Value="True"/>
-  </Style>
+    <!-- Drag grip style (subtle, small, vertically centered) -->
+    <Style x:Key="DragGripStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource BodyFontFamily}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <!-- smaller than body -->
+        <Setter Property="Foreground" Value="{StaticResource GripIconBrush}"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Cursor" Value="SizeAll"/>
+        <Setter Property="Padding" Value="0,3,0,3"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+    </Style>
 
-  <!-- Control styles -->
+    <!-- Control styles -->
 
-  <!-- IconButton: base button style with templated corner radius from resource ButtonCornerRadius -->
-  <Style x:Key="IconButton" TargetType="Button">
-    <Setter Property="Padding" Value="{StaticResource ButtonPadding}"/>
-    <Setter Property="MinWidth" Value="80"/>
-    <Setter Property="HorizontalAlignment" Value="Left"/>
-    <Setter Property="VerticalAlignment" Value="Center"/>
-    <Setter Property="Margin" Value="{StaticResource ButtonMargin}"/>
-    <Setter Property="Background" Value="{StaticResource PrimaryBackgroundBrush}"/>
-    <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
-    <Setter Property="BorderThickness" Value="{StaticResource ButtonBorderThickness}"/>
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="Button">
-          <Border
+    <!-- IconButton: base button style with templated corner radius from resource ButtonCornerRadius -->
+    <Style x:Key="IconButton" TargetType="Button">
+        <Setter Property="Padding" Value="{StaticResource ButtonPadding}"/>
+        <Setter Property="MinWidth" Value="80"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="{StaticResource ButtonMargin}"/>
+        <Setter Property="Background" Value="{StaticResource PrimaryBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="{StaticResource ButtonBorderThickness}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border
             Background="{TemplateBinding Background}"
             BorderBrush="{TemplateBinding BorderBrush}"
             BorderThickness="{TemplateBinding BorderThickness}"
             CornerRadius="{DynamicResource ButtonCornerRadius}"
             SnapsToDevicePixels="True">
-            <ContentPresenter Margin="{TemplateBinding Padding}"
+                        <ContentPresenter Margin="{TemplateBinding Padding}"
                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                               RecognizesAccessKey="True"/>
-          </Border>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <!-- RoundedActionButton: based on IconButton, overrides corner radius and colors -->
-  <Style x:Key="RoundedActionButton" TargetType="Button" BasedOn="{StaticResource IconButton}">
-      <Style.Resources>
-          <!-- Set Add/Remove buttons corner radius to 5px -->
-          <CornerRadius x:Key="ButtonCornerRadius">5</CornerRadius>
-      </Style.Resources>
-      <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
-      <Setter Property="Foreground" Value="{StaticResource BrushUnscheduled}"/>
-      <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
-      <Setter Property="BorderThickness" Value="1"/>
-      <!-- Visual feedback: brighten on hover, darken on press -->
-      <Style.Triggers>
-          <Trigger Property="IsMouseOver" Value="True">
-              <Setter Property="Background" Value="{StaticResource AccentBrushHover}"/>
-              <Setter Property="BorderBrush" Value="{StaticResource AccentBrushHover}"/>
-          </Trigger>
-          <Trigger Property="IsPressed" Value="True">
-              <Setter Property="Background" Value="{StaticResource AccentBrushPressed}"/>
-              <Setter Property="BorderBrush" Value="{StaticResource AccentBrushPressed}"/>
-              <!-- Slight inset effect by nudging content (optional): -->
-              <Setter Property="Padding" Value="12,7,12,5"/>
-          </Trigger>
-          <Trigger Property="IsEnabled" Value="False">
-              <Setter Property="Opacity" Value="0.6"/>
-          </Trigger>
-      </Style.Triggers>
-  </Style>
+    <!-- RoundedActionButton: based on IconButton, overrides corner radius and colors -->
+    <Style x:Key="RoundedActionButton" TargetType="Button" BasedOn="{StaticResource IconButton}">
+        <Style.Resources>
+            <!-- Set Add/Remove buttons corner radius to 5px -->
+            <CornerRadius x:Key="ButtonCornerRadius">5</CornerRadius>
+        </Style.Resources>
+        <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource BrushUnscheduled}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <!-- Visual feedback: brighten on hover, darken on press -->
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource AccentBrushHover}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource AccentBrushHover}"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{StaticResource AccentBrushPressed}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource AccentBrushPressed}"/>
+                <!-- Slight inset effect by nudging content (optional): -->
+                <Setter Property="Padding" Value="12,7,12,5"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.6"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
 
-  <!-- Add this new style near the other button styles (e.g. next to RoundedActionButton) -->
-  <Style x:Key="RoundedActionButtonSmallRadius" TargetType="Button" BasedOn="{StaticResource RoundedActionButton}">
-    <Style.Resources>
-      <!-- Slight corner radius for these small action buttons -->
-      <CornerRadius x:Key="ButtonCornerRadius">4</CornerRadius>
-    </Style.Resources>
+    <!-- Add this new style near the other button styles (e.g. next to RoundedActionButton) -->
+    <Style x:Key="RoundedActionButtonSmallRadius" TargetType="Button" BasedOn="{StaticResource RoundedActionButton}">
+        <Style.Resources>
+            <!-- Slight corner radius for these small action buttons -->
+            <CornerRadius x:Key="ButtonCornerRadius">4</CornerRadius>
+        </Style.Resources>
 
-    <!-- Ensure the content is centered and not clipped:
+        <!-- Ensure the content is centered and not clipped:
          - zero vertical padding so ContentPresenter centers the text exactly
          - a slightly taller Height so the font sits comfortably
          - explicit alignment and sensible defaults -->
-    <Setter Property="Padding" Value="10,0"/>
-    <Setter Property="MinWidth" Value="72"/>
-    <Setter Property="Height" Value="24"/>
-    <Setter Property="FontSize" Value="{StaticResource BodyFontSize}"/>
-    <Setter Property="Foreground" Value="{StaticResource BrushUnscheduled}"/>
-    <Setter Property="HorizontalContentAlignment" Value="Center"/>
-    <Setter Property="VerticalContentAlignment" Value="Center"/>
-    <Setter Property="SnapsToDevicePixels" Value="True"/>
-  </Style>
+        <Setter Property="Padding" Value="10,0"/>
+        <Setter Property="MinWidth" Value="72"/>
+        <Setter Property="Height" Value="24"/>
+        <Setter Property="FontSize" Value="{StaticResource BodyFontSize}"/>
+        <Setter Property="Foreground" Value="{StaticResource BrushUnscheduled}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+    </Style>
 
-  <!-- MenuPopupButton - menu items inside the hamburger popup -->
-  <Style x:Key="MenuPopupButton" TargetType="Button" BasedOn="{StaticResource IconButton}">
-    <Setter Property="HorizontalAlignment" Value="Stretch"/>
-    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-    <Setter Property="MinWidth" Value="0"/>
-    <Setter Property="Padding" Value="{StaticResource ButtonPadding}"/>
-    <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
-    <!-- Replaced invalid TemplateBinding-in-Setter with a concrete resource so the Setter is valid -->
-    <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
-    <Setter Property="BorderThickness" Value="0"/>
-    <Setter Property="Foreground" Value="{StaticResource SortGlyphBrush}"/>
-    <Setter Property="Cursor" Value="Hand"/>
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="Button">
-          <Border Background="{TemplateBinding Background}"
+    <!-- MenuPopupButton - menu items inside the hamburger popup -->
+    <Style x:Key="MenuPopupButton" TargetType="Button" BasedOn="{StaticResource IconButton}">
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="MinWidth" Value="0"/>
+        <Setter Property="Padding" Value="{StaticResource ButtonPadding}"/>
+        <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
+        <!-- Replaced invalid TemplateBinding-in-Setter with a concrete resource so the Setter is valid -->
+        <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Foreground" Value="{StaticResource SortGlyphBrush}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
                   BorderBrush="{TemplateBinding BorderBrush}"
                   BorderThickness="{TemplateBinding BorderThickness}"
                   CornerRadius="{DynamicResource ButtonCornerRadius}"
                   SnapsToDevicePixels="True">
-            <ContentPresenter Margin="{TemplateBinding Padding}"
+                        <ContentPresenter Margin="{TemplateBinding Padding}"
                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                               RecognizesAccessKey="True"/>
-          </Border>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
 
-    <Style.Triggers>
-      <Trigger Property="IsMouseOver" Value="True">
-        <Setter Property="Background" Value="{StaticResource MenuItemHoverBackgroundBrush}"/>
-      </Trigger>
-      <Trigger Property="IsPressed" Value="True">
-        <Setter Property="Background" Value="{StaticResource MenuItemPressedBackgroundBrush}"/>
-      </Trigger>
-      <Trigger Property="IsEnabled" Value="False">
-        <Setter Property="Opacity" Value="0.6"/>
-      </Trigger>
-    </Style.Triggers>
-  </Style>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource MenuItemHoverBackgroundBrush}"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{StaticResource MenuItemPressedBackgroundBrush}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.6"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
 
-  <!-- HamburgerToggleButtonStyle -->
-  <Style x:Key="HamburgerToggleButtonStyle" TargetType="ToggleButton">
-    <!-- Match TitleBarWindowButton size & feel -->
-    <Setter Property="Width" Value="40"/>
-    <Setter Property="Height" Value="40"/>
-    <Setter Property="VerticalAlignment" Value="Center"/>
-    <Setter Property="HorizontalAlignment" Value="Left"/>
-    <Setter Property="Margin" Value="{StaticResource HamburgerMargin}"/>
-    <Setter Property="ToolTip" Value="Toggle menu"/>
-    <Setter Property="Focusable" Value="False"/>
-    <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
-    <Setter Property="BorderThickness" Value="{StaticResource NoBorderThickness}"/>
-    <Setter Property="Cursor" Value="Hand"/>
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="ToggleButton">
-          <!-- Use a rounded border like the title bar buttons -->
-          <Border x:Name="RootBorder"
+    <!-- HamburgerToggleButtonStyle -->
+    <Style x:Key="HamburgerToggleButtonStyle" TargetType="ToggleButton">
+        <!-- Match TitleBarWindowButton size & feel -->
+        <Setter Property="Width" Value="40"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="Margin" Value="{StaticResource HamburgerMargin}"/>
+        <Setter Property="ToolTip" Value="Toggle menu"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
+        <Setter Property="BorderThickness" Value="{StaticResource NoBorderThickness}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <!-- Use a rounded border like the title bar buttons -->
+                    <Border x:Name="RootBorder"
                   Background="{TemplateBinding Background}"
                   CornerRadius="6"
                   SnapsToDevicePixels="True">
-            <Grid Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center" SnapsToDevicePixels="True">
-              <!-- hamburger stripes use TitleBarForegroundBrush for contrast on the navy title bar -->
-              <Rectangle x:Name="StripeTop" Height="2" Fill="{StaticResource TitleBarForegroundBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Top" Margin="{StaticResource HamburgerStripeTopMargin}"/>
-              <Rectangle x:Name="StripeMid" Height="2" Fill="{StaticResource TitleBarForegroundBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Center"/>
-              <Rectangle x:Name="StripeBottom" Height="2" Fill="{StaticResource TitleBarForegroundBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Bottom" Margin="{StaticResource HamburgerStripeBottomMargin}"/>
-            </Grid>
-          </Border>
+                        <Grid Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center" SnapsToDevicePixels="True">
+                            <!-- hamburger stripes use TitleBarForegroundBrush for contrast on the navy title bar -->
+                            <Rectangle x:Name="StripeTop" Height="2" Fill="{StaticResource TitleBarForegroundBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Top" Margin="{StaticResource HamburgerStripeTopMargin}"/>
+                            <Rectangle x:Name="StripeMid" Height="2" Fill="{StaticResource TitleBarForegroundBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Center"/>
+                            <Rectangle x:Name="StripeBottom" Height="2" Fill="{StaticResource TitleBarForegroundBrush}" RadiusX="1" RadiusY="1" VerticalAlignment="Bottom" Margin="{StaticResource HamburgerStripeBottomMargin}"/>
+                        </Grid>
+                    </Border>
 
-          <ControlTemplate.Triggers>
-            <!-- Keep checked visual (open state) as before -->
-            <Trigger Property="IsChecked" Value="True">
-              <Setter TargetName="RootBorder" Property="Background" Value="{StaticResource HamburgerHighlightBackgroundBrush}"/>
-              <Setter TargetName="StripeTop" Property="Fill" Value="{StaticResource HamburgerHighlightLineBrush}"/>
-              <Setter TargetName="StripeMid" Property="Fill" Value="{StaticResource HamburgerHighlightLineBrush}"/>
-              <Setter TargetName="StripeBottom" Property="Fill" Value="{StaticResource HamburgerHighlightLineBrush}"/>
-            </Trigger>
+                    <ControlTemplate.Triggers>
+                        <!-- Keep checked visual (open state) as before -->
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="RootBorder" Property="Background" Value="{StaticResource HamburgerHighlightBackgroundBrush}"/>
+                            <Setter TargetName="StripeTop" Property="Fill" Value="{StaticResource HamburgerHighlightLineBrush}"/>
+                            <Setter TargetName="StripeMid" Property="Fill" Value="{StaticResource HamburgerHighlightLineBrush}"/>
+                            <Setter TargetName="StripeBottom" Property="Fill" Value="{StaticResource HamburgerHighlightLineBrush}"/>
+                        </Trigger>
 
-            <!-- Make hover/press use the same translucent white overlays and rounded shape as title-bar buttons -->
-            <Trigger Property="IsMouseOver" Value="True">
-              <Setter TargetName="RootBorder" Property="Background" Value="#20FFFFFF"/>
-            </Trigger>
+                        <!-- Make hover/press use the same translucent white overlays and rounded shape as title-bar buttons -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="RootBorder" Property="Background" Value="#20FFFFFF"/>
+                        </Trigger>
 
-            <Trigger Property="IsPressed" Value="True">
-              <Setter TargetName="RootBorder" Property="Background" Value="#33FFFFFF"/>
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="RootBorder" Property="Background" Value="#33FFFFFF"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <!-- RoundedDataGridColumnHeader -->
-  <Style x:Key="RoundedDataGridColumnHeader" TargetType="DataGridColumnHeader">
-    <Setter Property="Background" Value="{StaticResource GridHeaderSolid}"/>
-    <Setter Property="Padding" Value="{StaticResource DataGridColumnHeaderPadding}"/>
-    <Setter Property="HorizontalContentAlignment" Value="Left"/>
-    <Setter Property="VerticalContentAlignment" Value="Center"/>
-    <Setter Property="SnapsToDevicePixels" Value="True"/>
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="DataGridColumnHeader">
-          <Grid SnapsToDevicePixels="True">
-            <!-- use StaticResource here too -->
-            <Border Background="{TemplateBinding Background}" BorderBrush="{StaticResource SchedGridLineBrush}">
-              <Border.CornerRadius>
-                <MultiBinding Converter="{StaticResource HeaderCornerRadiusConverter}"
+    <!-- RoundedDataGridColumnHeader -->
+    <Style x:Key="RoundedDataGridColumnHeader" TargetType="DataGridColumnHeader">
+        <Setter Property="Background" Value="{StaticResource GridHeaderSolid}"/>
+        <Setter Property="Padding" Value="{StaticResource DataGridColumnHeaderPadding}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="DataGridColumnHeader">
+                    <Grid SnapsToDevicePixels="True">
+                        <!-- use StaticResource here too -->
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{StaticResource SchedGridLineBrush}">
+                            <Border.CornerRadius>
+                                <MultiBinding Converter="{StaticResource HeaderCornerRadiusConverter}"
                               ConverterParameter="{StaticResource GridCornerRadius}">
-                  <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Column.DisplayIndex"/>
-                  <Binding RelativeSource="{RelativeSource AncestorType=DataGrid}" Path="Columns.Count"/>
-                  <Binding Source="{StaticResource GridOuterBorderStroke}"/>
-                </MultiBinding>
-              </Border.CornerRadius>
-              <Border.BorderThickness>
-                <MultiBinding Converter="{StaticResource HeaderBorderThicknessConverter}">
-                  <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Column.DisplayIndex"/>
-                  <Binding RelativeSource="{RelativeSource AncestorType=DataGrid}" Path="Columns.Count"/>
-                </MultiBinding>
-              </Border.BorderThickness>
-            </Border>
+                                    <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Column.DisplayIndex"/>
+                                    <Binding RelativeSource="{RelativeSource AncestorType=DataGrid}" Path="Columns.Count"/>
+                                    <Binding Source="{StaticResource GridOuterBorderStroke}"/>
+                                </MultiBinding>
+                            </Border.CornerRadius>
+                            <Border.BorderThickness>
+                                <MultiBinding Converter="{StaticResource HeaderBorderThicknessConverter}">
+                                    <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Column.DisplayIndex"/>
+                                    <Binding RelativeSource="{RelativeSource AncestorType=DataGrid}" Path="Columns.Count"/>
+                                </MultiBinding>
+                            </Border.BorderThickness>
+                        </Border>
 
-            <Grid>
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="20"/>
-              </Grid.ColumnDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="20"/>
+                            </Grid.ColumnDefinitions>
 
-              <ContentPresenter Grid.Column="0"
+                            <ContentPresenter Grid.Column="0"
                                 Margin="{TemplateBinding Padding}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
 
-              <Path x:Name="SortGlyph"
+                            <Path x:Name="SortGlyph"
                     Grid.Column="1"
                     Width="10"
                     Height="6"
@@ -391,233 +415,230 @@
                     Fill="{StaticResource SortGlyphBrush}"
                     Visibility="Collapsed"
                     Data="M 0 6 L 5 0 L 10 6 Z" RenderTransformOrigin="0.5,0.5"/>
-            </Grid>
-          </Grid>
+                        </Grid>
+                    </Grid>
 
-          <ControlTemplate.Triggers>
-            <Trigger Property="SortDirection" Value="{x:Null}">
-              <Setter TargetName="SortGlyph" Property="Visibility" Value="Collapsed"/>
-            </Trigger>
-            <Trigger Property="SortDirection" Value="Ascending">
-              <Setter TargetName="SortGlyph" Property="Visibility" Value="Visible"/>
-              <Setter TargetName="SortGlyph" Property="RenderTransform" Value="{x:Null}"/>
-            </Trigger>
-            <Trigger Property="SortDirection" Value="Descending">
-              <Setter TargetName="SortGlyph" Property="Visibility" Value="Visible"/>
-              <Setter TargetName="SortGlyph" Property="RenderTransform">
-                <Setter.Value>
-                  <ScaleTransform ScaleY="-1"/>
-                </Setter.Value>
-              </Setter>
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="SortDirection" Value="{x:Null}">
+                            <Setter TargetName="SortGlyph" Property="Visibility" Value="Collapsed"/>
+                        </Trigger>
+                        <Trigger Property="SortDirection" Value="Ascending">
+                            <Setter TargetName="SortGlyph" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="SortGlyph" Property="RenderTransform" Value="{x:Null}"/>
+                        </Trigger>
+                        <Trigger Property="SortDirection" Value="Descending">
+                            <Setter TargetName="SortGlyph" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="SortGlyph" Property="RenderTransform">
+                                <Setter.Value>
+                                    <ScaleTransform ScaleY="-1"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <!-- PillStyle -->
-  <Style x:Key="PillStyle" TargetType="Border">
-    <Setter Property="CornerRadius" Value="{StaticResource PillCornerRadius}"/>
-    <Setter Property="Padding" Value="{StaticResource PillPadding}"/>
-    <Setter Property="Margin" Value="{StaticResource PillMargin}"/>
-  </Style>
+    <!-- PillStyle -->
+    <Style x:Key="PillStyle" TargetType="Border">
+        <Setter Property="CornerRadius" Value="{StaticResource PillCornerRadius}"/>
+        <Setter Property="Padding" Value="{StaticResource PillPadding}"/>
+        <Setter Property="Margin" Value="{StaticResource PillMargin}"/>
+    </Style>
 
-  <!-- PillStyle.Outlined (new style) -->
-  <Style x:Key="PillStyle.Outlined" TargetType="Border" BasedOn="{StaticResource PillStyle}">
-    <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
-    <Setter Property="BorderThickness" Value="1"/>
-    <Setter Property="SnapsToDevicePixels" Value="True"/>
-  </Style>
+    <!-- PillStyle.Outlined (new style) -->
+    <Style x:Key="PillStyle.Outlined" TargetType="Border" BasedOn="{StaticResource PillStyle}">
+        <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+    </Style>
 
-  <!-- RoundedTableBorder -->
-  <Style x:Key="RoundedTableBorder" TargetType="Border">
-    <Setter Property="CornerRadius" Value="{StaticResource GridCornerRadius}"/>
-    <Setter Property="Background" Value="{StaticResource PrimaryBackgroundBrush}"/>
-    <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
-    <Setter Property="BorderThickness" Value="{StaticResource GridOuterBorderThickness}"/>
-    <Setter Property="SnapsToDevicePixels" Value="True"/>
-    <Setter Property="Padding" Value="{StaticResource NoPaddingThickness}"/>
-    <Setter Property="ClipToBounds" Value="True"/>
-  </Style>
+    <!-- RoundedTableBorder -->
+    <Style x:Key="RoundedTableBorder" TargetType="Border">
+        <Setter Property="CornerRadius" Value="{StaticResource GridCornerRadius}"/>
+        <Setter Property="Background" Value="{StaticResource PrimaryBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
+        <Setter Property="BorderThickness" Value="{StaticResource GridOuterBorderThickness}"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Padding" Value="{StaticResource NoPaddingThickness}"/>
+        <Setter Property="ClipToBounds" Value="True"/>
+    </Style>
 
-  <!-- RoundedTableContainer -->
-  <Style x:Key="RoundedTableContainer" TargetType="ContentControl">
-    <Setter Property="Background" Value="{StaticResource PrimaryBackgroundBrush}"/>
-    <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
-    <Setter Property="BorderThickness" Value="{StaticResource GridOuterBorderThickness}"/>
-    <Setter Property="SnapsToDevicePixels" Value="True"/>
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="ContentControl">
-          <Grid SnapsToDevicePixels="True">
-            <Border x:Name="OuterBorder"
-                    Background="{TemplateBinding Background}"
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="{StaticResource GridCornerRadius}"
-                    SnapsToDevicePixels="True"/>
-            <Grid>
-              <Grid.Clip>
-                <MultiBinding Converter="{StaticResource RoundedClipConverter}">
-                  <Binding RelativeSource="{RelativeSource Self}" Path="ActualWidth"/>
-                  <Binding RelativeSource="{RelativeSource Self}" Path="ActualHeight"/>
-                  <Binding Source="{StaticResource GridCornerRadius}"/>
-                  <Binding Source="{StaticResource GridOuterBorderStroke}"/>
-                </MultiBinding>
-              </Grid.Clip>
-              <ContentPresenter />
-            </Grid>
-          </Grid>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+    <!-- RoundedTableContainer -->
+    <Style x:Key="RoundedTableContainer" TargetType="ContentControl">
+        <Setter Property="Background" Value="{StaticResource PrimaryBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
+        <Setter Property="BorderThickness" Value="{StaticResource GridOuterBorderThickness}"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Top"/>
+        <Setter Property="Margin" Value="{StaticResource NoMarginThickness}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <Grid SnapsToDevicePixels="True"
+                          Margin="{StaticResource PageSectionMarginLarge}">
+                      <Border Background="{TemplateBinding Background}"
+                              BorderBrush="{TemplateBinding BorderBrush}"
+                              BorderThickness="{TemplateBinding BorderThickness}"
+                              CornerRadius="{StaticResource GridCornerRadius}"
+                              SnapsToDevicePixels="True"/>
+                      <Grid>
+                        <Grid.Clip>
+                          <MultiBinding Converter="{StaticResource RoundedClipConverter}">
+                            <Binding RelativeSource="{RelativeSource Self}" Path="ActualWidth"/>
+                            <Binding RelativeSource="{RelativeSource Self}" Path="ActualHeight"/>
+                            <Binding Source="{StaticResource GridCornerRadius}"/>
+                            <Binding Source="{StaticResource GridOuterBorderStroke}"/>
+                          </MultiBinding>
+                        </Grid.Clip>
+                        <ContentPresenter
+                            Margin="0"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                      </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <Style x:Key="InvisibleResizeThumbStyle" TargetType="Thumb">
-    <Setter Property="Background" Value="Transparent"/>
-    <Setter Property="BorderBrush" Value="Transparent"/>
-    <Setter Property="BorderThickness" Value="0"/>
-    <Setter Property="OverridesDefaultStyle" Value="True"/>
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="Thumb">
-          <Border Background="{TemplateBinding Background}"
+    <Style x:Key="InvisibleResizeThumbStyle" TargetType="Thumb">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Border Background="{TemplateBinding Background}"
                   BorderBrush="{TemplateBinding BorderBrush}"
                   BorderThickness="{TemplateBinding BorderThickness}"/>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <!-- SchedHeaderTemplate -->
-  <ControlTemplate x:Key="SchedHeaderTemplate" TargetType="DataGridColumnHeader">
-    <Grid SnapsToDevicePixels="True" Background="{TemplateBinding Background}">
-      <Grid.RowDefinitions>
-        <RowDefinition/>
-        <RowDefinition Height="1"/>
-      </Grid.RowDefinitions>
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition/>
-        <ColumnDefinition Width="1"/>
-      </Grid.ColumnDefinitions>
-      <ContentPresenter Grid.Column="0"
+    <!-- SchedHeaderTemplate -->
+    <ControlTemplate x:Key="SchedHeaderTemplate" TargetType="DataGridColumnHeader">
+        <Grid SnapsToDevicePixels="True" Background="{TemplateBinding Background}">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="1"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="1"/>
+            </Grid.ColumnDefinitions>
+            <ContentPresenter Grid.Column="0"
                         Margin="{TemplateBinding Padding}"
                         VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                         HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
-      <Border Grid.RowSpan="2" Grid.Column="1"
+            <Border Grid.RowSpan="2" Grid.Column="1"
               Background="{StaticResource SchedGridLineBrush}"
               IsHitTestVisible="False"/>
-      <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+            <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
               Background="{StaticResource SchedGridLineBrush}"
               IsHitTestVisible="False"/>
-    </Grid>
-  </ControlTemplate>
+        </Grid>
+    </ControlTemplate>
 
-  <!-- SchedGridHeaderStyleDefault -->
-  <Style x:Key="SchedGridHeaderStyleDefault" TargetType="DataGridColumnHeader">
-    <Setter Property="HorizontalContentAlignment" Value="Left"/>
-    <Setter Property="VerticalContentAlignment" Value="Center"/>
-    <Setter Property="Padding" Value="{StaticResource DataGridColumnHeaderPadding}"/>
-    <Setter Property="FontWeight" Value="Normal"/>
-    <Setter Property="SnapsToDevicePixels" Value="True"/>
-    <Setter Property="Template" Value="{StaticResource SchedHeaderTemplate}"/>
-    <Setter Property="SeparatorBrush" Value="{StaticResource SchedGridLineBrush}"/>
-  </Style>
+    <!-- SchedGridHeaderStyleDefault -->
+    <Style x:Key="SchedGridHeaderStyleDefault" TargetType="DataGridColumnHeader">
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="{StaticResource DataGridColumnHeaderPadding}"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Template" Value="{StaticResource SchedHeaderTemplate}"/>
+        <Setter Property="SeparatorBrush" Value="{StaticResource SchedGridLineBrush}"/>
+    </Style>
 
-  <!-- SchedGridCellText: for display (TextBlock) -->
-  <Style x:Key="SchedGridCellText" TargetType="TextBlock">
-    <Setter Property="TextAlignment" Value="Left"/>
-    <Setter Property="Padding" Value="{StaticResource CellTextPadding}"/>
-    <Setter Property="FontFamily" Value="{StaticResource MonospaceFontFamily}"/>
-    <Setter Property="FontSize" Value="{StaticResource BodyFontSize}"/>
-    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-    <Setter Property="SnapsToDevicePixels" Value="True"/>
-  </Style>
-
-  <!-- DefaultEditingElementStyle: for editing (TextBox) -->
-  <Style x:Key="DefaultEditingElementStyle" TargetType="TextBox">
-    <Setter Property="Padding" Value="{StaticResource CellEditorPadding}"/>
-    <Setter Property="Margin" Value="{StaticResource CellElementMargin}"/>
-    <Setter Property="FontFamily" Value="{StaticResource MonospaceFontFamily}"/>
-    <Setter Property="FontSize" Value="{StaticResource BodyFontSize}"/>
-    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-    <Setter Property="SnapsToDevicePixels" Value="True"/>
-    <!-- Optional (keeps visuals closer to display mode):
+    <!-- DefaultEditingElementStyle: for editing (TextBox) -->
+    <Style x:Key="DefaultEditingElementStyle" TargetType="TextBox">
+        <Setter Property="Padding" Value="{StaticResource CellEditorPadding}"/>
+        <Setter Property="Margin" Value="{StaticResource CellElementMargin}"/>
+        <Setter Property="FontFamily" Value="{StaticResource MonospaceFontFamily}"/>
+        <Setter Property="FontSize" Value="{StaticResource BodyFontSize}"/>
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <!-- Optional (keeps visuals closer to display mode):
          <Setter Property="Background" Value="Transparent"/>
          <Setter Property="BorderThickness" Value="0"/>
     -->
-  </Style>
+    </Style>
 
-  <Style x:Key="DefaultCellStyle" TargetType="DataGridCell">
-      <Setter Property="Padding" Value="{StaticResource GridCellPadding}"/>
-      <Setter Property="BorderThickness" Value="{StaticResource CellBorderThicknessDefault}"/>
-      <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
-      <Setter Property="SnapsToDevicePixels" Value="True"/>
-  </Style>
+    <Style x:Key="DefaultCellStyle" TargetType="DataGridCell">
+        <Setter Property="Padding" Value="{StaticResource GridCellPadding}"/>
+        <Setter Property="BorderThickness" Value="{StaticResource CellBorderThicknessDefault}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource SchedGridLineBrush}"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+    </Style>
 
-  <Style x:Key="LastColumnCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource DefaultCellStyle}">
-      <!-- last column: remove right vertical gridline so outer border draws it -->
-      <Setter Property="BorderThickness" Value="{StaticResource GridBottomBorderThickness}"/>
-  </Style>
+    <Style x:Key="LastColumnCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource DefaultCellStyle}">
+        <!-- last column: remove right vertical gridline so outer border draws it -->
+        <Setter Property="BorderThickness" Value="{StaticResource GridBottomBorderThickness}"/>
+    </Style>
 
-  <Style x:Key="SchedGridCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource DefaultCellStyle}">
-      <Setter Property="Padding" Value="{StaticResource GridCellPadding}"/>
-  </Style>
+    <Style x:Key="SchedGridCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource DefaultCellStyle}">
+        <Setter Property="Padding" Value="{StaticResource GridCellPadding}"/>
+    </Style>
 
-  <CornerRadius x:Key="AppPaneCornerRadius">0,0,12,12</CornerRadius>
+    <CornerRadius x:Key="AppPaneCornerRadius">0,0,12,12</CornerRadius>
 
-  <!-- Title / app pane layout metrics -->
-  <Thickness x:Key="TopBarOuterMargin">8,8,8,0</Thickness>   <!-- left,top,right,bottom -->
-  <sys:Double x:Key="TopBarMinHeight">48</sys:Double>
-  <Thickness x:Key="AppPaneOuterMargin">8,0,8,8</Thickness>
+    <!-- Title / app pane layout metrics -->
+    <Thickness x:Key="TopBarOuterMargin">8,8,8,0</Thickness>
+    <!-- left,top,right,bottom -->
+    <sys:Double x:Key="TopBarMinHeight">48</sys:Double>
+    <Thickness x:Key="AppPaneOuterMargin">8,0,8,8</Thickness>
 
-  <!-- Title bar SVG/geometries -->
-  <Geometry x:Key="MinimizeGeometry">M0,6 L12,6</Geometry>
-  <Geometry x:Key="MaximizeGeometry">M0,0 L12,0 L12,10 L0,10 Z</Geometry>
-  <Geometry x:Key="RestoreGeometry">M2,3 L10,3 L10,11 L2,11 Z M0,1 L8,1 L8,9 L0,9 Z</Geometry>
-  <Geometry x:Key="CloseGeometry">M2,2 L10,10 M10,2 L2,10</Geometry>
+    <!-- Title bar SVG/geometries -->
+    <Geometry x:Key="MinimizeGeometry">M0,6 L12,6</Geometry>
+    <Geometry x:Key="MaximizeGeometry">M0,0 L12,0 L12,10 L0,10 Z</Geometry>
+    <Geometry x:Key="RestoreGeometry">M2,3 L10,3 L10,11 L2,11 Z M0,1 L8,1 L8,9 L0,9 Z</Geometry>
+    <Geometry x:Key="CloseGeometry">M2,2 L10,10 M10,2 L2,10</Geometry>
 
-  <!-- Base title-bar button (visual baseline for the window controls) -->
-  <Style x:Key="TitleBarWindowButton" TargetType="Button">
-    <Setter Property="Width" Value="40"/>
-    <Setter Property="Height" Value="40"/>
-    <Setter Property="Padding" Value="4"/>
-    <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
-    <Setter Property="BorderThickness" Value="{StaticResource NoBorderThickness}"/>
-    <Setter Property="Foreground" Value="{StaticResource TitleBarForegroundBrush}"/>
-    <Setter Property="FontSize" Value="16"/>
-    <Setter Property="FontWeight" Value="SemiBold"/>
-    <Setter Property="Cursor" Value="Hand"/>
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="Button">
-          <Border Background="{TemplateBinding Background}"
+    <!-- Base title-bar button (visual baseline for the window controls) -->
+    <Style x:Key="TitleBarWindowButton" TargetType="Button">
+        <Setter Property="Width" Value="40"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="Padding" Value="4"/>
+        <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
+        <Setter Property="BorderThickness" Value="{StaticResource NoBorderThickness}"/>
+        <Setter Property="Foreground" Value="{StaticResource TitleBarForegroundBrush}"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
                   CornerRadius="6"
                   SnapsToDevicePixels="True">
-            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-          </Border>
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-              <Setter Property="Background" Value="#20FFFFFF"/>
-            </Trigger>
-            <Trigger Property="IsPressed" Value="True">
-              <Setter Property="Background" Value="#33FFFFFF"/>
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#20FFFFFF"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#33FFFFFF"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <!-- Minimize button (shows a horizontal stroke) -->
-  <Style x:Key="TitleBarMinimizeButtonStyle" TargetType="Button" BasedOn="{StaticResource TitleBarWindowButton}">
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="Button">
-          <Border Background="{TemplateBinding Background}" CornerRadius="6" SnapsToDevicePixels="True">
-            <Grid>
-              <Path x:Name="PART_Icon"
+    <!-- Minimize button (shows a horizontal stroke) -->
+    <Style x:Key="TitleBarMinimizeButtonStyle" TargetType="Button" BasedOn="{StaticResource TitleBarWindowButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="6" SnapsToDevicePixels="True">
+                        <Grid>
+                            <Path x:Name="PART_Icon"
                     Data="{StaticResource MinimizeGeometry}"
                     Stroke="{TemplateBinding Foreground}"
                     StrokeThickness="2"
@@ -625,29 +646,29 @@
                     Width="14" Height="14"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"/>
-            </Grid>
-          </Border>
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-              <Setter Property="Background" Value="#20FFFFFF"/>
-            </Trigger>
-            <Trigger Property="IsPressed" Value="True">
-              <Setter Property="Background" Value="#33FFFFFF"/>
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#20FFFFFF"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#33FFFFFF"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <!-- Maximize / Restore toggle button (icon Data will be swapped by code-behind) -->
-  <Style x:Key="TitleBarMaximizeButtonStyle" TargetType="Button" BasedOn="{StaticResource TitleBarWindowButton}">
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="Button">
-          <Border Background="{TemplateBinding Background}" CornerRadius="6" SnapsToDevicePixels="True">
-            <Grid>
-              <Path x:Name="PART_Icon"
+    <!-- Maximize / Restore toggle button (icon Data will be swapped by code-behind) -->
+    <Style x:Key="TitleBarMaximizeButtonStyle" TargetType="Button" BasedOn="{StaticResource TitleBarWindowButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="6" SnapsToDevicePixels="True">
+                        <Grid>
+                            <Path x:Name="PART_Icon"
                     Data="{StaticResource MaximizeGeometry}"
                     Stroke="{TemplateBinding Foreground}"
                     StrokeThickness="1.6"
@@ -656,29 +677,29 @@
                     Width="14" Height="14"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"/>
-            </Grid>
-          </Border>
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-              <Setter Property="Background" Value="#20FFFFFF"/>
-            </Trigger>
-                      <Trigger Property="IsPressed" Value="True">
-                          <Setter Property="Background" Value="#33FFFFFF"/>
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#20FFFFFF"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#33FFFFFF"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <!-- Close button (red hover feedback) -->
-  <Style x:Key="TitleBarCloseButtonStyle" TargetType="Button" BasedOn="{StaticResource TitleBarWindowButton}">
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="Button">
-          <Border x:Name="Root" Background="{TemplateBinding Background}" CornerRadius="6" SnapsToDevicePixels="True">
-            <Grid>
-              <Path x:Name="PART_Icon"
+    <!-- Close button (red hover feedback) -->
+    <Style x:Key="TitleBarCloseButtonStyle" TargetType="Button" BasedOn="{StaticResource TitleBarWindowButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Root" Background="{TemplateBinding Background}" CornerRadius="6" SnapsToDevicePixels="True">
+                        <Grid>
+                            <Path x:Name="PART_Icon"
                     Data="{StaticResource CloseGeometry}"
                     Stroke="{TemplateBinding Foreground}"
                     StrokeThickness="1.8"
@@ -689,67 +710,67 @@
                     Width="14" Height="14"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"/>
-            </Grid>
-          </Border>
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-              <Setter TargetName="Root" Property="Background" Value="#B30000"/>
-              <Setter Property="Foreground" Value="#FFFFFFFF"/>
-            </Trigger>
-            <Trigger Property="IsPressed" Value="True">
-              <Setter TargetName="Root" Property="Background" Value="#E00000"/>
-              <Setter Property="Foreground" Value="#FFFFFFFF"/>
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="#B30000"/>
+                            <Setter Property="Foreground" Value="#FFFFFFFF"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="#E00000"/>
+                            <Setter Property="Foreground" Value="#FFFFFFFF"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <!-- Display style used by Setup grids for read-only TextBlocks in cells -->
-  <Style x:Key="DefaultTextElementStyle" TargetType="TextBlock">
-    <Setter Property="Margin" Value="{StaticResource CellElementMargin}"/>
-    <Setter Property="FontFamily" Value="{StaticResource BodyFontFamily}"/>
-    <Setter Property="FontSize" Value="{StaticResource BodyFontSize}"/>
-    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-    <Setter Property="VerticalAlignment" Value="Center"/>
-    <Setter Property="SnapsToDevicePixels" Value="True"/>
-    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-  </Style>
+    <!-- Display style used by Setup grids for read-only TextBlocks in cells -->
+    <Style x:Key="DefaultTextElementStyle" TargetType="TextBlock">
+        <Setter Property="Margin" Value="{StaticResource CellElementMargin}"/>
+        <Setter Property="FontFamily" Value="{StaticResource BodyFontFamily}"/>
+        <Setter Property="FontSize" Value="{StaticResource BodyFontSize}"/>
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+    </Style>
 
-  <!-- Corner radius for tab content area (top-left kept square to meet tab strip) -->
-  <CornerRadius x:Key="TabContentCornerRadius">0,6,6,6</CornerRadius>
+    <!-- Corner radius for tab content area (top-left kept square to meet tab strip) -->
+    <CornerRadius x:Key="TabContentCornerRadius">0,6,6,6</CornerRadius>
 
-  <Style x:Key="RoundedTabControl" TargetType="TabControl">
-    <Setter Property="Background" Value="White"/>
-    <Setter Property="BorderBrush" Value="Gray"/>
-    <Setter Property="BorderThickness" Value="1"/>
-    <!-- Use WPF system defaults for control header typography so tab headers match standard WPF TabItem text -->
-    <Setter Property="FontFamily" Value="{x:Static SystemFonts.MessageFontFamily}"/>
-    <Setter Property="FontSize" Value="{x:Static SystemFonts.MessageFontSize}"/>
-    <Setter Property="FontWeight" Value="Normal"/>
-    <Setter Property="Margin" Value="0"/>
-    <Setter Property="Padding" Value="0"/>
-    <Setter Property="SnapsToDevicePixels" Value="True"/>
+    <Style x:Key="RoundedTabControl" TargetType="TabControl">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderBrush" Value="Gray"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <!-- Use WPF system defaults for control header typography so tab headers match standard WPF TabItem text -->
+        <Setter Property="FontFamily" Value="{x:Static SystemFonts.MessageFontFamily}"/>
+        <Setter Property="FontSize" Value="{x:Static SystemFonts.MessageFontSize}"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
 
-    <Setter Property="ItemContainerStyle">
-      <Setter.Value>
-        <Style TargetType="TabItem">
-          <!-- tab item visuals and layout -->
-          <Setter Property="Background" Value="LightGray"/>
-          <Setter Property="BorderBrush" Value="Gray"/>
-          <Setter Property="BorderThickness" Value="0"/>
-          <Setter Property="FontWeight" Value="Normal"/>
-          <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-          <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-          <Setter Property="VerticalContentAlignment" Value="Center"/>
-          <Setter Property="Panel.VerticalAlignment" Value="Bottom"/>
-
-          <!-- Correct ControlTemplate for TabItem -->
-          <Setter Property="Template">
+        <Setter Property="ItemContainerStyle">
             <Setter.Value>
-              <ControlTemplate TargetType="TabItem">
-                <Border x:Name="Bd"
+                <Style TargetType="TabItem">
+                    <!-- tab item visuals and layout -->
+                    <Setter Property="Background" Value="LightGray"/>
+                    <Setter Property="BorderBrush" Value="Gray"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="FontWeight" Value="Normal"/>
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalContentAlignment" Value="Top"/>
+                    <Setter Property="Panel.VerticalAlignment" Value="Bottom"/>
+
+                    <!-- Correct ControlTemplate for TabItem -->
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Border x:Name="Bd"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="1"
@@ -757,158 +778,159 @@
                         Margin="-2,0,1,-1"
                         Padding="12,0,12,0"
                         SnapsToDevicePixels="True">
-                  <ContentPresenter x:Name="ContentSite"
+                                    <ContentPresenter x:Name="ContentSite"
                                     ContentSource="Header"
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                     RecognizesAccessKey="True"/>
-                </Border>
-                <ControlTemplate.Triggers>
-                  <Trigger Property="IsSelected" Value="True">
-                    <Setter TargetName="Bd" Property="Background" Value="White"/>
-                    <Setter TargetName="Bd" Property="BorderBrush" Value="Gray"/>
-                    <Setter Property="Foreground" Value="Black"/>
-                    <Setter TargetName="Bd" Property="Height" Value="28"/>
-                    <Setter TargetName="Bd" Property="BorderThickness" Value="1,1,1,0"/>
-                  </Trigger>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Bd" Property="Background" Value="White"/>
+                                        <Setter TargetName="Bd" Property="BorderBrush" Value="Gray"/>
+                                        <Setter Property="Foreground" Value="Black"/>
+                                        <Setter TargetName="Bd" Property="Height" Value="28"/>
+                                        <Setter TargetName="Bd" Property="BorderThickness" Value="1,1,1,0"/>
+                                    </Trigger>
 
-                  <Trigger Property="IsSelected" Value="False">
-                   <Setter TargetName="Bd" Property="Background" Value="LightGray"/>
-                   <Setter TargetName="Bd" Property="BorderBrush" Value="Gray"/>
-                   <Setter Property="Foreground" Value="Black"/>
-                   <Setter TargetName="Bd" Property="Height" Value="26"/>
-                  </Trigger>
+                                    <Trigger Property="IsSelected" Value="False">
+                                        <Setter TargetName="Bd" Property="Background" Value="LightGray"/>
+                                        <Setter TargetName="Bd" Property="BorderBrush" Value="Gray"/>
+                                        <Setter Property="Foreground" Value="Black"/>
+                                        <Setter TargetName="Bd" Property="Height" Value="26"/>
+                                    </Trigger>
 
-                  <Trigger SourceName="Bd" Property="IsMouseOver" Value="True">
-                    <Setter TargetName="Bd" Property="BorderBrush" Value="Blue"/>
-                    <Setter TargetName="Bd" Property="Background" Value="LightBlue"/>
-                  </Trigger>
+                                    <Trigger SourceName="Bd" Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Bd" Property="BorderBrush" Value="Blue"/>
+                                        <Setter TargetName="Bd" Property="Background" Value="LightBlue"/>
+                                    </Trigger>
 
-                  <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Opacity" Value="0.5"/>
-                  </Trigger>
-                </ControlTemplate.Triggers>
-              </ControlTemplate>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity" Value="0.5"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
             </Setter.Value>
-          </Setter>
-        </Style>
-      </Setter.Value>
-    </Setter>
-  </Style>
+        </Setter>
+    </Style>
 
-  <!-- Tab metrics (ensure no negative left inset) -->
-  <Thickness x:Key="TabHeaderPadding">16,8</Thickness>
-  <Thickness x:Key="TabHeaderMargin">0,0,6,0</Thickness>
-  <CornerRadius x:Key="TabHeaderCornerRadius">6,6,0,0</CornerRadius>
-  <FontWeight x:Key="TabHeaderFontWeight">SemiBold</FontWeight>
-  <Thickness x:Key="TabStripMargin">0</Thickness>
-  <sys:Double x:Key="TabAccentThickness">2</sys:Double>
+    <!-- Tab metrics (ensure no negative left inset) -->
+    <Thickness x:Key="TabHeaderPadding">16,8</Thickness>
+    <Thickness x:Key="TabHeaderMargin">0,0,6,0</Thickness>
+    <CornerRadius x:Key="TabHeaderCornerRadius">6,6,0,0</CornerRadius>
+    <FontWeight x:Key="TabHeaderFontWeight">SemiBold</FontWeight>
+    <Thickness x:Key="TabStripMargin">0</Thickness>
+    <sys:Double x:Key="TabAccentThickness">2</sys:Double>
 
-  <!-- Rounded selection for ListBox items -->
-  <CornerRadius x:Key="ListBoxSelectionCornerRadius">3</CornerRadius>
+    <!-- Rounded selection for ListBox items -->
+    <CornerRadius x:Key="ListBoxSelectionCornerRadius">3</CornerRadius>
 
-  <Style x:Key="RoundedListBoxItemStyle" TargetType="ListBoxItem">
-    <Setter Property="SnapsToDevicePixels" Value="True"/>
-    <Setter Property="Background" Value="Transparent"/>
-    <Setter Property="Padding" Value="6,6"/>
-    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="ListBoxItem">
-          <Border x:Name="Bd"
+    <Style x:Key="RoundedListBoxItemStyle" TargetType="ListBoxItem">
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Padding" Value="6,6"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border x:Name="Bd"
                   Background="{TemplateBinding Background}"
                   Padding="{TemplateBinding Padding}"
                   CornerRadius="{StaticResource ListBoxSelectionCornerRadius}"
                   BorderThickness="0"
                   SnapsToDevicePixels="True">
-            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                               Margin="0"/>
-          </Border>
+                    </Border>
 
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsSelected" Value="True">
-              <!-- selection fill + subtle outline -->
-              <Setter TargetName="Bd" Property="Background" Value="#D9F0FF"/> <!-- light blue fill -->
-              <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
-              <Setter TargetName="Bd" Property="BorderThickness" Value="1"/>
-            </Trigger>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <!-- selection fill + subtle outline -->
+                            <Setter TargetName="Bd" Property="Background" Value="#D9F0FF"/>
+                            <!-- light blue fill -->
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+                            <Setter TargetName="Bd" Property="BorderThickness" Value="1"/>
+                        </Trigger>
 
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#20F0F8FF"/>
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.6"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ComboBox used for in-cell editing (match TextBox editing style) -->
+    <Style x:Key="DefaultEditingComboBoxStyle" TargetType="ComboBox">
+        <Setter Property="FontFamily" Value="{StaticResource MonospaceFontFamily}"/>
+        <Setter Property="FontSize" Value="{StaticResource BodyFontSize}"/>
+        <Setter Property="Padding" Value="{StaticResource CellEditorPadding}"/>
+        <Setter Property="Margin" Value="{StaticResource CellElementMargin}"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+    </Style>
+
+    <!-- alias to recover from typo'd references elsewhere -->
+    <Thickness x:Key="NoMarginThreshold">0</Thickness>
+
+    <!-- Add this near other control styles (e.g. after HamburgerToggleButtonStyle) -->
+    <Style x:Key="HeaderImageButtonBorderStyle" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="2"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Style.Triggers>
+            <!-- Use same hover background used elsewhere -->
             <Trigger Property="IsMouseOver" Value="True">
-              <Setter TargetName="Bd" Property="Background" Value="#20F0F8FF"/>
+                <Setter Property="Background" Value="{StaticResource MenuItemHoverBackgroundBrush}"/>
             </Trigger>
-
             <Trigger Property="IsEnabled" Value="False">
-              <Setter Property="Opacity" Value="0.6"/>
+                <Setter Property="Opacity" Value="0.6"/>
             </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+        </Style.Triggers>
+    </Style>
 
-  <!-- ComboBox used for in-cell editing (match TextBox editing style) -->
-  <Style x:Key="DefaultEditingComboBoxStyle" TargetType="ComboBox">
-    <Setter Property="FontFamily" Value="{StaticResource MonospaceFontFamily}"/>
-    <Setter Property="FontSize" Value="{StaticResource BodyFontSize}"/>
-    <Setter Property="Padding" Value="{StaticResource CellEditorPadding}"/>
-    <Setter Property="Margin" Value="{StaticResource CellElementMargin}"/>
-    <Setter Property="VerticalContentAlignment" Value="Center"/>
-    <Setter Property="HorizontalContentAlignment" Value="Left"/>
-    <Setter Property="SnapsToDevicePixels" Value="True"/>
-  </Style>
-
-  <!-- alias to recover from typo'd references elsewhere -->
-  <Thickness x:Key="NoMarginThreshold">0</Thickness>
-
-  <!-- Add this near other control styles (e.g. after HamburgerToggleButtonStyle) -->
-  <Style x:Key="HeaderImageButtonBorderStyle" TargetType="Border">
-    <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
-    <Setter Property="CornerRadius" Value="4"/>
-    <Setter Property="Padding" Value="2"/>
-    <Setter Property="Cursor" Value="Hand"/>
-    <Setter Property="SnapsToDevicePixels" Value="True"/>
-    <Style.Triggers>
-      <!-- Use same hover background used elsewhere -->
-      <Trigger Property="IsMouseOver" Value="True">
-        <Setter Property="Background" Value="{StaticResource MenuItemHoverBackgroundBrush}"/>
-      </Trigger>
-      <Trigger Property="IsEnabled" Value="False">
-        <Setter Property="Opacity" Value="0.6"/>
-      </Trigger>
-    </Style.Triggers>
-  </Style>
-  
-  <!-- Header image button: used for the arrow back icons -->
-  <Style x:Key="HeaderImageButtonStyle" TargetType="Button" BasedOn="{StaticResource IconButton}">
-    <Setter Property="Padding" Value="2"/>
-    <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
-    <Setter Property="BorderThickness" Value="0"/>
-    <Setter Property="Cursor" Value="Hand"/>
-    <Setter Property="Focusable" Value="False"/>
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="Button">
-          <Border x:Name="Bd"
+    <!-- Header image button: used for the arrow back icons -->
+    <Style x:Key="HeaderImageButtonStyle" TargetType="Button" BasedOn="{StaticResource IconButton}">
+        <Setter Property="Padding" Value="2"/>
+        <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd"
                   Background="{TemplateBinding Background}"
                   CornerRadius="4"
                   SnapsToDevicePixels="True">
-            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True"/>
-          </Border>
-  
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-              <Setter TargetName="Bd" Property="Background" Value="{StaticResource MenuItemHoverBackgroundBrush}"/>
-            </Trigger>
-            <Trigger Property="IsPressed" Value="True">
-              <Setter TargetName="Bd" Property="Background" Value="{StaticResource HamburgerHighlightBackgroundBrush}"/>
-            </Trigger>
-            <Trigger Property="IsEnabled" Value="False">
-              <Setter Property="Opacity" Value="0.6"/>
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True"/>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource MenuItemHoverBackgroundBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource HamburgerHighlightBackgroundBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.6"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
