@@ -62,7 +62,7 @@
                         <DataTemplate>
                             <ComboBox ItemsSource="{Binding DataContext.QuarterHours, RelativeSource={RelativeSource AncestorType=Window}}"
                                       SelectedItem="{Binding Start, Mode=TwoWay}"
-                                      ItemTemplate="{StaticResource TimeItemTemplate}"
+                                      ItemTemplate="{DynamicResource TimeItemTemplate}"
                                       MinWidth="120"
                                       Padding="{StaticResource CellEditorPadding}"
                                       Style="{StaticResource DefaultEditingComboBoxStyle}"/>
@@ -84,9 +84,10 @@
                         <DataTemplate>
                             <ComboBox ItemsSource="{Binding DataContext.QuarterHours, RelativeSource={RelativeSource AncestorType=Window}}"
                                       SelectedItem="{Binding End, Mode=TwoWay}"
-                                      ItemTemplate="{StaticResource TimeItemTemplate}"
+                                      ItemTemplate="{DynamicResource TimeItemTemplate}"
                                       MinWidth="120"
-                                      Padding="{StaticResource CellEditorPadding}"/>
+                                      Padding="{StaticResource CellEditorPadding}"
+                                      Style="{StaticResource DefaultEditingComboBoxStyle}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
