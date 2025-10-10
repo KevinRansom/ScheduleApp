@@ -4,20 +4,33 @@
              xmlns:beh="clr-namespace:ScheduleApp.Behaviors"
              xmlns:local="clr-namespace:ScheduleApp"
              SnapsToDevicePixels="True">
-    <ContentControl>
-        <TabControl x:Name="InnerTabControl"  Style="{StaticResource RoundedTabControl}">
-            <TabItem x:Name="TeamLineupInnerControlClassroomsAndTeachers" Header="Classrooms and Teachers">
-                <local:TeamLineupInnerControlClassroomsAndTeachers x:Name="ClassroomsAndTeachersControl"
-                                                                   SetupDataGridRowEditEnding="OnChildSetupDataGrid_RowEditEnding"
-                                                                   SetupDataGridCellEditEnding="OnChildSetupDataGrid_CellEditEnding"/>
-            </TabItem>
+    <Grid VerticalAlignment="Top">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-            <TabItem x:Name="TeamLineupInnerControlSupportStaff" Header="Support Staff">
-                <!-- Replaced inline Grid with separate UserControl to keep event forwarding and behavior identical -->
-                <local:TeamLineupInnerControlSupportStaff x:Name="SupportStaffControl"
-                                                          SetupDataGridRowEditEnding="OnChildSetupDataGrid_RowEditEnding"
-                                                          SetupDataGridCellEditEnding="OnChildSetupDataGrid_CellEditEnding"/>
-            </TabItem>
-        </TabControl>
-    </ContentControl>
+        <Grid Grid.Column="0"
+              VerticalAlignment="Top">
+            <ContentControl>
+                <TabControl x:Name="InnerTabControl"  Style="{StaticResource RoundedTabControl}">
+                    <TabItem x:Name="TeamLineupInnerControlClassroomsAndTeachers" Header="Classrooms and Teachers">
+                        <local:TeamLineupInnerControlClassroomsAndTeachers x:Name="ClassroomsAndTeachersControl"
+                                                                           SetupDataGridRowEditEnding="OnChildSetupDataGrid_RowEditEnding"
+                                                                           SetupDataGridCellEditEnding="OnChildSetupDataGrid_CellEditEnding"/>
+                    </TabItem>
+
+                    <TabItem x:Name="TeamLineupInnerControlSupportStaff" Header="Support Staff">
+                        <!-- Replaced inline Grid with separate UserControl to keep event forwarding and behavior identical -->
+                        <local:TeamLineupInnerControlSupportStaff x:Name="SupportStaffControl"
+                                                                  SetupDataGridRowEditEnding="OnChildSetupDataGrid_RowEditEnding"
+                                                                  SetupDataGridCellEditEnding="OnChildSetupDataGrid_CellEditEnding"/>
+                    </TabItem>
+                </TabControl>
+            </ContentControl>
+        </Grid>
+    </Grid>
 </UserControl>

@@ -4,7 +4,7 @@ using System.Windows.Controls;
 
 namespace ScheduleApp
 {
-    public partial class TeamLineupInnerControlSupportStaff : ContentControl
+    public partial class TeamLineupInnerControlSupportStaff : UserControl
     {
         // Expose events so parent XAML can attach handlers:
         // <local:TeamLineupInnerControlSupportStaff SetupDataGridRowEditEnding="..." />

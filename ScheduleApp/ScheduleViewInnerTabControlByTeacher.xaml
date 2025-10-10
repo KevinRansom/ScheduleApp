@@ -105,56 +105,56 @@
         </Border>
 
         <StackPanel Grid.Column="3"
-                    Orientation="Vertical"
+                     Orientation="Vertical"
                     VerticalAlignment="Top"
                     Margin="12,0,12,0"
                     Width="120">
             <Button Content="Team Lineup"
-                    Style="{StaticResource RoundedActionButton}"
-                    Margin="0,0,0,8"
-                    HorizontalAlignment="Stretch"
-                    Click="TeamLineupFromTeacher_Click"/>
+                        Style="{StaticResource RoundedActionButton}"
+                        Margin="0,0,0,8"
+                        HorizontalAlignment="Stretch"
+                        Click="TeamLineupFromTeacher_Click"/>
 
             <Button Content="Print All"
-                    Style="{StaticResource RoundedActionButton}"
-                    Margin="0,0,0,8"
-                    HorizontalAlignment="Stretch"
-                    Command="{Binding PrintPreview.PrintAllCommand}"/>
+                        Style="{StaticResource RoundedActionButton}"
+                        Margin="0,0,0,8"
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding PrintPreview.PrintAllCommand}"/>
 
             <Button Content="Preview"
-                    Style="{StaticResource RoundedActionButton}"
-                    Margin="0,0,0,8"
-                    HorizontalAlignment="Stretch"
-                    Click="SchedulePreview_Click"/>
+                        Style="{StaticResource RoundedActionButton}"
+                        Margin="0,0,0,8"
+                        HorizontalAlignment="Stretch"
+                        Click="SchedulePreview_Click"/>
 
             <Button Content="Export PDF"
-                    Style="{StaticResource RoundedActionButton}"
-                    HorizontalAlignment="Stretch"
-                    Command="{Binding PrintPreview.ExportPdfCommand}"/>
+                        Style="{StaticResource RoundedActionButton}"
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding PrintPreview.ExportPdfCommand}"/>
 
             <StackPanel Orientation="Vertical"
-                        VerticalAlignment="Top">
+                            VerticalAlignment="Top">
                 <StackPanel.Resources>
                     <Style x:Key="KeyPillStyle"
-                           TargetType="Border"
-                           BasedOn="{StaticResource PillStyle}">
+                                TargetType="Border"
+                                BasedOn="{StaticResource PillStyle}">
                         <Setter Property="BorderThickness" Value="1"/>
                         <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
                     </Style>
                 </StackPanel.Resources>
 
                 <TextBlock Text="Key"
-                           Margin="0,16,0,4"
-                           Foreground="{StaticResource SecondaryTextBrush}"
-                           FontWeight="SemiBold"
-                           HorizontalAlignment="Center"
-                           TextAlignment="Center"/>
+                                Margin="0,16,0,4"
+                                Foreground="{StaticResource SecondaryTextBrush}"
+                                FontWeight="SemiBold"
+                                HorizontalAlignment="Center"
+                                TextAlignment="Center"/>
 
                 <Border Height="1"
-                        Margin="0,0,0,12"
-                        Background="{StaticResource SchedGridLineBrush}"
-                        HorizontalAlignment="Stretch"
-                        SnapsToDevicePixels="True"/>
+                            Margin="0,0,0,12"
+                            Background="{StaticResource SchedGridLineBrush}"
+                            HorizontalAlignment="Stretch"
+                            SnapsToDevicePixels="True"/>
 
                 <Border Background="{StaticResource BrushCoverage}" Style="{StaticResource KeyPillStyle}" Margin="0,0,0,8">
                     <TextBlock Text="Coverage" TextAlignment="Center" HorizontalAlignment="Stretch"/>

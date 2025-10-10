@@ -229,6 +229,7 @@
             <!-- Set Add/Remove buttons corner radius to 5px -->
             <CornerRadius x:Key="ButtonCornerRadius">5</CornerRadius>
         </Style.Resources>
+        <Setter Property="VerticalAlignment" Value="Top"/>
         <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource BrushUnscheduled}"/>
         <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
@@ -477,8 +478,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ContentControl">
-                    <Grid SnapsToDevicePixels="True"
-                          Margin="{StaticResource PageSectionMarginLarge}">
+                    <Grid SnapsToDevicePixels="True">
                       <Border Background="{TemplateBinding Background}"
                               BorderBrush="{TemplateBinding BorderBrush}"
                               BorderThickness="{TemplateBinding BorderThickness}"
@@ -772,7 +772,7 @@
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="6,6,0,0"
-                                    Margin="0,0,1,-1"
+                                    Margin="0,0,-1,-1"
                                     Padding="{TemplateBinding Padding}"
                                     SnapsToDevicePixels="True">
                                     <ContentPresenter x:Name="ContentSite"
@@ -786,7 +786,7 @@
                                         <Setter TargetName="Bd" Property="Background" Value="White"/>
                                         <Setter TargetName="Bd" Property="BorderBrush" Value="Gray"/>
                                         <Setter Property="Foreground" Value="Black"/>
-                                        <Setter TargetName="Bd" Property="Height" Value="28"/>
+                                        <Setter TargetName="Bd" Property="Height" Value="26"/>
                                         <Setter TargetName="Bd" Property="BorderThickness" Value="1,1,1,0"/>
                                     </Trigger>
                                     <Trigger Property="IsSelected" Value="False">
@@ -801,6 +801,12 @@
                                     </Trigger>
                                     <Trigger Property="IsEnabled" Value="False">
                                         <Setter Property="Opacity" Value="0.5"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Panel.ZIndex" Value="10"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="False">
+                                        <Setter Property="Panel.ZIndex" Value="0"/>
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>

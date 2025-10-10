@@ -36,7 +36,9 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="0" Style="{StaticResource RoundedTableBorder}" Margin="{StaticResource NoMarginThickness}">
+        <Border Grid.Column="0" 
+                Style="{StaticResource RoundedTableBorder}" 
+                Margin="{StaticResource NoMarginThickness}">
             <ListBox x:Name="SupportListBox"
                      beh:AutoSelectFirstBehavior.EnableAutoSelect="True"
                      ItemsSource="{Binding Schedule.SupportEntries}"
