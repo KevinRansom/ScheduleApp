@@ -12,12 +12,9 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
 
         <Grid Grid.Column="0"
-              VerticalAlignment="Top">
+              VerticalAlignment="Stretch">
             <ContentControl
                 Style="{StaticResource RoundedTableContainer}">
                 <DockPanel LastChildFill="True">

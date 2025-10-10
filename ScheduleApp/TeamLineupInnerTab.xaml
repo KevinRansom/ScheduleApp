@@ -4,19 +4,16 @@
              xmlns:beh="clr-namespace:ScheduleApp.Behaviors"
              xmlns:local="clr-namespace:ScheduleApp"
              SnapsToDevicePixels="True">
-    <Grid VerticalAlignment="Top">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
 
-        <Grid Grid.Column="0"
-              VerticalAlignment="Top">
+        <Grid Grid.Column="0">
             <ContentControl>
-                <TabControl x:Name="InnerTabControl"  Style="{StaticResource RoundedTabControl}">
+                <TabControl x:Name="InnerTabControl"  
+                            Style="{StaticResource RoundedTabControl}">
                     <TabItem x:Name="TeamLineupInnerControlClassroomsAndTeachers" Header="Classrooms and Teachers">
                         <local:TeamLineupInnerControlClassroomsAndTeachers x:Name="ClassroomsAndTeachersControl"
                                                                            SetupDataGridRowEditEnding="OnChildSetupDataGrid_RowEditEnding"
