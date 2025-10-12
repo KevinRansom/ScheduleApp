@@ -4,7 +4,8 @@
              xmlns:beh="clr-namespace:ScheduleApp.Behaviors"
              xmlns:conv="clr-namespace:ScheduleApp.Converters"
              SnapsToDevicePixels="True"
-             VerticalContentAlignment="Stretch"
+             VerticalAlignment="Stretch"
+             HorizontalAlignment="Stretch"
              Margin="{StaticResource NoMarginThickness}">
 
     <Grid VerticalAlignment="Top">
@@ -37,7 +38,8 @@
                               beh:DataGridRowReorderBehavior.EnableRowReorder="True"
                               ScrollViewer.VerticalScrollBarVisibility="Auto"
                               ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                              VerticalAlignment="Top"
+                              VerticalAlignment="Stretch"
+                              HorizontalAlignment="Stretch"
                               RowEditEnding="OnSetupDataGrid_RowEditEnding"
                               CellEditEnding="OnSetupDataGrid_CellEditEnding">
                         <DataGrid.InputBindings>
@@ -112,7 +114,9 @@
         </Grid>
 
         <Grid Grid.Column="1"
-                  VerticalAlignment="Top">
+              VerticalAlignment="Stretch"
+              HorizontalAlignment="Stretch"
+              >
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>

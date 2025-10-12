@@ -16,11 +16,11 @@
                     Style="{StaticResource RoundedTabControl}"
                     SelectionChanged="ScheduleViewInnerTabControl_SelectionChanged">
             <TabItem x:Name="ScheduleViewInnerTabControlBySupport" Header="By Support">
-                <local:ScheduleViewInnerTabControlBySupport x:Name="SupportTabContent"/>
+                <local:ScheduleViewInnerTabControlBySupport x:Name="SupportTabContent" Margin="{StaticResource PageSectionMarginLarge}" />
             </TabItem>
 
             <TabItem x:Name="ScheduleViewInnerTabControlByTeacher" Header="By Teacher">
-                <local:ScheduleViewInnerTabControlByTeacher x:Name="TeacherTabContent"/>
+                <local:ScheduleViewInnerTabControlByTeacher x:Name="TeacherTabContent" Margin="{StaticResource PageSectionMarginLarge}" />
             </TabItem>
         </TabControl>
     </ContentControl>

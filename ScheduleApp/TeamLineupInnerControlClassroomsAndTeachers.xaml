@@ -5,15 +5,19 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             SnapsToDevicePixels="True">
-    <Grid VerticalAlignment="Top">
+             SnapsToDevicePixels="True"
+             VerticalAlignment="Stretch"
+             HorizontalAlignment="Stretch">
+    <Grid VerticalAlignment="Stretch"
+          HorizontalAlignment="Stretch">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Column="0"
-              VerticalAlignment="Stretch">
+              VerticalAlignment="Stretch"
+              HorizontalAlignment="Stretch">
             <ContentControl Style="{StaticResource RoundedTableContainer}">
                 <DataGrid x:Name="TeachersGrid"
                             ItemsSource="{Binding Setup.Teachers}"
@@ -32,9 +36,14 @@
                             beh:DataGridRowReorderBehavior.EnableRowReorder="True"
                             ScrollViewer.VerticalScrollBarVisibility="Auto"
                             ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                            VerticalAlignment="Top"
+                            VerticalAlignment="Stretch"
+                            HorizontalAlignment="Stretch"
                             RowEditEnding="OnSetupDataGrid_RowEditEnding"
-                            CellEditEnding="OnSetupDataGrid_CellEditEnding">
+                            CellEditEnding="OnSetupDataGrid_CellEditEnding"
+                            Loaded="TeachersGrid_Loaded"
+                            Unloaded="TeachersGrid_Unloaded"
+                            Sorting="TeachersGrid_Sorting"
+                            SizeChanged="TeachersGrid_SizeChanged">
                     <DataGrid.InputBindings>
                         <KeyBinding Key="Up"
                                     Modifiers="Control"
@@ -51,6 +60,22 @@
                             <Setter Property="ClipToBounds" Value="True"/>
                         </Style>
                     </DataGrid.Resources>
+
+                    <!-- Make placeholder rows non-interactive and visually blank -->
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Focusable" Value="True"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsPlaceholder}" Value="True">
+                                    <!-- keep row visible so gridlines draw, but prevent interaction -->
+                                    <Setter Property="IsHitTestVisible" Value="False"/>
+                                    <Setter Property="Focusable" Value="False"/>
+                                    <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource TransparentBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
 
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Room Number"
@@ -73,7 +98,6 @@
                                                 CellStyle="{StaticResource DefaultCellStyle}">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <!-- FIX: DynamicResource -> StaticResource -->
                                     <TextBlock Text="{Binding Start, Converter={StaticResource TimeSpanToStringConverter}}"
                                                 Style="{StaticResource DefaultTextElementStyle}"/>
                                 </DataTemplate>
@@ -96,7 +120,6 @@
                                                 CellStyle="{StaticResource LastColumnCellStyle}">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <!-- FIX: DynamicResource -> StaticResource -->
                                     <TextBlock Text="{Binding End, Converter={StaticResource TimeSpanToStringConverter}}"
                                                 Style="{StaticResource DefaultTextElementStyle}"/>
                                 </DataTemplate>
@@ -118,14 +141,16 @@
         </Grid>
 
         <Grid Grid.Column="1"
-              VerticalAlignment="Top">
+              VerticalAlignment="Top"
+              HorizontalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0"
                         Orientation="Vertical"
                         Margin="{StaticResource SidePanelLeftMargin}"
-                        VerticalAlignment="Top">
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Stretch">
                 <Button Content="Add"
                     Style="{StaticResource RoundedActionButton}"
                     Margin="{StaticResource ActionButtonStackMargin}"

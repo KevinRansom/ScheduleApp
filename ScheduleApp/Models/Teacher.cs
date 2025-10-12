@@ -22,7 +22,6 @@ namespace ScheduleApp.Models
         [XmlIgnore]
         public TimeSpan End { get => _end; set { if (_end != value) { _end = value; Notify(); } } }
 
-        // XML proxies to persist Start/End as xsd:duration
         [XmlElement("Start")]
         public string StartXml
         {
@@ -37,18 +36,16 @@ namespace ScheduleApp.Models
             set => End = string.IsNullOrEmpty(value) ? TimeSpan.Zero : XmlConvert.ToTimeSpan(value);
         }
 
-        public double ShiftHours
-        {
-            get
-            {
-                var span = End - Start;
-                return Math.Max(0, span.TotalHours);
-            }
-        }
+        public double ShiftHours => Math.Max(0, (End - Start).TotalHours);
+        public bool LunchRequired => ShiftHours > 5.0;
 
-        public bool LunchRequired
+        // Tag placeholder padding rows (not persisted)
+        private bool _isPlaceholder;
+        [XmlIgnore]
+        public bool IsPlaceholder
         {
-            get { return ShiftHours > 5.0; }
+            get => _isPlaceholder;
+            set { if (_isPlaceholder != value) { _isPlaceholder = value; Notify(); } }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

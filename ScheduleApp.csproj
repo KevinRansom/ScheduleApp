@@ -65,6 +65,7 @@
     <Compile Include="ScheduleApp\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ScheduleApp\Infrastructure\PaddedCollection.cs" />
     <Compile Include="ScheduleApp\MainWindow.EventHandlers.cs" />
     <Compile Include="ScheduleApp\MainWindow.TeamLineup.cs" />
     <Compile Include="ScheduleApp\MainWindow.TeamLineupFromSupport.cs" />

@@ -11,9 +11,10 @@
     <!-- SchedGridCellText (moved up so StaticResource resolves before TimeItemTemplate) -->
     <Style x:Key="SchedGridCellText" TargetType="TextBlock">
         <Setter Property="TextAlignment" Value="Left"/>
-        <Setter Property="Padding" Value="{StaticResource CellTextPadding}"/>
-        <Setter Property="FontFamily" Value="{StaticResource MonospaceFontFamily}"/>
-        <Setter Property="FontSize" Value="{StaticResource BodyFontSize}"/>
+        <!-- Use DynamicResource to avoid forward-reference errors -->
+        <Setter Property="Padding" Value="{DynamicResource CellTextPadding}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource MonospaceFontFamily}"/>
+        <Setter Property="FontSize" Value="{DynamicResource BodyFontSize}"/>
         <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
         <Setter Property="SnapsToDevicePixels" Value="True"/>
     </Style>
