@@ -27,7 +27,7 @@ namespace ScheduleApp.Services
 
                 // 1) Lunch (30m) if shift > 5h, near midpoint, clamped to 11:00–14:00 and inside shift
                 DateTime? lunchStartOpt = null, lunchEndOpt = null;
-                if (totalHours > 5.0)
+                if (totalHours > 5.0 || t.LunchRequired)
                 {
                     var midpoint = shiftStart + TimeSpan.FromTicks((shiftEnd - shiftStart).Ticks / 2);
                     var lunchStart = TimeHelpers.RoundToNearestQuarter(midpoint);
@@ -918,7 +918,7 @@ namespace ScheduleApp.Services
                 var sEnd   = date.Add(s.End);
                 var shiftHours = Math.Max(0, (sEnd - sStart).TotalHours);
 
-                if (!(s.LunchRequired || shiftHours > 5.0)) continue;
+                if (!s.LunchRequired) continue;
 
                 var midpoint = sStart + TimeSpan.FromTicks((sEnd - sStart).Ticks / 2);
                 var start = TimeHelpers.ClampToQuarterWithin(midpoint, earliest, latest);
