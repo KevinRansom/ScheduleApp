@@ -193,10 +193,10 @@
     <PackageReference Include="PdfSharp" Version="6.1.0" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="WashingtonState.png" />
+    <Resource Include="ScheduleApp\Images\WashingtonState.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Arrow.png" />
+    <Resource Include="ScheduleApp\Images\Arrow.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ScheduleApp\Views\" />
