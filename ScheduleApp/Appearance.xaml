@@ -971,4 +971,5 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style x:Key="DefaultEditingTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource DefaultEditingElementStyle}"/>
 </ResourceDictionary>

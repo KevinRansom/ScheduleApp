@@ -53,15 +53,21 @@
 
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="Support Staff"
-                                                    SortMemberPath="Name"
-                                                    Width="*"
+                                                    SortMemberPath="Name" 
+                                                    Width="*" 
                                                     CellStyle="{StaticResource DefaultCellStyle}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Name}"
-                                                   Style="{StaticResource DefaultTextElementStyle}"/>
+                                        <TextBlock Text="{Binding Name}" 
+                                                    Style="{StaticResource DefaultTextElementStyle}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
+                                <DataGridTemplateColumn.CellEditingTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                    Style="{StaticResource DefaultEditingTextBoxStyle}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellEditingTemplate>
                             </DataGridTemplateColumn>
 
                             <DataGridTemplateColumn Header="Start Time"
