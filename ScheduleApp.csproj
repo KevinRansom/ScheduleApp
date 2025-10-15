@@ -85,6 +85,7 @@
     <Compile Include="ScheduleApp\Models\CoverageTask.cs" />
     <Compile Include="ScheduleApp\Models\DayContext.cs" />
     <Compile Include="ScheduleApp\Models\RoomPreference.cs" />
+    <Compile Include="ScheduleApp\Models\ScheduledDay.cs" />
     <Compile Include="ScheduleApp\Models\SetupData.cs" />
     <Compile Include="ScheduleApp\Models\Support.cs" />
     <Compile Include="ScheduleApp\Models\SupportStaffEntry.cs" />

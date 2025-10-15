@@ -17,10 +17,4 @@
   <ItemGroup>
     <ProjectReference Include="..\ScheduleApp.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="ScheduleApp\Images\WashingtonState.png" />
-    <Resource Include="ScheduleApp\Images\Arrow.png" />
-  </ItemGroup>
-
 </Project>
