@@ -60,11 +60,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\HeaderCornerConverters.cs" />
-    <Compile Include="Converters\RoundedClipConverter.cs" />
     <Compile Include="ScheduleApp\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ScheduleApp\Converters\HeaderCornerConverters.cs" />
+    <Compile Include="ScheduleApp\Converters\RoundedClipConverter.cs" />
     <Compile Include="ScheduleApp\Infrastructure\PaddedCollection.cs" />
     <Compile Include="ScheduleApp\MainWindow.EventHandlers.cs" />
     <Compile Include="ScheduleApp\MainWindow.TeamLineup.cs" />
