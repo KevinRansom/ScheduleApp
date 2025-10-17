@@ -103,26 +103,26 @@
             <Setter Property="KeyboardNavigation.TabNavigation" Value="Local"/>
         </Style>
         <conv:SupportTaskToBrushConverter x:Key="SupportTaskToBrushConverter"
-                                  CoverageBrush="{StaticResource BrushCoverage}"
-                                  BreakBrush="{StaticResource BrushBreak}"
-                                  LunchBrush="{StaticResource BrushLunch}"
-                                  IdleBrush="{StaticResource BrushIdle}"
-                                  UnscheduledBrush="{StaticResource BrushUnscheduled}"/>
+                                          CoverageBrush="{StaticResource BrushCoverage}"
+                                          BreakBrush="{StaticResource BrushBreak}"
+                                          LunchBrush="{StaticResource BrushLunch}"
+                                          IdleBrush="{StaticResource BrushIdle}"
+                                          UnscheduledBrush="{StaticResource BrushUnscheduled}"/>
     </Window.Resources>
 
     <Grid>
         <DockPanel LastChildFill="True">
             <!-- Top-aligned navy title bar with hamburger -->
             <Border DockPanel.Dock="Top"
-              CornerRadius="{StaticResource TopBarCornerRadius}"
-              Background="{StaticResource TitleBarBackgroundBrush}"
-              BorderBrush="{StaticResource TitleBarBorderBrush}"
-              BorderThickness="{StaticResource GridOuterBorderThickness}"
-              Padding="{StaticResource TopBarPadding}"
-              SnapsToDevicePixels="True"
-              Margin="{StaticResource TopBarOuterMargin}"
-              MinHeight="{StaticResource TopBarMinHeight}"
-              MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                    CornerRadius="{StaticResource TopBarCornerRadius}"
+                    Background="{StaticResource TitleBarBackgroundBrush}"
+                    BorderBrush="{StaticResource TitleBarBorderBrush}"
+                    BorderThickness="{StaticResource GridOuterBorderThickness}"
+                    Padding="{StaticResource TopBarPadding}"
+                    SnapsToDevicePixels="True"
+                    Margin="{StaticResource TopBarOuterMargin}"
+                    MinHeight="{StaticResource TopBarMinHeight}"
+                    MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -142,23 +142,23 @@
                         </Grid.ColumnDefinitions>
 
                         <Image x:Name="TitleBarIcon"
-                   Grid.Column="0"
-                   Source="/ScheduleApp;component/washingtonstate.png"
-                   Height="36"
-                   Stretch="Uniform"
-                   VerticalAlignment="Center"
-                   SnapsToDevicePixels="True"/>
+                               Grid.Column="0"
+                               Source="/ScheduleApp;component/ScheduleApp/Images/WashingtonState.png"
+                               Height="36"
+                               Stretch="Uniform"
+                               VerticalAlignment="Center"
+                               SnapsToDevicePixels="True"/>
 
                         <!-- Two-space gap preserved before the text -->
                         <TextBlock Grid.Column="1"
-                       xml:space="preserve"
-                       Text="  Coverage Schedule App"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Left"
-                       Foreground="White"
-                       FontSize="16"
-                       FontWeight="SemiBold"
-                       IsHitTestVisible="False"/>
+                                   xml:space="preserve"
+                                   Text="  Coverage Schedule App"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Left"
+                                   Foreground="White"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   IsHitTestVisible="False"/>
                     </Grid>
 
                     <Popup x:Name="HamburgerPopup"
@@ -266,7 +266,7 @@
                                             SnapsToDevicePixels="True">
                                             <Image x:Name="ScheduleTitleImage"
                                                    Grid.Column="0"
-                                                   Source="/ScheduleApp;component/washingtonstate.png"
+                                                   Source="/ScheduleApp;component/ScheduleApp/Images/WashingtonState.png"
                                                    Height="{StaticResource PageTitleFontSize}"
                                                    Stretch="Uniform"
                                                    VerticalAlignment="Center"
@@ -320,16 +320,15 @@
                                     </Grid.ColumnDefinitions>
 
                                     <Button Grid.Column="0"
-                                            Style="{StaticResource HeaderImageButtonStyle}"
                                             Click="TitleBack_Click"
-                                            ToolTip="Back to Schedule"
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Center"
-                                            Focusable="False">
+                                            Padding="0"
+                                            BorderThickness="0" 
+                                            Background="Transparent">
                                         <Image x:Name="TeamLineupTitleImage"
-                                               Source="/ScheduleApp;component/arrow.png"
+                                               Source="/ScheduleApp;component/ScheduleApp/Images/Arrow.png"
                                                Height="{StaticResource PageTitleFontSize}"
-                                               Stretch="Uniform"
+                                               Stretch="Fill"
+                                               HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
                                                SnapsToDevicePixels="True"
                                                RenderOptions.BitmapScalingMode="HighQuality">
@@ -349,7 +348,8 @@
                                                FontSize="{StaticResource PageTitleFontSize}"
                                                FontWeight="Normal"
                                                Foreground="{StaticResource PrimaryTextBrush}"
-                                               VerticalAlignment="Center"/>
+                                               VerticalAlignment="Center"
+                                               Background="Transparent"/>
                                 </Grid>
 
                                 <!-- Renamed instance to avoid confusion with inner TabControl -->
@@ -382,7 +382,7 @@
                                             VerticalAlignment="Center"
                                             Focusable="False">
                                         <Image x:Name="PrintPreviewTitleImage"
-                                               Source="/ScheduleApp;component/arrow.png"
+                                               Source="/ScheduleApp;component/ScheduleApp/Images/Arrow.png"
                                                Height="{StaticResource PageTitleFontSize}"
                                                Stretch="Uniform"
                                                VerticalAlignment="Center"
@@ -468,7 +468,7 @@
                                             VerticalAlignment="Center"
                                             Focusable="False">
                                         <Image x:Name="PreferencesTitleImage"
-                                               Source="/ScheduleApp;component/arrow.png"
+                                               Source="/ScheduleApp;component/ScheduleApp/Images/Arrow.png"
                                                Height="{StaticResource PageTitleFontSize}"
                                                Stretch="Uniform"
                                                VerticalAlignment="Center"

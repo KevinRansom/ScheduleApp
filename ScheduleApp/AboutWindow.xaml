@@ -28,7 +28,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Image Grid.Column="0"
-                   Source="/ScheduleApp;component/washingtonstate.png"
+                   Source="/ScheduleApp;component/ScheduleApp/Images/WashingtonState.png"
                    Height="78"
                    Stretch="Uniform"
                    VerticalAlignment="Center"

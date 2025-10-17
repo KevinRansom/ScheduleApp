@@ -432,7 +432,7 @@ namespace ScheduleApp
                 }
 
                 // washingtonstate -> Schedule + TitleBar
-                var washingtonBitmap = ProcessPackImage("/ScheduleApp;component/washingtonstate.png");
+                var washingtonBitmap = ProcessPackImage("/ScheduleApp;component/ScheduleApp/Images/WashingtonState.png");
                 if (washingtonBitmap != null)
                 {
                     if (ScheduleTitleImage != null) ScheduleTitleImage.Source = washingtonBitmap;
@@ -440,7 +440,7 @@ namespace ScheduleApp
                 }
 
                 // arrow -> Team Lineup + Preview + Preferences
-                var arrowBitmap = ProcessPackImage("/ScheduleApp;component/arrow.png");
+                var arrowBitmap = ProcessPackImage("/ScheduleApp;component/ScheduleApp/Images/Arrow.png");
                 if (arrowBitmap != null)
                 {
                     if (TeamLineupTitleImage != null) TeamLineupTitleImage.Source = arrowBitmap;
