@@ -1,8 +1,9 @@
-using Xunit;
+﻿using Xunit;
 using System;
 using System.Linq;
 using System.Collections.Generic;
 using ScheduleApp.Models;
+using ScheduleTests.TestHelpers;
 
 namespace ScheduleTests
 {
@@ -12,78 +13,106 @@ namespace ScheduleTests
         public void Teacher7To15_Support9_30To15_AssignsBreaksAndLunches()
         {
             var date = new DateTime(2025, 10, 13);
-            var teacher = new Teacher { Name = "T1", RoomNumber = "R1", Start = new TimeSpan(7, 0, 0), End = new TimeSpan(15, 0, 0) };
-            var support = new Support { Name = "S1", Start = new TimeSpan(9, 30, 0), End = new TimeSpan(15, 0, 0) };
 
-            var day = MakeScheduledDay(date, new[] { teacher }, new[] { support });
+            var scenario = SchedulerScenario.For(date)
+                .AddTeacher(t => t.Named("T1").InRoom("R1").StartsAt(7, 0).EndsAt(15, 0))
+                .AddSupport(s => s.Named("S1").StartsAt(9, 30).EndsAt(15, 0))
+                .Run(_scheduler)
+                .ScheduleSelfCare(_scheduler);
 
-            var bySupport = day.AssignAndSchedule(_scheduler);
+            // High-level subset validation (ExpectedScheduleAssertions) for the support schedule
+            var expected = new ExpectedScheduleBuilder()
+                .Support("S1")
+                .Coverage("S1", "T1", 30)
+                .Coverage("S1", "T1", 10)
+                .SelfCare("S1", CoverageTaskKind.Lunch, 30)
+                .SelfCare("S1", CoverageTaskKind.Break, 10)
+                .Build();
 
-            // teacher should have a lunch (30min) and at least one break (10min)
-            Assert.Contains(bySupport["S1"], t => t.TeacherName == "T1" && (t.End - t.Start).TotalMinutes == 30);
-            Assert.Contains(bySupport["S1"], t => t.TeacherName == "T1" && (t.End - t.Start).TotalMinutes == 10);
+            ExpectedScheduleAssertions.AssertEquivalent(scenario.BySupport, expected);
 
-            // support should have been assigned the teacher coverage tasks
-            Assert.True(bySupport.ContainsKey("S1"));
-            var assigned = bySupport["S1"];
-            Assert.Contains(assigned, t => t.TeacherName == "T1" && (t.End - t.Start).TotalMinutes == 30);
-            Assert.Contains(assigned, t => t.TeacherName == "T1" && (t.End - t.Start).TotalMinutes == 10);
+            // Exact, ordered timeline for S1 (times + durations)
+            var timeline = new ExpectedTimeline(date)
+                .ForSupport("S1")
+                    .Coverage("T1", "09:30", 10)
+                    .Free(          "09:45", 75)
+                    .Coverage("T1", "11:00", 30)
+                    .Free(          "11:30", 45)
+                    .Lunch(         "12:15", 30)
+                    .Break(         "12:45", 10)
+                    .Free(          "13:00", 30)
+                    .Coverage("T1", "13:30", 10)
+                    .Free(          "13:45", 75)
+                .End()
+                .Build();
 
-            // schedule support self-care (should add Lunch/Break for support as needed)
-            _scheduler.ScheduleSupportSelfCare(day.Context, bySupport);
+            TimelineAssertions.AssertSupportTimelineEquals(
+                scenario.BySupport,
+                "S1",
+                timeline["S1"]);
 
-            Assert.Contains(bySupport["S1"], t => t.Kind == CoverageTaskKind.Lunch);
-            Assert.Contains(bySupport["S1"], t => t.Kind == CoverageTaskKind.Break);
+            // Teacher schedule: use builder with times for readability
+            var expectedTeacher = new ExpectedTeacherScheduleBuilder(date)
+                .Coverage("T1", "09:00", 10)
+                .Coverage("T1", "11:00", 30)
+                .Coverage("T1", "13:30", 10)
+                .Build();
+
+            // Exact match: presence, times (tolerance 0), and no extras
+            ExpectedScheduleAssertions.AssertTeacherTasksExactlyEqual(
+                scenario.TeacherTasks,
+                "T1",
+                expectedTeacher,
+                startToleranceMinutes: 0);
         }
 
         [Fact]
         public void Teacher7To11_Support9To11_AssignsBreaks_NoLunches()
         {
             var date = new DateTime(2025, 10, 13);
-            var teacher = new Teacher { Name = "T2", RoomNumber = "R2", Start = new TimeSpan(7, 0, 0), End = new TimeSpan(11, 0, 0) };
-            var support = new Support { Name = "S2", Start = new TimeSpan(9, 0, 0), End = new TimeSpan(11, 0, 0) };
 
-            var day = MakeScheduledDay(date, new[] { teacher }, new[] { support });
+            var scenario = SchedulerScenario
+                           .For(date)
+                           .AddTeacher(t => t.Named("T2").InRoom("R2").StartsAt(7, 0).EndsAt(11, 0))
+                           .AddSupport(s => s.Named("S2").StartsAt(9, 0).EndsAt(11, 0))
+                           .Run(_scheduler)
+                           .ScheduleSelfCare(_scheduler);
 
-            var bySupport = day.AssignAndSchedule(_scheduler);
+            // Exact, ordered expected timeline for S2:
+            // - one 10m coverage at 09:00 (teacher T2)
+            // - remaining time filled with Idle (self time) after the 5m buffer (starts 09:15)
+            var expectedTimeline = new ExpectedTimeline(date)
+                .ForSupport("S2")
+                    .Coverage("T2", "09:00", 10)
+                    .Free(          "09:15", 105)
+                .End()
+                .Build();
 
-            // teacher shift is 4 hours -> expect at least one 10min break and no 30min lunch
-            Assert.Contains(bySupport["S2"], t => t.TeacherName == "T2" && (t.End - t.Start).TotalMinutes == 10);
-            Assert.DoesNotContain(bySupport["S2"], t => t.TeacherName == "T2" && (t.End - t.Start).TotalMinutes == 30);
-
-            // support should have at least one assigned break coverage
-            Assert.Contains(bySupport["S2"], t => t.TeacherName == "T2" && (t.End - t.Start).TotalMinutes == 10);
-
-            // schedule self-care: support should NOT have a Lunch (shift < 5h)
-            _scheduler.ScheduleSupportSelfCare(day.Context, bySupport);
-            Assert.DoesNotContain(bySupport["S2"], t => t.Kind == CoverageTaskKind.Lunch);
-            Assert.Contains(bySupport["S2"], t => t.Kind == CoverageTaskKind.Break || t.Kind == CoverageTaskKind.Idle);
+            TimelineAssertions.AssertSupportTimelineEquals(scenario.BySupport,"S2", expectedTimeline["S2"]);
         }
 
         [Fact]
         public void Teacher7To15_NoSupport_ReportsUnscheduledBreaksAndLunch()
         {
             var date = new DateTime(2025, 10, 13);
-            var teacher = new Teacher { Name = "T3", RoomNumber = "R3", Start = new TimeSpan(7, 0, 0), End = new TimeSpan(15, 0, 0) };
 
-            var day = MakeScheduledDay(date, new[] { teacher }, Enumerable.Empty<Support>());
+            var scenario = SchedulerScenario.For(date)
+                .AddTeacher(t => t.Named("T3").InRoom("R3").StartsAt(7, 0).EndsAt(15, 0))
+                .Run(_scheduler);
 
-            var teacherTasks = _scheduler.GenerateTeacherCoverageTasks(day.Context);
+            // Exact expected Unscheduled timeline (teacher coverage with no supports)
+            var expectedUnscheduled = new ExpectedTimeline(date)
+                .ForSupport("Unscheduled")
+                    .Coverage("T3", "09:00", 10)
+                    .Coverage("T3", "11:00", 30)
+                    .Coverage("T3", "13:30", 10)
+                .End()
+                .Build();
 
-            // Expect lunch + breaks present as teacher coverage tasks
-            Assert.Contains(teacherTasks, t => t.TeacherName == "T3" && (t.End - t.Start).TotalMinutes == 30);
-            Assert.Contains(teacherTasks, t => t.TeacherName == "T3" && (t.End - t.Start).TotalMinutes == 10);
-
-            var bySupport = _scheduler.AssignSupportToTeacherTasks(day.Context, teacherTasks);
-
-            // No supports -> all teacher coverage tasks should be in Unscheduled bucket
-            Assert.True(bySupport.ContainsKey("Unscheduled"));
-            var unscheduled = bySupport["Unscheduled"];
-            Assert.Equal(teacherTasks.Count, unscheduled.Count);
-
-            // Verify unscheduled contains both lunch and break tasks for the teacher
-            Assert.Contains(unscheduled, t => t.TeacherName == "T3" && (t.End - t.Start).TotalMinutes == 30);
-            Assert.Contains(unscheduled, t => t.TeacherName == "T3" && (t.End - t.Start).TotalMinutes == 10);
+            TimelineAssertions.AssertSupportTimelineEquals(
+                scenario.BySupport,
+                "Unscheduled",
+                expectedUnscheduled["Unscheduled"]);
         }
     }
 }

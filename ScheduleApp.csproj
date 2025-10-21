@@ -185,6 +185,7 @@
     <None Include="ScheduleApp.settings">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="TESTING.md" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
